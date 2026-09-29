@@ -54,6 +54,7 @@ void main() {
 
     test('产品名使用 QFLIJVMX', () {
       expect(javaProfile.appTitle, 'QFLIJVMX');
+      expect(javaProfile.runtimeStatus, 'available');
     });
   });
 
@@ -86,19 +87,91 @@ void main() {
   });
 
   group('运行后端', () {
-    test('本语言文件被接管，并说明解释器还在开发中', () async {
-      write('Main.java', '// 示例');
+    test('使用 JDK 编译并运行多个 Java 源文件', () async {
+      write('src/Main.java', '''
+package demo;
+public class Main {
+    public static void main(String[] args) {
+        System.out.println(Greeting.message());
+    }
+}
+''');
+      write('src/Greeting.java', '''
+package demo;
+class Greeting {
+    static String message() { return "Hello from javac"; }
+}
+''');
       final result = await javaProfile.runner!.run(
         projectPath: project.path,
-        entryFile: p.join(project.path, 'Main.java'),
+        entryFile: p.join(project.path, 'src/Main.java'),
       );
-      expect(result, isNotNull, reason: '运行后端没有接管本语言文件');
-      expect(result!.title, contains('Java 解释器开发中'));
-      expect(await result.stdout.toList(), isNotEmpty);
-      // 127 = 「程序根本没跑起来」的内核约定（见 kProgramNotRunExitCode）。
-      // 不能用 2：终端面板把非 0 渲染成「（运行结束，退出码 N）」，
-      // 会被读成「程序自己跑完退出 2」。
+      expect(result, isNotNull);
+      final output = await result!.stdout.toList();
+      expect(output, ['Hello from javac']);
+      expect(await result.stderr.toList(), isEmpty);
+      expect(await result.exitCode, 0);
+    });
+
+    test('编译错误返回 javac 诊断且程序未运行', () async {
+      write('Main.java', 'public class Main { BROKEN }');
+      final result = (await javaProfile.runner!.run(
+        projectPath: project.path,
+        entryFile: p.join(project.path, 'Main.java'),
+      ))!;
+      final diagnostic = (await result.stderr.toList()).join('\n');
+      expect(diagnostic, contains('Main.java:1'));
+      expect(diagnostic, contains('BROKEN'));
       expect(await result.exitCode, kProgramNotRunExitCode);
+    });
+
+    test('保留 Java 程序自己的退出码', () async {
+      write('Main.java', '''
+public class Main {
+    public static void main(String[] args) { System.exit(7); }
+}
+''');
+      final result = (await javaProfile.runner!.run(
+        projectPath: project.path,
+        entryFile: p.join(project.path, 'Main.java'),
+      ))!;
+      expect(await result.stdout.toList(), isEmpty);
+      expect(await result.stderr.toList(), isEmpty);
+      expect(await result.exitCode, 7);
+    });
+
+    test('从 input.txt 提供标准输入', () async {
+      write('Main.java', '''
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        System.out.println(new Scanner(System.in).nextInt() * 2);
+    }
+}
+''');
+      write('input.txt', '21\n');
+      final result = (await javaProfile.runner!.run(
+        projectPath: project.path,
+        entryFile: p.join(project.path, 'Main.java'),
+      ))!;
+      expect(await result.stdout.toList(), ['42']);
+      expect(await result.stderr.toList(), isEmpty);
+      expect(await result.exitCode, 0);
+    });
+
+    test('中文源码与输出保持 UTF-8', () async {
+      write('Main.java', '''
+public class Main {
+    public static void main(String[] args) { System.out.println("你好，Java"); }
+}
+''');
+      final result = (await javaProfile.runner!.run(
+        projectPath: project.path,
+        entryFile: p.join(project.path, 'Main.java'),
+      ))!;
+      expect(await result.stdout.toList(), ['你好，Java']);
+      expect(await result.stderr.toList(), isEmpty);
+      expect(await result.exitCode, 0);
     });
 
     test('别的语言文件交回内核', () async {
@@ -112,15 +185,22 @@ void main() {
   });
 
   group('运行按钮分流', () {
-    test('点运行拿到结果，而不是掉进「移动端跑不了」的兜底提示', () async {
-      write('Main.java', '// 示例');
+    test('运行按钮拿到真实 JDK 执行结果', () async {
+      write('Main.java', '''
+public class Main {
+    public static void main(String[] args) { System.out.println("ready"); }
+}
+''');
       final result = await RunnerService.runProject(
         projectPath: project.path,
         entryFile: p.join(project.path, 'Main.java'),
       );
       expect(result, isNotNull);
       expect(result!.hint, isNull, reason: '后端接管了就不该走兜底提示');
-      expect(result.title, contains('Java 解释器开发中'));
+      expect(result.title, contains('JDK'));
+      expect(await result.stdout!.toList(), ['ready']);
+      expect(await result.stderr!.toList(), isEmpty);
+      expect(await result.exitCode, 0);
     });
   });
 }

@@ -1,61 +1,244 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:qfli_studio_core/services/studio_profile.dart';
 
-/// Java 版 App 的运行后端。
-///
-/// 目标形态是**应用内 Java 子集解释器（纯 Dart）**。
-/// 之所以是解释而不是编译：鸿蒙的普通应用被 SELinux 挡在 `exec` 之外，既调不动
-/// 设备上的编译器，也拉不起打包进 HAP 的可执行文件（HNP 那条路要求应用具备
-/// 生产力应用资格）。但沙箱从来不限制应用解释自己的数据，所以「自带解释器、
-/// 在当前进程里跑自己的源码」是普通应用唯一走得通的路。
-///
-/// C 版的 `qfli_c_runtime` 已经把这条路走通并交付（词法 → 预处理 → 语法 →
-/// 解释，约 7000 行纯 Dart），本版是同一个模式的接入点。
-///
-/// 解释器落地之前，[run] 明确返回「还不能运行」，而不是给一个看起来像结果的
-/// 东西——那比报错更糟。
-///
-/// **接入方式**：把 [_notReady] 换成真实解释器的调用（返回一个带
-/// stdout/stderr/exitCode 的 [ProgramRunResult]）。档位、入口识别、终端输出、
-/// 退出码这些接线都不用动。
+/// Compiles project sources with javac and runs the resulting main class.
 class JavaProgramRunner implements ProgramRunner {
-  const JavaProgramRunner();
+  const JavaProgramRunner({this.javaHome});
 
-  /// 本后端接管的源码后缀。
-  static const Set<String> _sourceExtensions = {'.java'};
+  /// An explicit JDK location, useful for a bundled distribution or tests.
+  final String? javaHome;
+
+  bool get isAvailable =>
+      (Platform.isWindows || Platform.isLinux || Platform.isMacOS) &&
+      _findJdk() != null;
 
   @override
   Future<ProgramRunResult?> run({
     required String projectPath,
     required String entryFile,
   }) async {
-    // 不是本语言的文件交回内核（返回 null），内核会走自己的分流逻辑。
-    if (!_sourceExtensions.contains(p.extension(entryFile).toLowerCase())) {
-      return null;
+    if (p.extension(entryFile).toLowerCase() != '.java') return null;
+    final project = p.normalize(p.absolute(projectPath));
+    final entry = p.normalize(p.absolute(entryFile));
+    if (!p.isWithin(project, entry) || !File(entry).existsSync()) {
+      return _failure('Java', '入口文件不在项目内或无法读取：$entryFile');
     }
-    return _notReady(p.basename(entryFile));
+    if (!(Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+      return _failure('Java', '当前设备未安装可用的 Java 工具链。');
+    }
+
+    final jdk = _findJdk();
+    if (jdk == null) {
+      return _failure('Java', '未找到 JDK。请设置 QFLI_JAVA_HOME 或 JAVA_HOME。');
+    }
+
+    Directory? output;
+    try {
+      final sources = _collectJavaFiles(Directory(project));
+      final jars = _collectJars(Directory(p.join(project, 'lib')));
+      jars.addAll(_collectJars(Directory(p.join(project, 'libs'))));
+      output = await Directory.systemTemp.createTemp('qfli_java_');
+      final classPath = [
+        output.path,
+        ...jars,
+      ].join(Platform.isWindows ? ';' : ':');
+      final compile = await Process.run(
+        jdk.javac,
+        [
+          '-encoding',
+          'UTF-8',
+          '-d',
+          output.path,
+          '-classpath',
+          classPath,
+          ...sources,
+        ],
+        workingDirectory: project,
+        runInShell: false,
+      );
+      if (compile.exitCode != 0) {
+        final diagnostic = '${compile.stdout}${compile.stderr}'.trim();
+        return _failure(
+          '编译 ${p.basename(entry)}',
+          diagnostic.isEmpty
+              ? 'javac 编译失败（退出码 ${compile.exitCode}）。'
+              : diagnostic,
+        );
+      }
+
+      final compileDiagnostics = '${compile.stdout}${compile.stderr}'.trim();
+
+      final source = await File(entry).readAsString();
+      final packageName = _packageName(source);
+      final mainClass = [
+        ?packageName,
+        p.basenameWithoutExtension(entry),
+      ].join('.');
+      final process = await Process.start(
+        jdk.java,
+        [
+          '-Dfile.encoding=UTF-8',
+          '-Dstdout.encoding=UTF-8',
+          '-Dstderr.encoding=UTF-8',
+          '-Dsun.stdout.encoding=UTF-8',
+          '-Dsun.stderr.encoding=UTF-8',
+          '-classpath',
+          classPath,
+          mainClass,
+        ],
+        workingDirectory: project,
+        runInShell: false,
+      );
+      unawaited(_feedInput(process.stdin, File(p.join(project, 'input.txt'))));
+      final runOutput = output;
+      final exitCode = process.exitCode.whenComplete(() async {
+        await _removeOutput(runOutput);
+      });
+      output = null;
+      return ProgramRunResult(
+        title: '运行 ${p.basename(entry)}（JDK）',
+        stdout: process.stdout
+            .transform(utf8.decoder)
+            .transform(const LineSplitter()),
+        stderr: _withDiagnostics(
+          compileDiagnostics,
+          process.stderr
+              .transform(utf8.decoder)
+              .transform(const LineSplitter()),
+        ),
+        exitCode: exitCode,
+        cancel: () async {
+          process.kill();
+          await exitCode;
+        },
+      );
+    } on FileSystemException catch (error) {
+      return _failure('Java', '无法读取项目文件：${error.message}');
+    } on ProcessException catch (error) {
+      return _failure('Java', '无法启动 JDK：${error.message}');
+    } finally {
+      if (output != null) await _removeOutput(output);
+    }
   }
 
-  /// 解释器还没接上时的占位结果。
-  ///
-  /// 退出码用 [kProgramNotRunExitCode]（127）而不是 2：终端面板把非 0 渲染成
-  /// 「（运行结束，退出码 N）」，任何非 127 的值都会被读成「程序自己跑完退出」。
-  ProgramRunResult _notReady(String fileName) {
-    final controller = StreamController<String>();
-    scheduleMicrotask(() {
-      controller
-        ..add('Java 版的运行后端还在开发中（应用内纯 Dart 解释器）。')
-        ..add('现在已经可用的：编辑器、语法高亮、项目模板、Java 入门教程。')
-        ..add('内置 Java 解释器完成后即可在本 App 内运行这段代码。')
-        ..close();
-    });
-    return ProgramRunResult(
-      title: '运行 $fileName（Java 解释器开发中）',
-      stdout: controller.stream,
-      stderr: const Stream<String>.empty(),
-      exitCode: Future<int>.value(kProgramNotRunExitCode),
+  _Jdk? _findJdk() {
+    final homes = [
+      javaHome,
+      Platform.environment['QFLI_JAVA_HOME'],
+      Platform.environment['JAVA_HOME'],
+    ];
+    for (final home in homes) {
+      if (home == null || home.isEmpty) continue;
+      final jdk = _Jdk.fromDirectory(p.join(home, 'bin'));
+      if (jdk != null) return jdk;
+    }
+    final path = Platform.environment['PATH'] ?? '';
+    for (final directory in path.split(Platform.isWindows ? ';' : ':')) {
+      if (directory.isEmpty) continue;
+      final jdk = _Jdk.fromDirectory(directory);
+      if (jdk != null) return jdk;
+    }
+    return null;
+  }
+
+  List<String> _collectJavaFiles(Directory directory) {
+    final files = <String>[];
+    void visit(Directory current) {
+      for (final entity in current.listSync(followLinks: false)) {
+        if (entity is Directory) {
+          final name = p.basename(entity.path);
+          if (name.startsWith('.') || name == 'build') continue;
+          visit(entity);
+        } else if (entity is File &&
+            p.extension(entity.path).toLowerCase() == '.java') {
+          files.add(entity.path);
+        }
+      }
+    }
+
+    visit(directory);
+    files.sort();
+    return files;
+  }
+
+  List<String> _collectJars(Directory directory) {
+    if (!directory.existsSync()) return [];
+    final jars =
+        directory
+            .listSync(recursive: true, followLinks: false)
+            .whereType<File>()
+            .where((file) => p.extension(file.path).toLowerCase() == '.jar')
+            .map((file) => file.path)
+            .toList()
+          ..sort();
+    return jars;
+  }
+
+  String? _packageName(String source) {
+    final withoutComments = source.replaceAll(
+      RegExp(r'/\*[\s\S]*?\*/|//[^\r\n]*'),
+      '',
     );
+    return RegExp(
+      r'^\s*package\s+([\w$]+(?:\.[\w$]+)*)\s*;',
+      multiLine: true,
+    ).firstMatch(withoutComments)?.group(1);
+  }
+
+  Stream<String> _withDiagnostics(
+    String diagnostics,
+    Stream<String> runtime,
+  ) async* {
+    if (diagnostics.isNotEmpty) {
+      yield* Stream<String>.fromIterable(diagnostics.split(RegExp(r'\r?\n')));
+    }
+    yield* runtime;
+  }
+
+  Future<void> _feedInput(IOSink sink, File input) async {
+    try {
+      if (await input.exists()) await sink.addStream(input.openRead());
+    } on IOException {
+      // The program may close stdin or exit before all input is consumed.
+    }
+    try {
+      await sink.close();
+    } on IOException {
+      // A terminated process has already closed its pipe.
+    }
+  }
+
+  Future<void> _removeOutput(Directory output) async {
+    try {
+      if (await output.exists()) await output.delete(recursive: true);
+    } on FileSystemException {
+      // A cleanup failure must not replace javac diagnostics or the JVM exit code.
+    }
+  }
+
+  ProgramRunResult _failure(String title, String message) => ProgramRunResult(
+    title: title,
+    stdout: const Stream<String>.empty(),
+    stderr: Stream<String>.fromIterable(message.split(RegExp(r'\r?\n'))),
+    exitCode: Future<int>.value(kProgramNotRunExitCode),
+  );
+}
+
+class _Jdk {
+  const _Jdk(this.java, this.javac);
+
+  final String java;
+  final String javac;
+
+  static _Jdk? fromDirectory(String directory) {
+    final suffix = Platform.isWindows ? '.exe' : '';
+    final java = p.join(directory, 'java$suffix');
+    final javac = p.join(directory, 'javac$suffix');
+    if (!File(java).existsSync() || !File(javac).existsSync()) return null;
+    return _Jdk(java, javac);
   }
 }

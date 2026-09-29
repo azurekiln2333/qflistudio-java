@@ -1,5 +1,5 @@
 name: qfli_java
-description: "QFLIJVMX：手机上的 Java IDE，本地解释执行。"
+description: "QFLIJVMX: Java editor with JDK compilation and execution."
 publish_to: 'none'
 version: 1.0.0+1
 

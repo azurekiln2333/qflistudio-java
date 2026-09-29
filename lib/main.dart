@@ -18,7 +18,7 @@ const String _appTitle = StudioProductCatalog.jvmx;
 /// Java 版档位：同一套内核 UI，收窄成只服务 Java。
 ///
 /// 单独提出来是为了让测试能直接断言档位，而不必为了一个常量去跑 `main()`。
-const StudioProfile javaProfile = StudioProfile(
+final StudioProfile javaProfile = StudioProfile(
   id: 'java',
   appTitle: _appTitle,
   templates: [ProjectTemplate.empty, ProjectTemplate.java],
@@ -26,8 +26,10 @@ const StudioProfile javaProfile = StudioProfile(
   isOffline: true,
   productKey: StudioProductCatalog.jvmxKey,
   showHomeTabs: false,
-  runtimeKind: 'embedded-java-runtime',
-  runtimeStatus: 'unavailable',
+  runtimeKind: 'JDK (javac + java)',
+  runtimeStatus: const JavaProgramRunner().isAvailable
+      ? 'available'
+      : 'unavailable',
   supportedFileExtensions: ['.java'],
   // Main.java 排在默认入口表前面，保证本版一定先命中它。
   entryFileNames: ['Main.java', 'src/Main.java'],
