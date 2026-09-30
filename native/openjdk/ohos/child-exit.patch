@@ -1,0 +1,13 @@
+--- a/src/hotspot/os/posix/os_posix.cpp
++++ b/src/hotspot/os/posix/os_posix.cpp
+@@ -832,3 +832,10 @@
+ void os::exit(int num) {
++#ifdef __OHOS__
++  // A forked VM must not run the host application's inherited exit handlers.
++  if (::getenv("QFLI_NATIVE_LIBRARY_DIR") != NULL) {
++    ::fflush(NULL);
++    ::_exit(num);
++  }
++#endif
+   ::exit(num);
+ }

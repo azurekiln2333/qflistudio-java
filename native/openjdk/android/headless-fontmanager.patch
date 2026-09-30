@@ -1,0 +1,20 @@
+--- a/make/modules/java.desktop/lib/Awt2dLibraries.gmk
++++ b/make/modules/java.desktop/lib/Awt2dLibraries.gmk
+@@ -557,7 +557,7 @@
+     LDFLAGS_unix := -L$(INSTALL_LIBRARIES_HERE), \
+     LDFLAGS_aix := -Wl$(COMMA)-berok, \
+     LIBS := $(BUILD_LIBFONTMANAGER_FONTLIB), \
+-    LIBS_unix := -lawt -lawt_xawt -ljava -ljvm -lc $(LIBM) $(LIBCXX), \
++    LIBS_unix := -lawt $(if $(filter true,$(ENABLE_HEADLESS_ONLY)),-lawt_headless,-lawt_xawt) -ljava -ljvm -lc $(LIBM) $(LIBCXX), \
+     LIBS_macosx := -lawt_lwawt -framework CoreText -framework CoreFoundation -framework CoreGraphics, \
+     LIBS_windows := $(WIN_JAVA_LIB) advapi32.lib user32.lib gdi32.lib \
+         $(WIN_AWT_LIB), \
+@@ -565,7 +565,7 @@
+ ))
+ 
+-$(BUILD_LIBFONTMANAGER): $(BUILD_LIBAWT) $(BUILD_LIBAWT_XAWT)
++$(BUILD_LIBFONTMANAGER): $(BUILD_LIBAWT) $(if $(filter true,$(ENABLE_HEADLESS_ONLY)),$(BUILD_LIBAWT_HEADLESS),$(BUILD_LIBAWT_XAWT))
+ 
+ ifeq ($(call isTargetOs, macosx), true)
+   $(BUILD_LIBFONTMANAGER): $(call FindLib, $(MODULE), awt_lwawt)
+ endif

@@ -1,0 +1,12 @@
+--- a/src/hotspot/share/memory/virtualspace.cpp
++++ b/src/hotspot/share/memory/virtualspace.cpp
+@@ -643,4 +643,9 @@
+                                      size_t rs_page_size) : ReservedSpace() {
++  // Zero stores interpreter entry records here, not generated instructions.
++#if defined(__OHOS__) && defined(ZERO)
++  initialize(r_size, rs_align, rs_page_size, /*requested address*/ NULL, /*executable*/ false);
++#else
+   initialize(r_size, rs_align, rs_page_size, /*requested address*/ NULL, /*executable*/ true);
++#endif
+   MemTracker::record_virtual_memory_type((address)base(), mtCode);
+ }

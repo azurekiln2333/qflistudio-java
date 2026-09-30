@@ -1,0 +1,15 @@
+--- a/src/java.base/unix/native/libjli/java_md.c
++++ b/src/java.base/unix/native/libjli/java_md.c
+@@ -227,6 +227,12 @@
+ RequiresSetenv(const char *jvmpath) {
++    // The app bridge preloads dependencies from its installed library directory.
++    const char* native_dir = getenv("QFLI_NATIVE_LIBRARY_DIR");
++    if (native_dir != NULL && native_dir[0] != '\0') {
++        return JNI_FALSE;
++    }
++
+     char jpath[PATH_MAX + 1];
+     char *llp;
+     char *dmllp = NULL;
+     char *p; /* a utility pointer */
+ 

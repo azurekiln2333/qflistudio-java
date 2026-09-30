@@ -13,6 +13,7 @@ import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { GeneratedPluginRegistrant } from '../plugins/GeneratedPluginRegistrant';
 import { handlePickerCall, isPickerMethod } from './PickerBridge';
+import { configureJavaChannel } from './JavaBridge';
 
 const CHANNEL_PLATFORM = 'qflistudio/platform';
 const CHANNEL_HUAWEI = 'qflistudio/huawei_account';
@@ -36,6 +37,7 @@ export default class EntryAbility extends FlutterAbility {
   configureFlutterEngine(flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
     GeneratedPluginRegistrant.registerWith(flutterEngine)
+    configureJavaChannel(flutterEngine, this.context);
 
     const abilityContext = this.context as common.UIAbilityContext;
 

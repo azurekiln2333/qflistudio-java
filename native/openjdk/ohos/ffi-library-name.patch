@@ -1,0 +1,5 @@
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -640 +640 @@
+-libffi_version_info = -version-info `grep -v '^\#' $(srcdir)/libtool-version`
++libffi_version_info = -avoid-version

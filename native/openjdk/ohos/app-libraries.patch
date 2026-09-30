@@ -1,0 +1,61 @@
+--- a/src/java.base/unix/native/libjli/java_md.c
++++ b/src/java.base/unix/native/libjli/java_md.c
+@@ -469,6 +469,12 @@
+            char *jvmpath, jint jvmpathsize)
+ {
+     struct stat s;
++    const char* native_dir = getenv("QFLI_NATIVE_LIBRARY_DIR");
++    if (native_dir != NULL && native_dir[0] != '\0') {
++        JLI_Snprintf(jvmpath, jvmpathsize, "%s/" JVM_DLL, native_dir);
++        return stat(jvmpath, &s) == 0;
++    }
++
+ 
+     if (JLI_StrChr(jvmtype, '/')) {
+         JLI_Snprintf(jvmpath, jvmpathsize, "%s/" JVM_DLL, jvmtype);
+@@ -500,6 +506,11 @@
+     if (app_home != NULL && app_home[0] != '\0' &&
+         JLI_StrLen(app_home) < (size_t) pathsize) {
+-        JLI_Snprintf(libjava, sizeof(libjava), "%s/lib/" JAVA_DLL, app_home);
++        const char* native_dir = getenv("QFLI_NATIVE_LIBRARY_DIR");
++        if (native_dir != NULL && native_dir[0] != '\0') {
++            JLI_Snprintf(libjava, sizeof(libjava), "%s/" JAVA_DLL, native_dir);
++        } else {
++            JLI_Snprintf(libjava, sizeof(libjava), "%s/lib/" JAVA_DLL, app_home);
++        }
+         if (stat(libjava, &s) == 0) {
+             JLI_StrCpy(path, app_home);
+             JLI_TraceLauncher("App JRE path is %s\n", path);
+--- a/src/hotspot/os/linux/os_linux.cpp
++++ b/src/hotspot/os/linux/os_linux.cpp
+@@ -430,6 +430,11 @@
+     const char* app_home = ::getenv("QFLI_JAVA_HOME");
+     if (app_home != NULL && app_home[0] != '\0') {
+-      os::snprintf_checked(buf, bufsize, "%s/lib", app_home);
++      const char* native_dir = ::getenv("QFLI_NATIVE_LIBRARY_DIR");
++      if (native_dir != NULL && native_dir[0] != '\0') {
++        os::snprintf_checked(buf, bufsize, "%s", native_dir);
++      } else {
++        os::snprintf_checked(buf, bufsize, "%s/lib", app_home);
++      }
+       Arguments::set_dll_dir(buf);
+       Arguments::set_java_home(app_home);
+       if (!set_boot_path('/', ':')) {
+--- a/src/java.base/unix/classes/java/lang/ProcessImpl.java
++++ b/src/java.base/unix/classes/java/lang/ProcessImpl.java
+@@ -142,6 +142,14 @@
+     private static final Platform platform = Platform.get();
+     private static final LaunchMechanism launchMechanism = platform.launchMechanism();
+-    private static final byte[] helperpath = toCString(StaticProperty.javaHome() + "/lib/jspawnhelper");
++    private static final byte[] helperpath = toCString(helperPath());
++
++    private static String helperPath() {
++        String nativeDir = System.getenv("QFLI_NATIVE_LIBRARY_DIR");
++        if (nativeDir != null && !nativeDir.isEmpty()) {
++            return nativeDir + "/libqfli_jspawnhelper.so";
++        }
++        return StaticProperty.javaHome() + "/lib/jspawnhelper";
++    }
+ 
+     private static byte[] toCString(String s) {
+         if (s == null)

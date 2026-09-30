@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.azurekiln.qfli.jvmx"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -24,10 +24,23 @@ android {
         applicationId = "com.azurekiln.qfli.jvmx"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = maxOf(28, flutter.minSdkVersion)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        ndk {
+            abiFilters += "arm64-v8a"
+        }
+    }
+
+    sourceSets.getByName("main") {
+        jniLibs.srcDir("../../native/build/android/jniLibs")
+        assets.srcDir("../../native/build/android/assets")
+    }
+
+    packaging {
+        jniLibs.useLegacyPackaging = true
+        jniLibs.keepDebugSymbols += "**/libqfli_*.so"
     }
 
     buildTypes {

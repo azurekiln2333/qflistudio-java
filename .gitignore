@@ -68,6 +68,8 @@ app.*.map.json
 
 # Native language runtime build output
 **/native/build/
+/ohos/entry/src/main/resources/rawfile/jdk-*.zip
+/ohos/entry/src/main/resources/rawfile/jdk-*.json
 
 # Local AI/editor tool state; project instructions remain tracked in .agents/.trellis.
 /.agent/

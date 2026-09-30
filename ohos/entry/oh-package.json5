@@ -6,6 +6,7 @@
   "main": "",
   "author": "",
   "license": "",
-  "dependencies": {},
+  "dependencies": {
+    "libqfli_jdk_layout.so": "file:./src/main/cpp/types/libqfli_jdk_layout"
+  },
 }
-

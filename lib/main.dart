@@ -18,7 +18,9 @@ const String _appTitle = StudioProductCatalog.jvmx;
 /// Java 版档位：同一套内核 UI，收窄成只服务 Java。
 ///
 /// 单独提出来是为了让测试能直接断言档位，而不必为了一个常量去跑 `main()`。
-final StudioProfile javaProfile = StudioProfile(
+StudioProfile javaProfile = _createJavaProfile();
+
+StudioProfile _createJavaProfile() => StudioProfile(
   id: 'java',
   appTitle: _appTitle,
   templates: [ProjectTemplate.empty, ProjectTemplate.java],
@@ -49,13 +51,16 @@ void main() async {
   runApp(QfliApp(store: store, auth: auth, settings: settings, ready: ready));
   // 首帧提交后再做磁盘/插件初始化，避免与首帧构建争用主 isolate。
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    unawaited(
-      AppBootstrap.run(
+    unawaited(() async {
+      await JavaProgramRunner.prepare();
+      javaProfile = _createJavaProfile();
+      StudioProfile.current = javaProfile;
+      await AppBootstrap.run(
         store: store,
         auth: auth,
         settings: settings,
         ready: ready,
-      ),
-    );
+      );
+    }());
   });
 }

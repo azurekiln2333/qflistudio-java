@@ -2,8 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:qfli_studio_core/services/studio_profile.dart';
+
+import 'mobile_jdk.dart';
+import 'ohos_jdk_process.dart';
 
 /// Compiles project sources with javac and runs the resulting main class.
 class JavaProgramRunner implements ProgramRunner {
@@ -13,8 +17,18 @@ class JavaProgramRunner implements ProgramRunner {
   final String? javaHome;
 
   bool get isAvailable =>
+      MobileJdk.current != null ||
       (Platform.isWindows || Platform.isLinux || Platform.isMacOS) &&
-      _findJdk() != null;
+          _findJdk() != null;
+
+  static Future<void> prepare() async {
+    if (!MobileJdk.isMobile) return;
+    try {
+      await MobileJdk.prepare();
+    } on Exception {
+      // run() returns the platform error when a user starts a program.
+    }
+  }
 
   @override
   Future<ProgramRunResult?> run({
@@ -27,11 +41,21 @@ class JavaProgramRunner implements ProgramRunner {
     if (!p.isWithin(project, entry) || !File(entry).existsSync()) {
       return _failure('Java', '入口文件不在项目内或无法读取：$entryFile');
     }
-    if (!(Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    if (!(MobileJdk.isMobile ||
+        Platform.isWindows ||
+        Platform.isLinux ||
+        Platform.isMacOS)) {
       return _failure('Java', '当前设备未安装可用的 Java 工具链。');
     }
 
-    final jdk = _findJdk();
+    _Jdk? jdk;
+    try {
+      jdk = MobileJdk.isMobile
+          ? _Jdk.fromMobile(await MobileJdk.prepare())
+          : _findJdk();
+    } on Exception catch (error) {
+      return _failure('Java', '无法初始化 JDK：$error');
+    }
     if (jdk == null) {
       return _failure('Java', '未找到 JDK。请设置 QFLI_JAVA_HOME 或 JAVA_HOME。');
     }
@@ -41,25 +65,52 @@ class JavaProgramRunner implements ProgramRunner {
       final sources = _collectJavaFiles(Directory(project));
       final jars = _collectJars(Directory(p.join(project, 'lib')));
       jars.addAll(_collectJars(Directory(p.join(project, 'libs'))));
-      output = await Directory.systemTemp.createTemp('qfli_java_');
+      output = await Directory(
+        jdk.tempDirectory ?? Directory.systemTemp.path,
+      ).createTemp('qfli_java_');
       final classPath = [
         output.path,
         ...jars,
       ].join(Platform.isWindows ? ';' : ':');
-      final compile = await Process.run(
-        jdk.javac,
-        [
-          '-encoding',
-          'UTF-8',
-          '-d',
-          output.path,
-          '-classpath',
-          classPath,
-          ...sources,
-        ],
-        workingDirectory: project,
-        runInShell: false,
-      );
+      final compilerArguments = [
+        '-encoding',
+        'UTF-8',
+        '-d',
+        output.path,
+        '-classpath',
+        classPath,
+        ...sources,
+      ];
+      final ProcessResult compile;
+      if (jdk.mobileLayout case final MobileJdkLayout layout
+          when Platform.operatingSystem == 'ohos') {
+        final process = await OhosJdkProcess.start(
+          home: layout.home,
+          libraryDirectory: layout.libraryDirectory,
+          arguments: [
+            '-m',
+            'jdk.compiler/com.sun.tools.javac.Main',
+            ...compilerArguments,
+          ],
+          workingDirectory: project,
+        );
+        final stdout = process.stdout.transform(utf8.decoder).join();
+        final stderr = process.stderr.transform(utf8.decoder).join();
+        compile = ProcessResult(
+          0,
+          await process.exitCode,
+          await stdout,
+          await stderr,
+        );
+      } else {
+        compile = await Process.run(
+          jdk.javac,
+          compilerArguments,
+          workingDirectory: project,
+          environment: jdk.environment,
+          runInShell: false,
+        );
+      }
       if (compile.exitCode != 0) {
         final diagnostic = '${compile.stdout}${compile.stderr}'.trim();
         return _failure(
@@ -78,19 +129,50 @@ class JavaProgramRunner implements ProgramRunner {
         ?packageName,
         p.basenameWithoutExtension(entry),
       ].join('.');
+      final runtimeArguments = [
+        '-Dfile.encoding=UTF-8',
+        '-Dstdout.encoding=UTF-8',
+        '-Dstderr.encoding=UTF-8',
+        '-Dsun.stdout.encoding=UTF-8',
+        '-Dsun.stderr.encoding=UTF-8',
+        '-classpath',
+        classPath,
+        mainClass,
+      ];
+      if (jdk.mobileLayout case final MobileJdkLayout layout
+          when Platform.operatingSystem == 'ohos') {
+        final process = await OhosJdkProcess.start(
+          home: layout.home,
+          libraryDirectory: layout.libraryDirectory,
+          arguments: runtimeArguments,
+          workingDirectory: project,
+          inputFile: p.join(project, 'input.txt'),
+        );
+        final runOutput = output;
+        final exitCode = process.exitCode.whenComplete(
+          () => _removeOutput(runOutput),
+        );
+        output = null;
+        return ProgramRunResult(
+          title: '运行 ${p.basename(entry)}（JDK）',
+          stdout: process.stdout
+              .transform(utf8.decoder)
+              .transform(const LineSplitter()),
+          stderr: _withDiagnostics(
+            compileDiagnostics,
+            process.stderr
+                .transform(utf8.decoder)
+                .transform(const LineSplitter()),
+          ),
+          exitCode: exitCode,
+          cancel: process.cancel,
+        );
+      }
       final process = await Process.start(
         jdk.java,
-        [
-          '-Dfile.encoding=UTF-8',
-          '-Dstdout.encoding=UTF-8',
-          '-Dstderr.encoding=UTF-8',
-          '-Dsun.stdout.encoding=UTF-8',
-          '-Dsun.stderr.encoding=UTF-8',
-          '-classpath',
-          classPath,
-          mainClass,
-        ],
+        runtimeArguments,
         workingDirectory: project,
+        environment: jdk.environment,
         runInShell: false,
       );
       unawaited(_feedInput(process.stdin, File(p.join(project, 'input.txt'))));
@@ -119,6 +201,8 @@ class JavaProgramRunner implements ProgramRunner {
     } on FileSystemException catch (error) {
       return _failure('Java', '无法读取项目文件：${error.message}');
     } on ProcessException catch (error) {
+      return _failure('Java', '无法启动 JDK：${error.message}');
+    } on PlatformException catch (error) {
       return _failure('Java', '无法启动 JDK：${error.message}');
     } finally {
       if (output != null) await _removeOutput(output);
@@ -229,10 +313,27 @@ class JavaProgramRunner implements ProgramRunner {
 }
 
 class _Jdk {
-  const _Jdk(this.java, this.javac);
+  const _Jdk(
+    this.java,
+    this.javac, {
+    this.environment,
+    this.tempDirectory,
+    this.mobileLayout,
+  });
 
   final String java;
   final String javac;
+  final Map<String, String>? environment;
+  final String? tempDirectory;
+  final MobileJdkLayout? mobileLayout;
+
+  factory _Jdk.fromMobile(MobileJdkLayout layout) => _Jdk(
+    layout.java,
+    layout.javac,
+    environment: layout.environment,
+    tempDirectory: p.join(layout.home, 'tmp'),
+    mobileLayout: layout,
+  );
 
   static _Jdk? fromDirectory(String directory) {
     final suffix = Platform.isWindows ? '.exe' : '';
