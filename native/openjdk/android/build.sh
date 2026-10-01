@@ -11,21 +11,24 @@ ndk_dir=
 work_dir=
 cache_dir=
 boot_jdk=
+abi=arm64-v8a
 
 usage() {
   printf '%s\n' 'Usage: bash build.sh --ndk-dir PATH --work-dir PATH --boot-jdk PATH' \
-    '                     [--cache-dir PATH] [--app-id ID] [--jobs N] [--configure-only]'
+    '                     [--abi arm64-v8a|x86_64] [--cache-dir PATH]' \
+    '                     [--app-id ID] [--jobs N] [--configure-only]'
 }
 
 while (($#)); do
   case "$1" in
-    --ndk-dir|--work-dir|--cache-dir|--boot-jdk|--app-id|--jobs)
+    --ndk-dir|--work-dir|--cache-dir|--boot-jdk|--app-id|--jobs|--abi)
       (($# >= 2)) || { usage >&2; exit 2; }
       key=$1; value=$2; shift 2
       case "$key" in
         --ndk-dir) ndk_dir=$value;; --work-dir) work_dir=$value;;
         --cache-dir) cache_dir=$value;; --boot-jdk) boot_jdk=$value;;
         --app-id) app_id=$value;; --jobs) jobs=$value;;
+        --abi) abi=$value;;
       esac;;
     --configure-only) configure_only=true; shift;;
     --help) usage; exit 0;;
@@ -33,6 +36,11 @@ while (($#)); do
   esac
 done
 [[ -n $ndk_dir && -n $work_dir && -n $boot_jdk ]] || { usage >&2; exit 2; }
+case "$abi" in
+  arm64-v8a) cpu=aarch64; triple=aarch64-linux-android; lock=$here/dependencies.lock;;
+  x86_64) cpu=x86_64; triple=x86_64-linux-android; lock=$here/dependencies-x86_64.lock;;
+  *) usage >&2; exit 2;;
+esac
 [[ $app_id =~ ^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)+$ && $jobs =~ ^[1-9][0-9]*$ ]] || exit 2
 [[ ! $work_dir =~ [[:space:]] && ! $ndk_dir =~ [[:space:]] ]] || {
   printf '%s\n' 'OpenJDK build and NDK paths must not contain whitespace.' >&2; exit 2;
@@ -50,7 +58,7 @@ prebuilt=$ndk_dir/toolchains/llvm/prebuilt/linux-x86_64
 [[ -d $prebuilt ]] || prebuilt=$ndk_dir/toolchains/llvm/prebuilt/windows-x86_64
 sysroot=$prebuilt/sysroot
 resource=$prebuilt/lib/clang/18
-[[ -f $sysroot/usr/lib/aarch64-linux-android/28/libc.so && -d $resource ]] || {
+[[ -f $sysroot/usr/lib/$triple/28/libc.so && -d $resource ]] || {
   printf '%s\n' 'This build requires the Clang 18 resource files from Android NDK 27.' >&2; exit 1;
 }
 [[ $(clang -dumpversion) == 18.* ]] || {
@@ -90,14 +98,14 @@ while read -r sha name path; do
   [[ -n $sha && $sha != \#* ]] || continue
   download "https://packages.termux.dev/apt/termux-main/pool/main/$path/$name" "$cache_dir/$name" "$sha"
   dpkg-deb -x "$cache_dir/$name" "$work_dir/dependencies"
-done < "$here/dependencies.lock"
+done < "$lock"
 for lib in pthread rt; do
-  [[ -e $deps/lib/lib$lib.so ]] || ln -s "$sysroot/usr/lib/aarch64-linux-android/28/libc.so" "$deps/lib/lib$lib.so"
+  [[ -e $deps/lib/lib$lib.so ]] || ln -s "$sysroot/usr/lib/$triple/28/libc.so" "$deps/lib/lib$lib.so"
 done
 
 src=$work_dir/source
 prefix=/data/data/$app_id/files/usr
-stamp="$source_sha:$app_id:$(sha256sum "$here/termux-patches.lock" "$here/headless-fontmanager.patch" "$here/../app-layout.patch" | sha256sum | cut -d ' ' -f1)"
+stamp="$source_sha:$app_id:$abi:$(sha256sum "$here/termux-patches.lock" "$here/headless-fontmanager.patch" "$here/../app-layout.patch" | sha256sum | cut -d ' ' -f1)"
 if [[ -d $src ]]; then
   [[ -f $src/.qfli-prepared && $(< "$src/.qfli-prepared") == "$stamp" ]] || {
     printf 'Source directory has different inputs; choose a new work directory: %s\n' "$src" >&2; exit 1;
@@ -121,8 +129,13 @@ mkdir -p "$toolchain"
 cp "$here/clang-wrapper.sh" "$toolchain/android-clang"
 cp "$here/clang-wrapper.sh" "$toolchain/android-clang++"
 chmod 755 "$toolchain/android-clang" "$toolchain/android-clang++"
-printf 'host_cc=%q\nhost_cxx=%q\nsysroot=%q\nresource=%q\n' \
-  "$(command -v clang)" "$(command -v clang++)" "$sysroot" "$resource" > "$toolchain/toolchain.env"
+printf 'host_cc=%q\nhost_cxx=%q\nsysroot=%q\nresource=%q\ntriple=%q\n' \
+  "$(command -v clang)" "$(command -v clang++)" "$sysroot" "$resource" "$triple" > "$toolchain/toolchain.env"
+# The pinned Termux spawn package predates Android's 16 KiB page support.
+"$toolchain/android-clang++" -O2 -fPIC -shared \
+  -Wl,-soname,libandroid-spawn.so \
+  -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 \
+  "$here/spawn/posix_spawn.cpp" -o "$deps/lib/libandroid-spawn.so"
 llvm_args=()
 for pair in AR:ar NM:nm OBJCOPY:objcopy OBJDUMP:objdump STRIP:strip CXXFILT:cxxfilt; do
   name=${pair%%:*}; executable=$(command -v "llvm-${pair#*:}-18")
@@ -131,7 +144,7 @@ done
 
 cd "$src"
 CC=$toolchain/android-clang CXX=$toolchain/android-clang++ bash configure \
-  --build=x86_64-pc-linux-gnu --host=aarch64-unknown-linux-gnu --target=aarch64-unknown-linux-gnu \
+  --build=x86_64-pc-linux-gnu "--host=$cpu-unknown-linux-gnu" "--target=$cpu-unknown-linux-gnu" \
   --disable-precompiled-headers --disable-warnings-as-errors --enable-headless-only \
   --with-jvm-variants=server --with-debug-level=release --with-toolchain-type=clang \
   "--with-boot-jdk=$boot_jdk" "--with-sysroot=$sysroot" \
@@ -141,18 +154,20 @@ CC=$toolchain/android-clang CXX=$toolchain/android-clang++ bash configure \
   "--with-alsa=$deps" "--with-alsa-include=$deps/include/alsa" "--with-alsa-lib=$deps/lib" \
   "--with-extra-cflags=-I$deps/include -D__ANDROID__=1 -D__TERMUX__=1 -DLE_STANDALONE" \
   "--with-extra-cxxflags=-I$deps/include -D__ANDROID__=1 -D__TERMUX__=1 -DLE_STANDALONE" \
-  "--with-extra-ldflags=-L$deps/lib -fuse-ld=lld -landroid-shmem -landroid-spawn -liconv" \
+  "--with-extra-ldflags=-L$deps/lib -fuse-ld=lld -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -landroid-shmem -landroid-spawn -liconv" \
   "--with-jobs=$jobs" "${llvm_args[@]}" \
   "BUILD_CC=$(command -v clang)" "BUILD_CXX=$(command -v clang++)" \
   "BUILD_AR=$(command -v llvm-ar-18)" "BUILD_NM=$(command -v llvm-nm-18)" \
   "BUILD_OBJCOPY=$(command -v llvm-objcopy-18)" "BUILD_STRIP=$(command -v llvm-strip-18)"
 if $configure_only; then exit 0; fi
 make images "JOBS=$jobs"
-image=$src/build/linux-aarch64-server-release/images/jdk
+image=$src/build/linux-$cpu-server-release/images/jdk
 for lib in libandroid-shmem.so libandroid-spawn.so libandroid-sysv-semaphore.so libiconv.so libasound.so; do
   cp -L "$deps/lib/$lib" "$image/lib/$lib"
 done
-cp "$sysroot/usr/lib/aarch64-linux-android/libc++_shared.so" "$image/lib/"
+cp "$sysroot/usr/lib/$triple/libc++_shared.so" "$image/lib/"
+mkdir -p "$image/legal/qfli-android-spawn"
+cp "$here/spawn/LICENSE" "$image/legal/qfli-android-spawn/"
 for tool in java javac jar javap jshell; do test -x "$image/bin/$tool"; done
 readelf -l "$image/bin/java" | grep '/system/bin/linker64'
-printf 'Android ARM64 JDK image: %s\n' "$image"
+printf 'Android %s JDK image: %s\n' "$abi" "$image"

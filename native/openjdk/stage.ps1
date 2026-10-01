@@ -14,8 +14,37 @@ if ($header[0] -ne 127 -or $header[1] -ne 69 -or $header[2] -ne 76 -or $header[3
     ($Abi -eq 'x86_64' -and $machine -ne 62)) {
     throw 'The image must contain an ELF64 launcher matching the selected ABI.'
 }
-if ($Platform -eq 'android' -and $Abi -ne 'arm64-v8a') {
-    throw 'The Android recipe currently builds ARM64 only.'
+
+function Assert-AndroidElf([string]$Path) {
+    $bytes = [System.IO.File]::ReadAllBytes($Path)
+    $machine = [BitConverter]::ToUInt16($bytes, 18)
+    if (($Abi -eq 'arm64-v8a' -and $machine -ne 183) -or
+        ($Abi -eq 'x86_64' -and $machine -ne 62)) {
+        throw "Wrong Android ELF architecture: $Path"
+    }
+    $table = [BitConverter]::ToUInt64($bytes, 32)
+    $size = [BitConverter]::ToUInt16($bytes, 54)
+    $count = [BitConverter]::ToUInt16($bytes, 56)
+    for ($index = 0; $index -lt $count; $index++) {
+        $entry = [int]($table + $index * $size)
+        if ([BitConverter]::ToUInt32($bytes, $entry) -ne 1) { continue }
+        $alignment = [BitConverter]::ToUInt64($bytes, $entry + 48)
+        if ($alignment -lt 16384) { throw "Android ELF lacks 16 KB LOAD alignment: $Path" }
+        $offset = [BitConverter]::ToUInt64($bytes, $entry + 8)
+        $address = [BitConverter]::ToUInt64($bytes, $entry + 16)
+        if ($offset % 16384 -ne $address % 16384) {
+            throw "Android ELF lacks 16 KB LOAD offset congruence: $Path"
+        }
+    }
+}
+if ($Platform -eq 'android') {
+    foreach ($file in Get-ChildItem -LiteralPath $Image -File -Recurse) {
+        if ($file.Name -match '\.so(?:\.[0-9]+)*$' -or
+            $file.FullName -in @((Join-Path $Image 'bin/java'), (Join-Path $Image 'bin/javac')) -or
+            $file.Name -in @('jspawnhelper', 'jexec')) {
+            Assert-AndroidElf $file.FullName
+        }
+    }
 }
 
 $out = Join-Path $repo "native/build/$Platform"

@@ -1,0 +1,11 @@
+# SHA-256, filename, path below https://packages.termux.dev/apt/termux-main/pool/main/
+6c6e0e3a2db8b6b54f3739274ae0081deb1325a13bc1451c7d5e1bbb5062c984 cups_2.4.19_x86_64.deb c/cups
+5c40bc38f24e22eb7d6654748aaf8d6a33a5a69ff53cf02a249e8aa3ecefc2e5 fontconfig_2.18.3_x86_64.deb f/fontconfig
+c3aaaa9263a5029c00a1837863356e2d4a3bdb1ecef5bd6dc48d7336273a0a41 alsa-lib_1.2.16.1_x86_64.deb a/alsa-lib
+ffa9e4c87467b158b148d0ff92dda796aa038276c2075af3269cdcdb06f25797 libandroid-shmem_0.7_x86_64.deb liba/libandroid-shmem
+778b109cb78719faaae0643eee943146a5ab1056bf607036c5ea258636d11868 libandroid-spawn_0.3_x86_64.deb liba/libandroid-spawn
+bb13235269380e93d07dc350bdcd9cbd0e0634c46a6085764c8101e2c1ecb723 libandroid-sysv-semaphore_0.1-1_x86_64.deb liba/libandroid-sysv-semaphore
+880e9f423b448316a4951ffca3ffcd626d79538042b60ce2c3a821b9650c594c libiconv_1.19_x86_64.deb libi/libiconv
+95d7acb460930fce61c26baeafb002e9b978df569b89d4093ad4de1e7dfd78d7 libx11_1.8.13-1_x86_64.deb libx/libx11
+cd2a6405a79540f6cc0dbc991fffdbe68058f3223ed456ac66c07207048ef62f xorgproto_2025.1_all.deb x/xorgproto
+4a32680f188ba6a262392e0d8d671cd144f3513ea97ab51ed92e58d67b8f08a6 libxrender_0.9.12-1_x86_64.deb libx/libxrender

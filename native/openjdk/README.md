@@ -6,7 +6,7 @@ JDK. Generated images and package assets are ignored by Git.
 
 | Target | ABI | VM | Execution in the app |
 | --- | --- | --- | --- |
-| Android API 28+ | ARM64 | HotSpot server | Installed native launchers |
+| Android API 28+ | ARM64, x86_64 | HotSpot server | Installed native launchers |
 | HarmonyOS | ARM64, x86_64 | Zero | A native child loads the packaged JVM |
 
 Build recipes and pinned input details:
@@ -79,3 +79,23 @@ simulator on OpenHarmony 6.1.1.125 (API 24) passed all eight in-app smoke checks
 Sixteen Flutter tests passed, including the desktop JDK runner and the native
 process transport. Android and HarmonyOS ARM64 physical execution is pending
 device availability.
+
+## Android Emulator Verification On 2026-10-01
+
+The normal Android ARM64 app opened on the Pixel_10 x86_64 emulator using
+ARM64 translation and 16 KB pages. The in-app smoke test failed before its
+first check: the JDK launcher has 4 KB ELF LOAD alignment, and the emulator's
+ARM64 linker rejects it on a 16 KB system. The installed ELF matched the
+staged file and contained the symbol table reported missing by the native
+bridge. This is a failed Android runtime check; 16 KB compatibility must be
+fixed before repeating it. See the [Android verification details](android/README.md).
+The normal app was restored after testing.
+
+## Android x86_64 Verification On 2026-10-02
+
+The new 16 KiB aligned x86_64 image passed all eight in-app JDK checks on
+emulator-5560, API 37. The retained upstream spawn implementation is rebuilt
+with 16 KiB alignment; the pinned old binary package alone is incompatible.
+The complete image's 46 native files passed architecture, LOAD alignment and
+dependency checks. Nineteen Flutter tests passed on Windows, including actual
+host-JDK execution. Android ARM execution still needs a matching device.

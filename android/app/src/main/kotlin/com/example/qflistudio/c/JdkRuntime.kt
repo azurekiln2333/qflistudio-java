@@ -3,6 +3,7 @@ package com.azurekiln.qfli.jvmx
 import android.content.Context
 import android.system.Os
 import org.json.JSONObject
+import java.io.DataInputStream
 import java.io.File
 import java.nio.file.Files
 import java.util.zip.ZipInputStream
@@ -10,7 +11,21 @@ import java.util.zip.ZipInputStream
 internal class JdkRuntime(private val context: Context) {
     fun prepare(): Map<String, String> {
         val nativeDir = context.applicationInfo.nativeLibraryDir
-        val abi = "arm64-v8a"
+        val java = File(nativeDir, "libqfli_java.so")
+        val header = DataInputStream(java.inputStream()).use { input ->
+            ByteArray(20).also { input.readFully(it) }
+        }
+        check(header.size == 20 && header[0] == 0x7f.toByte() &&
+            header[1] == 'E'.code.toByte() && header[2] == 'L'.code.toByte() &&
+            header[3] == 'F'.code.toByte() && header[4] == 2.toByte() && header[5] == 1.toByte()) {
+            "Invalid JDK launcher"
+        }
+        val machine = (header[18].toInt() and 0xff) or ((header[19].toInt() and 0xff) shl 8)
+        val abi = when (machine) {
+            183 -> "arm64-v8a"
+            62 -> "x86_64"
+            else -> error("Unsupported JDK architecture: $machine")
+        }
         val manifest = context.assets.open("jdk-$abi.json").bufferedReader().use { JSONObject(it.readText()) }
         check(manifest.getInt("version") == 1) { "Unsupported JDK layout" }
         val home = File(context.filesDir, "usr")
@@ -55,7 +70,6 @@ internal class JdkRuntime(private val context: Context) {
             Os.symlink(target.path, link.path)
         }
         File(home, "tmp").mkdirs()
-        val java = File(nativeDir, "libqfli_java.so")
         val javac = File(nativeDir, "libqfli_javac.so")
         check(java.canExecute() && javac.canExecute()) { "JDK launchers are not executable" }
         return mapOf("home" to home.path, "java" to java.path, "javac" to javac.path, "libraryDirectory" to nativeDir)
