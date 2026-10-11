@@ -85,3 +85,27 @@ before building for the corresponding Flutter target (android-arm64 or
 android-x64). The app selects data from the installed launcher's ELF machine,
 using APIs available at the minimum Android version.
 See the [shared staging instructions](../README.md).
+
+### ARM64 Package Recovery On 2026-10-02
+
+The earlier ARM64 package was stale: its launchers, JVM and other upstream
+libraries still used 4 KiB LOAD alignment. A fresh pinned OpenJDK 17.0.20 build
+completed in a separate ext4 work directory with the current recipe, including
+the rebuilt upstream spawn library. All 71 non-debug ELF files in the exported
+image passed ARM64, 16 KiB LOAD alignment/congruence and API 28 public-system or
+bundled dependency checks. A broader check of the retained x64 image passed all
+72 non-debug ELF files, including tools that are not staged into the app.
+
+The owning ARM64 package now contains 44 native files with hashes matching the
+new image. The ordinary dual-ABI APK contains those 44 ARM64 and the retained
+45 x64 JDK files, plus three Flutter framework libraries. All 92 APK native
+files passed their ABI, dependency and 16 KiB LOAD checks; both JDK data archives
+matched staged assets. APK ZIP alignment also passed. All 215 inspected x64 and
+HarmonyOS generated inputs remained unchanged during ARM64 staging.
+
+APK hash checks must reproduce the owning Gradle transformation: preserve
+`libqfli_*.so` exactly and apply NDK 27 `llvm-strip --strip-unneeded` to other
+JDK libraries. Compare APK hashes with those transformed staged inputs; comparing
+all files directly with the unstripped image incorrectly reports mismatches.
+Generated images and package assets remain outside Git. Native ARM64 device and
+API 28 execution remain unverified; x64 emulation is separate runtime evidence.

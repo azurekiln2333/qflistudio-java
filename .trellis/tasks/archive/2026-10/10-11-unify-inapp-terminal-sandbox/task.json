@@ -1,0 +1,29 @@
+{
+  "id": "unify-inapp-terminal-sandbox",
+  "name": "unify-inapp-terminal-sandbox",
+  "title": "Unify in-app terminals with sandbox root and JDK command support",
+  "description": "Unify the editor run terminal, home built-in terminal and quick-tools local terminal into one sandboxed terminal implementation. Sandbox root is parameterized: editor entry roots at the current project; app/home entry roots at the app private data directory so every project file is reachable. Implement portable in-sandbox file commands, route java/javac through the existing native JDK bridge (same path as Run), and report honest unsupported messages for unavailable system tools. Keep behavior consistent on OHOS and desktop.",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lichengyu",
+  "assignee": "lichengyu",
+  "createdAt": "2026-10-11",
+  "completedAt": "2026-10-12",
+  "branch": "main",
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "10-11-terminal-jdk-delegate-wiring",
+    "10-11-terminal-verification-spec"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

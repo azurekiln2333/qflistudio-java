@@ -99,3 +99,17 @@ with 16 KiB alignment; the pinned old binary package alone is incompatible.
 The complete image's 46 native files passed architecture, LOAD alignment and
 dependency checks. Nineteen Flutter tests passed on Windows, including actual
 host-JDK execution. Android ARM execution still needs a matching device.
+
+## Android ARM64 Package Recovery On 2026-10-02
+
+The ARM64 generated inputs have now been rebuilt with the current pinned recipe,
+replacing the stale 4 KiB-aligned image. All 71 exported non-debug native files
+passed ABI, 16 KiB LOAD and dependency checks. The owning package's 44 ARM64
+native files match this image; the ordinary dual-ABI APK passed corresponding
+checks for both ABIs and its JDK assets. APK native hashes match staged inputs
+after the standard Gradle strip step. The retained x64 and HarmonyOS generated
+inputs were unchanged. See the [Android details](android/README.md).
+
+This closes the ARM64 package alignment defect. Native ARM device execution and
+API 28 execution remain unavailable on the current host and are not inferred
+from successful builds, packaging or x64 emulator checks.

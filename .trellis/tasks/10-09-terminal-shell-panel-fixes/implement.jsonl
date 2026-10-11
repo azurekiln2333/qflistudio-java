@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/editor-terminal.md","reason":"Preserve continuous transcript, session lifecycle, Run gestures and validation; the task explicitly supersedes borderless tabs."}
+{"file":".trellis/spec/backend/mobile-jdk.md","reason":"Keep attached Java process, output, cancellation and exit contracts unchanged."}
+{"file":".trellis/tasks/10-09-terminal-shell-panel-fixes/research/code-evidence.md","reason":"Root causes, Pi review decisions, cross-workspace ownership and pre-task baseline."}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Verify command parser, shell backend, session state and UI contract boundaries together."}

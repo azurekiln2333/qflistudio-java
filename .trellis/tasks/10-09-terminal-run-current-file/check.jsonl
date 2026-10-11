@@ -1,0 +1,4 @@
+{"file":".trellis/spec/backend/mobile-jdk.md","reason":"Preserve Java entry, process output, cancellation and exit semantics across presentation changes."}
+{"file":".trellis/spec/frontend/editor-terminal.md","reason":"Concrete terminal continuity, gesture, active-entry, status and regression contracts."}
+{"file":".trellis/tasks/10-09-terminal-run-current-file/research/code-evidence.md","reason":"Baseline behavior and task-owned integration boundary."}
+{"file":".trellis/tasks/10-09-terminal-run-current-file/research/visual-qa.md","reason":"Actual first-pass rendering findings to verify in the final implementation."}

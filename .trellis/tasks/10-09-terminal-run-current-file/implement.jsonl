@@ -1,0 +1,2 @@
+{"file":".trellis/spec/backend/mobile-jdk.md","reason":"Preserve Java entry, process output, cancellation and exit semantics across presentation changes."}
+{"file":".trellis/tasks/10-09-terminal-run-current-file/research/code-evidence.md","reason":"Actual entry selection, save semantics, shared terminal boundaries, baseline protection and focused regression plan."}

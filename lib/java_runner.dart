@@ -114,9 +114,9 @@ class JavaProgramRunner implements ProgramRunner {
       if (compile.exitCode != 0) {
         final diagnostic = '${compile.stdout}${compile.stderr}'.trim();
         return _failure(
-          '编译 ${p.basename(entry)}',
+          'javac ${p.basename(entry)}',
           diagnostic.isEmpty
-              ? 'javac 编译失败（退出码 ${compile.exitCode}）。'
+              ? 'javac failed (exit code ${compile.exitCode})'
               : diagnostic,
         );
       }
@@ -154,7 +154,7 @@ class JavaProgramRunner implements ProgramRunner {
         );
         output = null;
         return ProgramRunResult(
-          title: '运行 ${p.basename(entry)}（JDK）',
+          title: 'java $mainClass',
           stdout: process.stdout
               .transform(utf8.decoder)
               .transform(const LineSplitter()),
@@ -182,7 +182,7 @@ class JavaProgramRunner implements ProgramRunner {
       });
       output = null;
       return ProgramRunResult(
-        title: '运行 ${p.basename(entry)}（JDK）',
+        title: 'java $mainClass',
         stdout: process.stdout
             .transform(utf8.decoder)
             .transform(const LineSplitter()),
@@ -209,8 +209,95 @@ class JavaProgramRunner implements ProgramRunner {
     }
   }
 
-  _Jdk? _findJdk() {
-    final homes = [
+  /// Compiles and/or executes a raw terminal command (`javac`/`java`) in
+  /// [workingDirectory], using the same JDK resolution and mobile bridge as
+  /// [run]. Returns null when the command is not a java toolchain command.
+  ///
+  /// Used by the shared terminal so `javac Main.java` / `java Main` typed by
+  /// the user run for real, instead of the terminal falsely reporting that the
+  /// platform forbids execution.
+  Future<ProgramRunResult?> runToolchainCommand({
+    required String workingDirectory,
+    required List<String> arguments,
+  }) async {
+    if (arguments.isEmpty) return null;
+    final tool = arguments.first;
+    final isJavac = tool == 'javac' || p.basenameWithoutExtension(tool) == 'javac';
+    final isJava = tool == 'java' || p.basenameWithoutExtension(tool) == 'java';
+    if (!isJavac && !isJava) return null;
+
+    _Jdk? jdk;
+    try {
+      jdk = MobileJdk.isMobile
+          ? _Jdk.fromMobile(await MobileJdk.prepare())
+          : _findJdk();
+    } on Exception catch (error) {
+      return _failure('javac', '无法初始化 JDK：$error');
+    }
+    if (jdk == null) {
+      return _failure('javac', '未找到 JDK。请设置 QFLI_JAVA_HOME 或 JAVA_HOME。');
+    }
+
+    final rest = arguments.sublist(1);
+    final String title = isJavac ? 'javac ${rest.join(' ')}' : 'java ${rest.join(' ')}';
+    try {
+      if (jdk.mobileLayout case final MobileJdkLayout layout
+          when Platform.operatingSystem == 'ohos') {
+        final process = await OhosJdkProcess.start(
+          home: layout.home,
+          libraryDirectory: layout.libraryDirectory,
+          arguments: isJavac
+              ? ['-m', 'jdk.compiler/com.sun.tools.javac.Main', ...rest]
+              : rest,
+          workingDirectory: workingDirectory,
+        );
+        return ProgramRunResult(
+          title: title,
+          stdout: process.stdout
+              .transform(_toolchainDecoder)
+              .transform(const LineSplitter()),
+          stderr: process.stderr
+              .transform(_toolchainDecoder)
+              .transform(const LineSplitter()),
+          exitCode: process.exitCode,
+          cancel: process.cancel,
+        );
+      }
+      final executable = isJavac ? jdk.javac : jdk.java;
+      final process = await Process.start(
+        executable,
+        rest,
+        workingDirectory: workingDirectory,
+        environment: jdk.environment,
+        runInShell: false,
+      );
+      return ProgramRunResult(
+        title: title,
+        stdout: process.stdout
+            .transform(_toolchainDecoder)
+            .transform(const LineSplitter()),
+        stderr: process.stderr
+            .transform(_toolchainDecoder)
+            .transform(const LineSplitter()),
+        exitCode: process.exitCode,
+        cancel: () async => process.kill(),
+      );
+    } on ProcessException catch (error) {
+      return _failure(title, '无法启动 $tool：${error.message}');
+    }
+  }
+
+  /// Decoder for a JDK toolchain process' output.
+  ///
+  /// `javac`/`java` print diagnostics in the host's ANSI code page (GBK on a
+  /// Chinese Windows), not UTF-8. A strict decoder throws on those bytes and
+  /// the terminal would show `shell: FormatException: ...` instead of the real
+  /// compiler diagnostic. Malformed bytes are replaced rather than fatal so the
+  /// user always sees the tool's actual message.
+  static const Converter<List<int>, String> _toolchainDecoder =
+      Utf8Decoder(allowMalformed: true);
+
+  _Jdk? _findJdk() {    final homes = [
       javaHome,
       Platform.environment['QFLI_JAVA_HOME'],
       Platform.environment['JAVA_HOME'],

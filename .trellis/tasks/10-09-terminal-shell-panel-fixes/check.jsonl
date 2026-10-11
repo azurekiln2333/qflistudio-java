@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/editor-terminal.md","reason":"Existing terminal and Run invariants plus required behavioral and visual checks."}
+{"file":".trellis/spec/backend/mobile-jdk.md","reason":"Review cancellation, stream drainage, numeric exit status and truthful device-validation claims."}
+{"file":".trellis/tasks/10-09-terminal-shell-panel-fixes/research/code-evidence.md","reason":"Check this task against captured baseline and avoid reverting concurrent edits."}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Trace real filesystem operations through shell execution and per-session UI state."}

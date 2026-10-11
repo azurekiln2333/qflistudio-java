@@ -1,0 +1,2 @@
+{"file":".trellis/spec/frontend/editor-terminal.md","reason":"Editor Run/terminal presentation, prompt/output contract, verification rules."}
+{"file":".trellis/spec/backend/mobile-jdk.md","reason":"JDK availability, OHOS native bridge signature, exit/cancel semantics the terminal must reuse."}

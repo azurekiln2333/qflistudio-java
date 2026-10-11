@@ -9,7 +9,7 @@ import {
 import { authentication } from '@kit.AccountKit';
 import { systemShare } from '@kit.ShareKit';
 import { common, Want, ConfigurationConstant } from '@kit.AbilityKit';
-import { window } from '@kit.ArkUI';
+import { window, router } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { GeneratedPluginRegistrant } from '../plugins/GeneratedPluginRegistrant';
 import { handlePickerCall, isPickerMethod } from './PickerBridge';
@@ -48,7 +48,25 @@ export default class EntryAbility extends FlutterAbility {
     );
     platformChannel.setMethodCallHandler({
       onMethodCall(call: MethodCall, result: MethodResult): void {
-        if (call.method === 'openUrl') {
+        if (call.method === 'openAgreement') {
+          const url = call.argument('url') as string;
+          const title = call.argument('title') as string;
+          if (typeof url !== 'string' || !url.startsWith('https://')) {
+            result.error('INVALID_URL', '协议地址无效', null);
+            return;
+          }
+          router.pushUrl({ url: 'pages/AgreementReader', params: { url, title } })
+            .then(() => result.success(null))
+            .catch((err: BusinessError) => result.error('AGREEMENT_OPEN_FAILED', `${err.code}: ${err.message}`, null));
+        } else if (call.method === 'startupProgress') {
+          const progress = call.argument('progress') as number;
+          if (typeof progress === 'number' && Number.isFinite(progress)) {
+            abilityContext.eventHub.emit('EVENT_STARTUP_PROGRESS', Math.max(0, Math.min(1, progress)));
+            result.success(null);
+          } else {
+            result.error('INVALID_PROGRESS', 'Startup progress must be a number', null);
+          }
+        } else if (call.method === 'openUrl') {
           const url = call.argument('url') as string;
           const want: Want = {
             action: 'ohos.want.action.viewData',

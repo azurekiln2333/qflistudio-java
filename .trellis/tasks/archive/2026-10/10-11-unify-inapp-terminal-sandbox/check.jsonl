@@ -1,0 +1,2 @@
+{"file":".trellis/spec/frontend/editor-terminal.md","reason":"Verify unified sandbox terminal does not regress Run/long-press/online/layout contracts."}
+{"file":".trellis/spec/backend/mobile-jdk.md","reason":"Verify terminal java/javac output, exit codes and cancellation match the bridge contract."}
