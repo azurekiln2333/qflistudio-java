@@ -33,9 +33,6 @@ StudioProfile _createJavaProfile() => StudioProfile(
   // Java 专属工具页：由档位交给共享 shell 的「工具」页渲染，不改 core。
   toolsPageBuilder: (_) => const JavaToolsPage(),
   isOffline: true,
-  // This app ships no account or cloud features at all, so the profile page
-  // hides its login entry, account summary and sync actions.
-  offlineOnly: true,
   productKey: StudioProductCatalog.jvmxKey,
   showHomeTabs: false,
   runtimeKind: 'JDK (javac + java)',
