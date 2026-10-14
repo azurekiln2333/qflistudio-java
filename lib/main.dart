@@ -30,6 +30,9 @@ StudioProfile _createJavaProfile() => StudioProfile(
   templates: [ProjectTemplate.empty, ProjectTemplate.java],
   runner: JavaProgramRunner(),
   isOffline: true,
+  // This app ships no account or cloud features at all, so the profile page
+  // hides its login entry, account summary and sync actions.
+  offlineOnly: true,
   productKey: StudioProductCatalog.jvmxKey,
   showHomeTabs: false,
   runtimeKind: 'JDK (javac + java)',
