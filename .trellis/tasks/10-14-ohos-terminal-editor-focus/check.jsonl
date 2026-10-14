@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend quality checklist"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Code quality standards and forbidden patterns"}
+{"file": ".trellis/spec/frontend/editor-terminal.md", "reason": "Terminal contracts for validation"}
+{"file": ".trellis/tasks/10-14-ohos-terminal-editor-focus/prd.md", "reason": "Acceptance criteria for verification"}
+{"file": ".trellis/tasks/10-14-ohos-terminal-editor-focus/design.md", "reason": "Technical design for validation against architecture"}
