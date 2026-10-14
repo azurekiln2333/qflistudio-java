@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/10-13-spring-boot-ohos/prd.md", "reason": "Acceptance criteria to verify against, especially the honesty requirement and the plain-Java no-regression requirement."}
+{"file": ".trellis/tasks/10-13-spring-boot-ohos/implement.md", "reason": "Gate conditions that must actually be satisfied, not skipped; validation commands to run."}
+{"file": ".trellis/spec/backend/mobile-jdk.md", "reason": "Required verification section governs whether the probe result counts as evidence; ARM64 packaging success is explicitly not device runtime evidence."}
+{"file": ".trellis/spec/frontend/editor-terminal.md", "reason": "Required verification for the run/terminal behavior; existing suites must stay green and titles/exit semantics must be preserved."}

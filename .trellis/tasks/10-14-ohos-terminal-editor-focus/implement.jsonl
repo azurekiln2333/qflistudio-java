@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend layer entry point with quality checklist"}
+{"file": ".trellis/spec/frontend/editor-terminal.md", "reason": "Terminal and editor interaction contracts, run gestures, focus handling"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Component patterns and composition rules"}
+{"file": ".trellis/tasks/10-14-ohos-terminal-editor-focus/prd.md", "reason": "Task requirements: OHOS keyboard focus issues"}
+{"file": ".trellis/tasks/10-14-ohos-terminal-editor-focus/design.md", "reason": "Technical design: focus architecture and fix strategies"}
