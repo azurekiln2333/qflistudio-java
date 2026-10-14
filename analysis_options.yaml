@@ -13,6 +13,10 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   exclude:
     - vendor/**
+    # build/ holds Git-ignored scratch and audit material (including the Stage 1
+    # Spring Boot proof project). It is not product source, so it must not make
+    # `flutter analyze` noisy or fail the gate.
+    - build/**
 
 linter:
   # The lint rules applied to this project can be customized in the
