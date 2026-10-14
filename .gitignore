@@ -71,6 +71,10 @@ app.*.map.json
 /ohos/entry/src/main/resources/rawfile/jdk-*.zip
 /ohos/entry/src/main/resources/rawfile/jdk-*.json
 
+# Spring Boot 依赖集：按 tools/spring_boot.lock.json 下载，可复现，不进版本库。
+# 只跟踪锁文件与下载脚本（tools/spring_boot.lock.json、tools/prepare_spring_boot.ps1）。
+/assets/spring_boot/
+
 # Local AI/editor tool state; project instructions remain tracked in .agents/.trellis.
 /.agent/
 /.claude/
