@@ -15,6 +15,7 @@ import 'package:qfli_studio_core/terminal/shell/command_parser.dart';
 import 'package:qfli_studio_core/terminal/shell/sandbox_shell_backend.dart';
 
 import 'java_runner.dart';
+import 'java_tools_page.dart';
 
 /// 本 App 的产品名。窗口标题、任务切换器和应用内顶栏都读它。
 const String _appTitle = StudioProductCatalog.jvmx;
@@ -29,6 +30,8 @@ StudioProfile _createJavaProfile() => StudioProfile(
   appTitle: _appTitle,
   templates: [ProjectTemplate.empty, ProjectTemplate.java],
   runner: JavaProgramRunner(),
+  // Java 专属工具页：由档位交给共享 shell 的「工具」页渲染，不改 core。
+  toolsPageBuilder: (_) => const JavaToolsPage(),
   isOffline: true,
   // This app ships no account or cloud features at all, so the profile page
   // hides its login entry, account summary and sync actions.
