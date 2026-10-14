@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:qfli_studio_core/app.dart';
-import 'package:qfli_studio_core/editor/editor_page_diag.dart';
 import 'package:qfli_studio_core/services/project_templates.dart';
 import 'package:qfli_studio_core/services/studio_profile.dart';
 import 'package:qfli_studio_core/splash_screen.dart';
@@ -101,8 +100,6 @@ Future<void> main() async {
   final auth = AuthStore();
   final settings = SettingsStore();
   final ready = ValueNotifier<bool>(false);
-  // TEMP-DIAG (remove after device verification).
-  EditorPageDiag.probeAlive('main()');
   runApp(QfliApp(store: store, auth: auth, settings: settings, ready: ready));
 
   const platformChannel = MethodChannel('qflistudio/platform');
