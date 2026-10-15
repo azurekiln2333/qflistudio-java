@@ -125,10 +125,7 @@ final List<JavaToolDefinition> javaTools = [
   ),
 ];
 
-/// The Java tools page: every tool laid out directly, grouped, scrollable.
-///
-/// Mounted through `StudioProfile.toolsPageBuilder`, so the shared shell renders
-/// it on its tools tab without any change to core.
+/// Standalone page wrapper for the Java tools grid.
 class JavaToolsPage extends StatelessWidget {
   const JavaToolsPage({super.key});
 
@@ -136,61 +133,82 @@ class JavaToolsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('工具')),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final horizontal = JavaToolsTheme.horizontalPadding(
-            constraints.maxWidth,
-          );
-          return CustomScrollView(
-            key: const PageStorageKey<String>('java-tools-scroll'),
-            slivers: [
-              for (final group in JavaToolGroup.values)
-                if (javaTools.any((tool) => tool.group == group)) ...[
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(horizontal, 20, horizontal, 8),
-                    sliver: SliverToBoxAdapter(
-                      child: JavaToolsSectionHeading(
-                        icon: group.icon,
-                        title: group.label,
-                      ),
+      body: const JavaToolsGrid(),
+    );
+  }
+}
+
+/// Grouped, scrollable tool cards embedded in the shell's tools tab.
+///
+/// The shell supplies its terminal route so it uses the same card styling as
+/// the other tools, without nesting a page scaffold inside the tab.
+class JavaToolsGrid extends StatelessWidget {
+  const JavaToolsGrid({super.key, this.onOpenTerminal});
+
+  final VoidCallback? onOpenTerminal;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final horizontal = JavaToolsTheme.horizontalPadding(
+          constraints.maxWidth,
+        );
+        return CustomScrollView(
+          key: const PageStorageKey<String>('java-tools-scroll'),
+          slivers: [
+            for (final group in JavaToolGroup.values)
+              if (javaTools.any((tool) => tool.group == group)) ...[
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(horizontal, 20, horizontal, 8),
+                  sliver: SliverToBoxAdapter(
+                    child: JavaToolsSectionHeading(
+                      icon: group.icon,
+                      title: group.label,
                     ),
                   ),
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(
-                      horizontal,
-                      0,
-                      horizontal,
-                      8,
-                    ),
-                    sliver: _grid(group, constraints.maxWidth),
-                  ),
-                ],
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(horizontal, 12, horizontal, 32),
-                sliver: const SliverToBoxAdapter(child: _OfflineNote()),
-              ),
-            ],
-          );
-        },
-      ),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(horizontal, 0, horizontal, 8),
+                  sliver: _grid(group),
+                ),
+              ],
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(horizontal, 12, horizontal, 32),
+              sliver: const SliverToBoxAdapter(child: _OfflineNote()),
+            ),
+          ],
+        );
+      },
     );
   }
 
   /// One grid per group, so the column width stays constant across the page.
-  Widget _grid(JavaToolGroup group, double width) {
+  Widget _grid(JavaToolGroup group) {
     final tools = javaTools.where((tool) => tool.group == group).toList();
+    final includeTerminal =
+        group == JavaToolGroup.numbers && onOpenTerminal != null;
+    final terminalCount = includeTerminal ? 1 : 0;
     return SliverGrid(
       delegate: SliverChildBuilderDelegate((context, index) {
-        final tool = tools[index];
+        if (includeTerminal && index == 0) {
+          return JavaToolCard(
+            icon: Icons.terminal,
+            title: '终端',
+            description: '在本机沙盒中运行命令',
+            onTap: onOpenTerminal!,
+          );
+        }
+        final tool = tools[index - terminalCount];
         return JavaToolCard(
           icon: tool.icon,
           title: tool.title,
           description: tool.description,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: tool.builder),
-          ),
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute<void>(builder: tool.builder)),
         );
-      }, childCount: tools.length),
+      }, childCount: tools.length + terminalCount),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: JavaToolsTheme.cardMaxWidth,
         mainAxisExtent: JavaToolsTheme.cardHeight,

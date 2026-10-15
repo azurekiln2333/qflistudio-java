@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/frontend/editor-terminal.md", "reason": "Terminal entry contract: which widget owns the full-screen sandbox terminal, so the new 终端 card must reuse it"}
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "Check for duplicated card/grid code between the core tab and the product grid"}
