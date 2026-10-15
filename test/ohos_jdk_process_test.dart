@@ -18,9 +18,19 @@ void main() {
     Directory(p.join(home.path, 'tmp')).createSync();
   });
 
-  tearDown(() {
+  tearDown(() async {
     messenger.setMockMethodCallHandler(channel, null);
-    if (home.existsSync()) home.deleteSync(recursive: true);
+    // The monitor removes its child directory after closing the output streams.
+    // On Windows that can race recursive deletion of this fixture's parent.
+    for (var attempt = 0; attempt < 10; attempt++) {
+      try {
+        if (await home.exists()) await home.delete(recursive: true);
+        return;
+      } on PathNotFoundException {
+        if (!await home.exists()) return;
+        if (attempt == 9) rethrow;
+      }
+    }
   });
 
   test(
