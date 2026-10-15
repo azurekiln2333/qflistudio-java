@@ -32,7 +32,13 @@ void main() {
       final value = JavaIntValue(BigInt.from(255), JavaPrimitive.int_);
       expect(value.decimal, '255');
       expect(value.hexadecimal, '0x000000FF');
-      expect(value.binary, '0b00000000' '00000000' '00000000' '11111111');
+      expect(
+        value.binary,
+        '0b00000000'
+        '00000000'
+        '00000000'
+        '11111111',
+      );
       expect(value.octal, '0377');
     });
 
@@ -80,13 +86,13 @@ void main() {
     });
 
     test('>> keeps the sign, >>> shifts in zeros', () {
-      final negative = JavaIntValue(
-        BigInt.from(-8),
-        JavaPrimitive.int_,
-      );
+      final negative = JavaIntValue(BigInt.from(-8), JavaPrimitive.int_);
       final one = JavaIntValue(BigInt.one, JavaPrimitive.int_);
       // -8 >> 1 == -4, but -8 >>> 1 is a large positive number.
-      expect(applyJavaBitOp(negative, JavaBitOp.arithmeticRightShift, one).decimal, '-4');
+      expect(
+        applyJavaBitOp(negative, JavaBitOp.arithmeticRightShift, one).decimal,
+        '-4',
+      );
       expect(
         applyJavaBitOp(negative, JavaBitOp.logicalRightShift, one).decimal,
         '2147483644',
@@ -124,23 +130,6 @@ void main() {
 
     test('renders a text block', () {
       expect(JavaString.toTextBlock('a\nb\n'), '"""\na\nb\n"""');
-    });
-  });
-
-  group('UnicodeInfo', () {
-    test('reports BMP escapes and UTF-8 bytes', () {
-      final info = UnicodeInfo(0x4E2D);
-      expect(info.hex, 'U+4E2D');
-      expect(info.javaEscape, r'\u4E2D');
-      expect(info.utf8BytesHex, 'E4 B8 AD');
-      expect(info.utf16UnitsHex, '4E2D');
-    });
-
-    test('splits an astral code point into a surrogate pair', () {
-      final info = UnicodeInfo(0x1F600);
-      expect(info.utf8BytesHex, 'F0 9F 98 80');
-      expect(info.utf16Units.length, 2);
-      expect(info.utf16UnitsHex, 'D83D DE00');
     });
   });
 
@@ -195,38 +184,6 @@ void main() {
         () => JavaClassGenerator.generate(const [1, 2], 'X', asRecord: false),
         throwsFormatException,
       );
-    });
-  });
-
-  group('JavaTimestamp', () {
-    test('formats local time with and without milliseconds', () {
-      final time = DateTime(2026, 3, 4, 5, 6, 7, 89);
-      expect(
-        JavaTimestamp.toLocal(time, milliseconds: true),
-        '2026-03-04 05:06:07.089',
-      );
-      expect(
-        JavaTimestamp.toLocal(time, milliseconds: false),
-        '2026-03-04 05:06:07',
-      );
-    });
-
-    test('parses back what it formatted', () {
-      final parsed = JavaTimestamp.parseLocal('2026-03-04 05:06:07.089');
-      expect(parsed, DateTime(2026, 3, 4, 5, 6, 7, 89));
-    });
-
-    test('accepts ISO separators and date-only input', () {
-      expect(
-        JavaTimestamp.parseLocal('2026-03-04T05:06:07'),
-        DateTime(2026, 3, 4, 5, 6, 7),
-      );
-      expect(JavaTimestamp.parseLocal('2026-03-04'), DateTime(2026, 3, 4));
-    });
-
-    test('rejects nonsense', () {
-      expect(JavaTimestamp.parseLocal('not a date'), isNull);
-      expect(JavaTimestamp.parseLocal(''), isNull);
     });
   });
 }

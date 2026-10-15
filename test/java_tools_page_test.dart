@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qfli_java/java_tools_page.dart';
 import 'package:qfli_java/java_tools_pages.dart';
-import 'package:qfli_java/java_tools_widgets.dart';
+import 'package:qfli_studio_core/pages/content_tools_pages.dart';
+import 'package:qfli_studio_core/pages/offline_tool_pages.dart';
+import 'package:qfli_studio_core/pages/tools_grid.dart';
+import 'package:qfli_studio_core/widgets/tool_widgets.dart';
 
 /// Widget tests for the redesigned tools page.
 ///
@@ -10,11 +13,14 @@ import 'package:qfli_java/java_tools_widgets.dart';
 /// structure: every tool is laid out on the page itself, each card opens its
 /// own page, and the grid adapts to the window without overflowing.
 void main() {
-  // `pumpAndSettle` is avoided throughout: page transitions settle quickly, but
-  // a fixed pair of pumps is deterministic and cannot hang.
+  // Wait for the route transition and the frame that hides its previous page.
+  // A short fake-clock timeout keeps a persistent animation from hanging tests.
   Future<void> settle(WidgetTester tester) async {
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle(
+      const Duration(milliseconds: 50),
+      EnginePhase.sendSemanticsUpdate,
+      const Duration(seconds: 2),
+    );
   }
 
   Future<void> mount(
@@ -47,6 +53,23 @@ void main() {
     await settle(tester);
   }
 
+  Future<Finder> revealCard(WidgetTester tester, String title) async {
+    final card = find.widgetWithText(ToolCard, title);
+    await tester.scrollUntilVisible(
+      card,
+      260,
+      scrollable: find.descendant(
+        of: find.byType(JavaToolsGrid),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    // The final ensureVisible jump needs a layout frame before hit testing.
+    await tester.pump();
+    expect(card.hitTestable(), findsOneWidget);
+    expect(find.text(title).hitTestable(), findsOneWidget);
+    return card;
+  }
+
   testWidgets('the page shows every tool card without opening anything', (
     tester,
   ) async {
@@ -54,19 +77,24 @@ void main() {
     await mount(tester, size: const Size(1100, 2400));
 
     expect(find.text('工具'), findsOneWidget);
-    for (final tool in javaTools) {
+    for (final tool in [...javaTools, ...commonTools]) {
       expect(
         find.text(tool.title),
         findsOneWidget,
         reason: 'card for ${tool.title} is on the page',
       );
     }
-    // Every group heading is present too.
-    for (final group in JavaToolGroup.values) {
-      if (javaTools.any((tool) => tool.group == group)) {
-        expect(find.text(group.label), findsOneWidget);
-      }
-    }
+    expect(javaTools.map((tool) => tool.title), [
+      JavaIntegerToolPage.title,
+      JavaStringToolPage.title,
+      JavaJsonToolPage.title,
+      JavaReferenceToolPage.title,
+    ]);
+    expect(commonTools, hasLength(9));
+    final titles = [...javaTools, ...commonTools].map((tool) => tool.title);
+    expect(titles.toSet(), hasLength(13), reason: 'no duplicated tool cards');
+    expect(find.text('Java'), findsOneWidget);
+    expect(find.text('通用'), findsOneWidget);
   });
 
   testWidgets('there is no single wrapper card around the whole page', (
@@ -76,36 +104,125 @@ void main() {
     // behind a tab set. Cards are per-tool, so a window tall enough to build
     // the whole page must show exactly one card per tool.
     await mount(tester, size: const Size(1100, 2400));
-    expect(find.byType(JavaToolCard), findsNWidgets(javaTools.length));
+    expect(
+      find.byType(ToolCard),
+      findsNWidgets(javaTools.length + commonTools.length),
+    );
   });
 
   testWidgets('tapping a card opens that tool page', (tester) async {
     await mount(tester);
-    await tester.tap(find.text(JavaBase64ToolPage.title));
+    expect(find.byType(Base64ToolPage), findsNothing);
+    await tester.tap(await revealCard(tester, Base64ToolPage.title));
     await settle(tester);
 
-    expect(find.byType(JavaBase64ToolPage), findsOneWidget);
+    expect(find.byType(Base64ToolPage), findsOneWidget);
+    expect(find.byType(JavaToolsPage), findsNothing);
     // Its own content is live.
     expect(find.text('URL-safe 字母表（无填充）'), findsOneWidget);
   });
 
   testWidgets('a tool page offers copy buttons', (tester) async {
     await mount(tester);
-    await tester.tap(find.text(JavaHashToolPage.title));
+    expect(find.byType(HashToolPage), findsNothing);
+    await tester.tap(await revealCard(tester, HashToolPage.title));
     await settle(tester);
 
-    expect(find.byType(JavaHashToolPage), findsOneWidget);
+    expect(find.byType(HashToolPage), findsOneWidget);
     expect(find.byTooltip('复制MD5'), findsOneWidget);
     expect(find.byTooltip('复制SHA-1'), findsOneWidget);
     expect(find.byTooltip('复制SHA-256'), findsOneWidget);
+  });
+
+  for (final route in <(String, Type)>[
+    (UnicodeToolPage.title, UnicodeToolPage),
+    (TimestampToolPage.title, TimestampToolPage),
+    (UrlToolPage.title, UrlToolPage),
+    (RegexToolPage.title, RegexToolPage),
+    (ColorToolPage.title, ColorToolPage),
+    (UuidToolPage.title, UuidToolPage),
+    ('JSON 格式化', JsonToolPage),
+  ]) {
+    testWidgets('the shared ${route.$1} card opens its core page', (
+      tester,
+    ) async {
+      await mount(tester);
+      expect(find.byType(route.$2), findsNothing);
+      await tester.tap(await revealCard(tester, route.$1));
+      await settle(tester);
+
+      expect(find.byType(route.$2), findsOneWidget);
+      expect(find.byType(JavaToolsPage), findsNothing);
+      expect(find.byType(JavaJsonToolPage), findsNothing);
+    });
+  }
+
+  testWidgets('the Java integer card still converts input', (tester) async {
+    await mount(tester, size: const Size(1100, 2400));
+    expect(find.byType(JavaIntegerToolPage), findsNothing);
+    await tester.tap(await revealCard(tester, JavaIntegerToolPage.title));
+    await settle(tester);
+
+    expect(find.byType(JavaIntegerToolPage), findsOneWidget);
+    await tester.enterText(find.byType(TextField).first, '0x10');
+    await tester.pump();
+    expect(find.text('16'), findsOneWidget);
+    expect(find.text('Java 值'), findsOneWidget);
+  });
+
+  testWidgets('the Java string card still generates a literal', (tester) async {
+    await mount(tester, size: const Size(1100, 2400));
+    expect(find.byType(JavaStringToolPage), findsNothing);
+    await tester.tap(await revealCard(tester, JavaStringToolPage.title));
+    await settle(tester);
+
+    expect(find.byType(JavaStringToolPage), findsOneWidget);
+    await tester.enterText(find.byType(TextField).first, 'A\nB');
+    await tester.tap(find.text('转为字面量'));
+    await tester.pump();
+    expect(find.text(r'"A\nB"'), findsOneWidget);
+    expect(find.text('text block'), findsOneWidget);
+  });
+
+  testWidgets('the Java JSON card still generates records', (tester) async {
+    await mount(tester, size: const Size(1100, 2400));
+    expect(find.byType(JavaJsonToolPage), findsNothing);
+    await tester.tap(await revealCard(tester, JavaJsonToolPage.title));
+    await settle(tester);
+
+    expect(find.byType(JavaJsonToolPage), findsOneWidget);
+    expect(find.byType(JsonToolPage), findsNothing);
+    await tester.tap(find.byType(SwitchListTile));
+    await tester.pump();
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is SelectableText &&
+            widget.data?.contains('record User(') == true,
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('the Java reference card still shows language tables', (
+    tester,
+  ) async {
+    await mount(tester, size: const Size(1100, 2400));
+    expect(find.byType(JavaReferenceToolPage), findsNothing);
+    await tester.tap(await revealCard(tester, JavaReferenceToolPage.title));
+    await settle(tester);
+
+    expect(find.byType(JavaReferenceToolPage), findsOneWidget);
+    expect(find.text('基本类型'), findsOneWidget);
+    expect(find.text('字符串转义'), findsOneWidget);
   });
 
   testWidgets('a narrow window lays the cards out in one column', (
     tester,
   ) async {
     await mount(tester, size: const Size(360, 900));
-    final first = tester.getRect(find.byType(JavaToolCard).first);
-    final second = tester.getRect(find.byType(JavaToolCard).at(1));
+    final first = tester.getRect(find.byType(ToolCard).first);
+    final second = tester.getRect(find.byType(ToolCard).at(1));
     // Same column: the second card starts at the same x and sits below.
     expect(second.left, closeTo(first.left, 0.5));
     expect(second.top, greaterThan(first.top));
@@ -116,8 +233,8 @@ void main() {
     tester,
   ) async {
     await mount(tester, size: const Size(1100, 900));
-    final first = tester.getRect(find.byType(JavaToolCard).first);
-    final second = tester.getRect(find.byType(JavaToolCard).at(1));
+    final first = tester.getRect(find.byType(ToolCard).first);
+    final second = tester.getRect(find.byType(ToolCard).at(1));
     // Same row: the second card shares the first card's top and sits to its
     // right.
     expect(second.top, closeTo(first.top, 0.5));
@@ -126,7 +243,10 @@ void main() {
 
   testWidgets('the page renders in dark mode', (tester) async {
     await mount(tester, size: const Size(1100, 2400), mode: ThemeMode.dark);
-    expect(find.byType(JavaToolCard), findsNWidgets(javaTools.length));
+    expect(
+      find.byType(ToolCard),
+      findsNWidgets(javaTools.length + commonTools.length),
+    );
     // The scaffold adopted the dark scheme.
     final context = tester.element(find.byType(JavaToolsPage));
     expect(Theme.of(context).brightness, Brightness.dark);
@@ -137,14 +257,18 @@ void main() {
     final scrollable = find.byType(CustomScrollView);
     expect(scrollable, findsOneWidget);
     await tester.scrollUntilVisible(
-      find.text(JavaToolGroup.reference.label),
+      find.widgetWithText(ToolCard, commonTools.last.title),
       300,
       scrollable: find.descendant(
         of: scrollable,
         matching: find.byType(Scrollable),
       ),
     );
-    expect(find.text(JavaReferenceToolPage.title), findsOneWidget);
+    await tester.pump();
+    expect(
+      find.widgetWithText(ToolCard, commonTools.last.title).hitTestable(),
+      findsOneWidget,
+    );
   });
 
   testWidgets('no overflow is reported in either orientation', (tester) async {

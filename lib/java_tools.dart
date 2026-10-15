@@ -96,8 +96,7 @@ class JavaIntValue {
   String get hexadecimal =>
       '0x${pattern.toRadixString(16).toUpperCase().padLeft(type.bits ~/ 4, '0')}';
 
-  String get binary =>
-      '0b${pattern.toRadixString(2).padLeft(type.bits, '0')}';
+  String get binary => '0b${pattern.toRadixString(2).padLeft(type.bits, '0')}';
 
   // Java does not zero-pad octal literals, so neither does this view; the
   // leading `0` is the literal's own radix marker.
@@ -111,10 +110,7 @@ class JavaIntValue {
     return String.fromCharCode(code);
   }
 
-  JavaIntValue _same(BigInt value) => JavaIntValue._(
-    value & _mask,
-    type,
-  );
+  JavaIntValue _same(BigInt value) => JavaIntValue._(value & _mask, type);
 }
 
 /// Parses [source], reads it as [type], and reports whether it overflowed.
@@ -213,7 +209,9 @@ abstract final class JavaString {
         default:
           if (rune < 0x20 || rune == 0x7F) {
             // Control characters have no short escape; use a unicode escape.
-            buffer.write('\\u${rune.toRadixString(16).toUpperCase().padLeft(4, '0')}');
+            buffer.write(
+              '\\u${rune.toRadixString(16).toUpperCase().padLeft(4, '0')}',
+            );
           } else {
             buffer.writeCharCode(rune);
           }
@@ -281,56 +279,10 @@ abstract final class JavaString {
   /// Java strips incidental leading whitespace up to the closing delimiter, so
   /// the block is closed at column zero and the content is aligned accordingly.
   static String toTextBlock(String text) {
-    final body = text.endsWith('\n') ? text.substring(0, text.length - 1) : text;
+    final body = text.endsWith('\n')
+        ? text.substring(0, text.length - 1)
+        : text;
     return '"""\n$body\n"""';
-  }
-}
-
-/// One code point's representations, as the character tool displays them.
-class UnicodeInfo {
-  UnicodeInfo(this.codePoint);
-
-  final int codePoint;
-
-  String get hex => 'U+${codePoint.toRadixString(16).toUpperCase().padLeft(4, '0')}';
-
-  String get javaEscape =>
-      '\\u${codePoint.toRadixString(16).toUpperCase().padLeft(4, '0')}';
-
-  /// UTF-8 bytes, as Java would write them to a stream.
-  List<int> get utf8Bytes => _utf8(codePoint);
-
-  /// UTF-16 code units. A code point above the BMP becomes a surrogate pair.
-  List<int> get utf16Units {
-    if (codePoint <= 0xFFFF) return [codePoint];
-    final offset = codePoint - 0x10000;
-    return [0xD800 + (offset >> 10), 0xDC00 + (offset & 0x3FF)];
-  }
-
-  String get utf8BytesHex =>
-      utf8Bytes.map((b) => b.toRadixString(16).toUpperCase().padLeft(2, '0')).join(' ');
-
-  String get utf16UnitsHex =>
-      utf16Units.map((u) => u.toRadixString(16).toUpperCase().padLeft(4, '0')).join(' ');
-
-  static List<int> _utf8(int codePoint) {
-    if (codePoint <= 0x7F) return [codePoint];
-    if (codePoint <= 0x7FF) {
-      return [0xC0 | (codePoint >> 6), 0x80 | (codePoint & 0x3F)];
-    }
-    if (codePoint <= 0xFFFF) {
-      return [
-        0xE0 | (codePoint >> 12),
-        0x80 | ((codePoint >> 6) & 0x3F),
-        0x80 | (codePoint & 0x3F),
-      ];
-    }
-    return [
-      0xF0 | (codePoint >> 18),
-      0x80 | ((codePoint >> 12) & 0x3F),
-      0x80 | ((codePoint >> 6) & 0x3F),
-      0x80 | (codePoint & 0x3F),
-    ];
   }
 }
 
@@ -503,47 +455,4 @@ class _Declaration {
 
   final String name;
   final List<JavaField> fields;
-}
-
-/// Timestamp conversion between epoch values and local date/time.
-abstract final class JavaTimestamp {
-  /// Formats an epoch value in local time as `yyyy-MM-dd HH:mm:ss.SSS`.
-  ///
-  /// [unit] selects seconds or milliseconds, which is the only difference the
-  /// Java APIs care about (`System.currentTimeMillis` vs `Instant.getEpochSecond`).
-  static String toLocal(DateTime local, {required bool milliseconds}) {
-    String two(int value) => value.toString().padLeft(2, '0');
-    return '${local.year.toString().padLeft(4, '0')}-'
-        '${two(local.month)}-${two(local.day)} '
-        '${two(local.hour)}:${two(local.minute)}:${two(local.second)}'
-        '${milliseconds ? '.${local.millisecond.toString().padLeft(3, '0')}' : ''}';
-  }
-
-  /// Parses `yyyy-MM-dd HH:mm:ss[.SSS]` (and `T`-separated ISO input) as local
-  /// time, returning null when the text is not a date this tool accepts.
-  static DateTime? parseLocal(String source) {
-    final text = source.trim().replaceFirst('T', ' ');
-    if (text.isEmpty) return null;
-    final match = RegExp(
-      r'^(\d{4})-(\d{2})-(\d{2})[ ](\d{2}):(\d{2})(?::(\d{2}))?(?:\.(\d{1,3}))?$',
-    ).firstMatch(text);
-    if (match == null) {
-      final dateOnly = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(text);
-      if (dateOnly == null) return null;
-      return DateTime(
-        int.parse(dateOnly.group(1)!),
-        int.parse(dateOnly.group(2)!),
-        int.parse(dateOnly.group(3)!),
-      );
-    }
-    return DateTime(
-      int.parse(match.group(1)!),
-      int.parse(match.group(2)!),
-      int.parse(match.group(3)!),
-      int.parse(match.group(4)!),
-      int.parse(match.group(5)!),
-      int.parse(match.group(6) ?? '0'),
-      int.parse(match.group(7)?.padRight(3, '0') ?? '0'),
-    );
-  }
 }
