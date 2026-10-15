@@ -35,7 +35,7 @@ async function saveDocument(context: common.UIAbilityContext, call: MethodCall):
   const dot = name.lastIndexOf('.');
   const options = new picker.DocumentSaveOptions();
   options.newFileNames = [name];
-  options.fileSuffixChoices = [`JSON|${dot > 0 ? name.substring(dot) : '.json'}`];
+  options.fileSuffixChoices = [`QFLI files|${dot > 0 ? name.substring(dot) : '.json'}`];
   const uris = await new picker.DocumentViewPicker(context).save(options);
   return uris.length === 0 ? null : { uri: uris[0], name: uriName(uris[0]) };
 }
