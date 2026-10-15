@@ -30,7 +30,9 @@ StudioProfile _createJavaProfile() => StudioProfile(
   appTitle: _appTitle,
   templates: [ProjectTemplate.empty, ProjectTemplate.java],
   runner: JavaProgramRunner(),
-  // Java 专属工具页：由档位交给共享 shell 的「工具」页渲染，不改 core。
+  // Java 工具直接嵌入共享 shell 的「工具」tab，终端复用 shell 提供的入口。
+  toolsTabBuilder: (store, onOpenTerminal) =>
+      JavaToolsGrid(onOpenTerminal: onOpenTerminal),
   toolsPageBuilder: (_) => const JavaToolsPage(),
   isOffline: true,
   productKey: StudioProductCatalog.jvmxKey,

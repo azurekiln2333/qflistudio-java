@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "Reuse rules: prefer extending the existing tool-card widgets over a parallel copy when the grid moves into the core tab"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "This change crosses core (shell tab) and qfli_java (product grid); the guide states what belongs in which layer"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend conventions index for the shared studio shell and product pages"}
