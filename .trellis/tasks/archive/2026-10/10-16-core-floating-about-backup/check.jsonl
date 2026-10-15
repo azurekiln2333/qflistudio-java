@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/index.md","reason":"Flutter checks and test conventions"}
+{"file":".trellis/spec/frontend/retained-editor.md","reason":"Preserve lifecycle and layout regressions"}
+{"file":".trellis/spec/guides/index.md","reason":"Check full data flow"}
+{"file":".trellis/spec/frontend/app-data-backup.md","reason":"Private-root archive, staged restore, transaction and startup contracts"}
