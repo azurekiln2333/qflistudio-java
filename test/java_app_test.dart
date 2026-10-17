@@ -1,16 +1,21 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:qfli_java/main.dart' show javaProfile;
 import 'package:qfli_java/java_runner.dart';
+import 'package:qfli_studio_core/i18n/studio_localizations.dart';
 import 'package:qfli_studio_core/models/tutorial.dart';
+import 'package:qfli_studio_core/pages/local_content_pages.dart';
 import 'package:qfli_studio_core/services/code_import_service.dart';
 import 'package:qfli_studio_core/services/demo_run_service.dart';
 import 'package:qfli_studio_core/services/project_templates.dart';
 import 'package:qfli_studio_core/services/runner_service.dart';
 import 'package:qfli_studio_core/services/studio_profile.dart';
 import 'package:qfli_studio_core/terminal/shell/sandbox_shell_backend.dart';
+import 'package:qfli_studio_core/widgets/code_snippet.dart';
 
 /// Java 版 App 的接线测试。
 ///
@@ -250,6 +255,98 @@ class Greeting {
   });
 
   group('直接运行与重命名导入', () {
+    testWidgets('示例运行原样提交当前的空代码和未闭合字符串', (tester) async {
+      final previousScratch = DemoRunService.scratchRootOverride;
+      DemoRunService.scratchRootOverride = project.path;
+      addTearDown(() => DemoRunService.scratchRootOverride = previousScratch);
+      const bundled = ExampleCode(
+        id: 'java-current-source',
+        type: 'java',
+        title: 'Current source',
+        summary: '',
+        code:
+            'public class Main { public static void main(String[] args) '
+            '{ System.out.println("bundled source"); } }',
+        output: '',
+      );
+
+      for (final sample in [
+        (
+          code: '',
+          diagnostic: 'ClassNotFoundException: Main',
+          title: 'java Main',
+          exitCode: 1,
+        ),
+        (
+          code:
+              'public class Main {\n'
+              '  public static void main(String[] args) {\n'
+              '    System.out.println("first\n'
+              '行");\n'
+              '  }\n'
+              '}\n',
+          // javac localizes its text; the source line and compile title do not.
+          diagnostic: 'Main.java:3',
+          title: 'javac Main.java',
+          exitCode: kProgramNotRunExitCode,
+        ),
+      ]) {
+        final runner = _SourceRecordingRunner(javaProfile.runner!);
+        StudioProfile.current = StudioProfile(
+          id: javaProfile.id,
+          appTitle: javaProfile.appTitle,
+          templates: javaProfile.templates,
+          isOffline: true,
+          runner: runner,
+        );
+        await tester.pumpWidget(
+          const MaterialApp(
+            locale: Locale('en'),
+            localizationsDelegates: [StudioLocalizations.delegate],
+            home: ExampleDetailPage(example: bundled),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), sample.code);
+        expect(
+          tester.widget<TextField>(find.byType(TextField)).controller!.text,
+          sample.code,
+        );
+        await tester.tap(find.byTooltip('Run example'));
+        for (var attempt = 0; attempt < 400; attempt++) {
+          await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 10)),
+          );
+          await tester.pump(const Duration(milliseconds: 20));
+          if (runner.sourceBytes != null &&
+              find.byIcon(Icons.play_arrow_outlined).evaluate().isNotEmpty) {
+            break;
+          }
+        }
+
+        expect(runner.sourceBytes, utf8.encode(sample.code));
+        expect(runner.entryName, 'Main.java');
+        expect(find.text(sample.title), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byType(CodeSnippet),
+            matching: find.textContaining(sample.diagnostic),
+          ),
+          findsWidgets,
+          reason: find
+              .byType(SelectableText)
+              .evaluate()
+              .map((element) {
+                return (element.widget as SelectableText).data;
+              })
+              .join('\n'),
+        );
+        expect(find.text('exit code ${sample.exitCode}'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox.shrink());
+      }
+    });
+
     test('DemoRunService 用真实 JDK 运行示例并观察到真实退出', () async {
       final previousScratch = DemoRunService.scratchRootOverride;
       DemoRunService.scratchRootOverride = project.path;
@@ -510,6 +607,25 @@ class HelloWorld {
       expect(await toolchain(backend, 'ls'), isFalse);
     });
   });
+}
+
+/// Records the actual scratch bytes before delegating to the production JDK.
+class _SourceRecordingRunner implements ProgramRunner {
+  _SourceRecordingRunner(this.delegate);
+
+  final ProgramRunner delegate;
+  List<int>? sourceBytes;
+  String? entryName;
+
+  @override
+  Future<ProgramRunResult?> run({
+    required String projectPath,
+    required String entryFile,
+  }) async {
+    sourceBytes = await File(entryFile).readAsBytes();
+    entryName = p.basename(entryFile);
+    return delegate.run(projectPath: projectPath, entryFile: entryFile);
+  }
 }
 
 /// Minimal [SandboxShellBackend] used to capture delegate output in tests.

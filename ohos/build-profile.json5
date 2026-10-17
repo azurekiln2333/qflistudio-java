@@ -1,42 +1,37 @@
 {
   "app": {
-    // 签名留空是有意的——别照着主工程抄，有两个硬约束：
-    //
-    // 1. HarmonyOS 的 .p7b 描述文件绑定 bundleName。D:/Keystore 下现有的三个
-    //    分别是 com.azurekiln.qflistudio（qfliRelease / qfli_profileDebug）和
-    //    com.azurekiln.terminax，没有一个是 com.azurekiln.qflistudio.java。
-    // 2. 主工程用的密钥库是 suanxiwanjie.p12，别名 suanxiwanjie。
-    //
-    // 所以首次构建前二选一：
-    //   A（推荐）DevEco Studio 自动生成签名：
-    //      File → Project Structure → Signing Configs →
-    //      勾上 "Automatically generate signature"，登录华为账号。
-    //      DevEco 会为当前 bundleName 生成一套材料并自动写回这一段。
-    //   B 在 AGC 里为 com.azurekiln.qflistudio.java 新建应用，重新生成证书和
-    //      描述文件，再把 material 补上。
-    //
-    // 不配签名也能构建，只是产出 entry-default-unsigned.hap，装不上设备。
-    // 把 bundleName 改回 com.azurekiln.qflistudio 也能立刻用主工程那套签名，
-    // 但那样两个 App 会互相覆盖安装。
     "signingConfigs": [
       {
-        "name": "default",
+        "name": "debugKey",
         "type": "HarmonyOS",
         "material": {
           "certpath": "C:\\Users\\lichengyu\\.ohos\\config\\default_ohos_Gu8zVby71b0t4gfRa-4NpIdkL2QGfz2fVEJ7JnRdkBg=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001AC79DB4BE4CFD6089660C48B33304606E2E03A4F19DA9BD6C9453635BAFD6C125B0F598470BD2",
+          "keyPassword": "0000001B6166F79237F2A92B0BBCEA6B31623232974F9538A353EEF0DC7D4B7FE1F7BEBAB24CCFFB6A576B",
           "profile": "C:\\Users\\lichengyu\\.ohos\\config\\default_ohos_Gu8zVby71b0t4gfRa-4NpIdkL2QGfz2fVEJ7JnRdkBg=.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "C:\\Users\\lichengyu\\.ohos\\config\\default_ohos_Gu8zVby71b0t4gfRa-4NpIdkL2QGfz2fVEJ7JnRdkBg=.p12",
-          "storePassword": "0000001AC57B37BED671735C8C4E9DACE75E3DE997CA1A15F1F0EF9CE2321505EB52DD35E5BC45535E4A"
+          "storePassword": "0000001B7A9D72087D7D40D643579FF62FDC6CDD159E4706E82C60CEA6A7469179D0FBC86228117477ECB0"
+        }
+      },
+      {
+        "name": "releaseKey",
+        "type": "HarmonyOS",
+        "material": {
+          "storeFile": "D:/Keystore/suanxiwanjie.p12",
+          "storePassword": "000000203FB996974D4ACDC85E1C53C506F0872481C17BC901E514F1205D4CF20626248692646B0C498E6E883646264C",
+          "keyAlias": "suanxiwanjie",
+          "keyPassword": "00000020531BB6349A004B31E182D5E447DC893C3299DB6D8C52ED3E87265BD8D4C7BF9BB546382C90339EFF0B1A3D46",
+          "signAlg": "SHA256withECDSA",
+          "profile": "D:/Keystore/Profile/jvmxRelease.p7b",
+          "certpath": "D:/Keystore/suanxiwanjie_release.cer"
         }
       }
     ],
     "products": [
       {
         "name": "default",
-        "signingConfig": "default",
+        "signingConfig": "debugKey",
         "compatibleSdkVersion": "5.1.0(18)",
         "runtimeOS": "HarmonyOS",
         "targetSdkVersion": "6.1.1(24)"
