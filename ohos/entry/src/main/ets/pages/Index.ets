@@ -29,6 +29,8 @@ struct StartupSplash {
         .width(96)
         .height(96)
         .objectFit(ImageFit.Contain)
+        .borderRadius(24)
+        .clip(true)
 
       Column() {
         Blank()

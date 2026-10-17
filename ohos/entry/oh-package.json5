@@ -9,4 +9,12 @@
   "dependencies": {
     "libqfli_jdk_layout.so": "file:./src/main/cpp/types/libqfli_jdk_layout"
   },
+  "nativeLib": {
+    "filter": {
+      "excludes": ["**/x86_64/**"]
+    }
+  },
+  "resOptions": {
+    "ignoreResourcePattern": ["**/jdk-x86_64.*"]
+  }
 }

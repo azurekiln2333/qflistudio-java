@@ -119,3 +119,9 @@ app.*.map.json
 /.trellis/**/research/
 /.codex/
 /.trae/
+
+# Local agent process state and coordination markers
+/.herdr-autoapprove.pid
+/herdr-autoapprove.log.old
+/done[0-9]
+/sent[0-9]
