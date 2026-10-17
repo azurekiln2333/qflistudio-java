@@ -1,0 +1,30 @@
+{
+  "id": "studio-polish",
+  "name": "studio-polish",
+  "title": "Offline-first studio polish",
+  "description": "Umbrella: Java tools page redesign, local stats/audit in core, project-open performance; subprojects stay offline, qflistudio online features untouched.",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lichengyu",
+  "assignee": "lichengyu",
+  "createdAt": "2026-10-15",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "10-15-java-tools-redesign",
+    "10-15-local-stats-audit",
+    "10-15-open-performance"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
