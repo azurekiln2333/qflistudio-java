@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Created-By: qfli_java fixtures
+Main-Class: fixtures.Greeting
+Implementation-Title: Greeting fixture
+Implementation-Version: 1.2.3
+Implementation-Vendor: QFLIStudio
+X-Fixture-Purpose: Java developer tool tests parse this real manifest

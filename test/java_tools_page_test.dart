@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qfli_java/java_tools_page.dart';
+import 'package:qfli_java/java_debugger_page.dart';
 import 'package:qfli_java/java_tools_pages.dart';
+import 'package:qfli_java/java_developer_tool_pages.dart';
 import 'package:qfli_studio_core/pages/content_tools_pages.dart';
 import 'package:qfli_studio_core/pages/offline_tool_pages.dart';
 import 'package:qfli_studio_core/pages/tools_grid.dart';
@@ -89,10 +91,15 @@ void main() {
       JavaStringToolPage.title,
       JavaJsonToolPage.title,
       JavaReferenceToolPage.title,
+      JavaDescriptorToolPage.title,
+      JavaStackTraceToolPage.title,
+      JavaClassFileToolPage.title,
+      JavaJarToolPage.title,
+      JavaDebuggerPage.title,
     ]);
     expect(commonTools, hasLength(9));
     final titles = [...javaTools, ...commonTools].map((tool) => tool.title);
-    expect(titles.toSet(), hasLength(13), reason: 'no duplicated tool cards');
+    expect(titles.toSet(), hasLength(18), reason: 'no duplicated tool cards');
     expect(find.text('Java'), findsOneWidget);
     expect(find.text('通用'), findsOneWidget);
   });
