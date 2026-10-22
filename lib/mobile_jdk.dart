@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
+import 'mobile_jvm_launch.dart';
 import 'ohos_jdk_process.dart';
 
 class MobileJdkLayout {
@@ -18,6 +19,8 @@ class MobileJdkLayout {
   final String java;
   final String javac;
   final String libraryDirectory;
+
+  String get temporaryDirectory => MobileJvmLaunch.temporaryDirectory(home);
 
   factory MobileJdkLayout.fromMap(Map<Object?, Object?> data) {
     String path(String key) {
@@ -41,7 +44,7 @@ class MobileJdkLayout {
     'QFLI_JAVA_HOME': home,
     if (Platform.operatingSystem == 'ohos')
       'QFLI_NATIVE_LIBRARY_DIR': libraryDirectory,
-    'TMPDIR': p.join(home, 'tmp'),
+    'TMPDIR': temporaryDirectory,
     'LD_LIBRARY_PATH': [
       libraryDirectory,
       p.join(home, 'lib'),
@@ -61,7 +64,11 @@ abstract final class MobileJdk {
       Platform.isAndroid || Platform.operatingSystem == 'ohos';
 
   static Future<MobileJdkLayout> prepare() {
-    if (current case final MobileJdkLayout layout) return Future.value(layout);
+    if (current case final MobileJdkLayout layout) {
+      return MobileJvmLaunch.prepareTemporaryDirectory(
+        layout.home,
+      ).then((_) => layout);
+    }
     return _preparing ??= _prepare().whenComplete(() => _preparing = null);
   }
 
@@ -105,7 +112,11 @@ abstract final class MobileJdk {
     for (final executable in [layout.java, layout.javac]) {
       final process = await Process.start(
         executable,
-        ['-version'],
+        await MobileJvmLaunch.arguments(
+          home: layout.home,
+          arguments: ['-version'],
+          javac: executable == layout.javac,
+        ),
         environment: layout.environment,
         runInShell: false,
       );

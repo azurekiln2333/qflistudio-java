@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
+import 'mobile_jvm_launch.dart';
+
 /// Streams a native JVM child without executing an ELF launcher in the sandbox.
 class OhosJdkProcess {
   OhosJdkProcess._(this._pid, this._directory);
@@ -27,7 +29,13 @@ class OhosJdkProcess {
     required String workingDirectory,
     String? inputFile,
   }) async {
-    final directory = await Directory(p.join(home, 'tmp')).createTemp('jvm-');
+    final launchArguments = await MobileJvmLaunch.arguments(
+      home: home,
+      arguments: arguments,
+    );
+    final directory = await Directory(
+      MobileJvmLaunch.temporaryDirectory(home),
+    ).createTemp('jvm-');
     try {
       final input = inputFile != null && await File(inputFile).exists()
           ? inputFile
@@ -39,7 +47,7 @@ class OhosJdkProcess {
         'input': input,
         'output': p.join(directory.path, 'stdout'),
         'error': p.join(directory.path, 'stderr'),
-        'args': ['java', ...arguments],
+        'args': ['java', ...launchArguments],
       });
       if (pid == null) throw const FormatException('JVM child PID is missing');
       final process = OhosJdkProcess._(pid, directory);
