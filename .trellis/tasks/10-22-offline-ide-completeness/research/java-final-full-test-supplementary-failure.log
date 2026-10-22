@@ -1,0 +1,268 @@
+00:00 +0: loading D:/MyNewProjects/qfli_java/test/java_app_test.dart
+00:00 +0: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 档位收窄 新建项目只放行「空项目」和 Java
+00:00 +1: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 档位收窄 默认模板是 Java 而不是空项目
+00:00 +2: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 档位收窄 语言筛选芯片只剩 Java
+00:00 +3: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 档位收窄 产品名使用 QFLIJVMX
+00:00 +4: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 入口文件识别 优先命中 Main.java
+00:00 +5: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 入口文件识别 入口表覆盖了模板自带的入口文件
+00:00 +6: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 入口文件识别 模板把源码放在 src/ 下时也能找到入口
+00:00 +7: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 运行后端 使用 JDK 编译并运行多个 Java 源文件
+00:00 +8: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 运行后端 编译错误返回 javac 诊断且程序未运行
+00:00 +9: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 运行后端 保留 Java 程序自己的退出码
+00:01 +10: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 运行后端 从 input.txt 提供标准输入
+00:02 +11: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 运行后端 中文源码与输出保持 UTF-8
+00:02 +12: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 运行后端 别的语言文件交回内核
+00:02 +13: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 运行按钮分流 运行按钮拿到真实 JDK 执行结果
+00:03 +14: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 运行按钮分流 显式运行 Main2 后默认入口仍然运行 Main
+00:04 +15: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 直接运行与重命名导入 示例运行原样提交当前的空代码和未闭合字符串
+00:06 +16: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 直接运行与重命名导入 DemoRunService 用真实 JDK 运行示例并观察到真实退出
+00:07 +17: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 直接运行与重命名导入 重命名导入后的示例用真实 JDK 编译运行
+00:07 +18: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 内置终端可以手动跑 JDK 命令 javac 与 java 经终端委托真实编译运行
+00:08 +19: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 内置终端可以手动跑 JDK 命令 非 java 命令不由 Java 委托接管
+00:08 +20: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 内置终端可以手动跑 JDK 命令 委托收到的运行目录等于用户 cd 后的沙盒目录
+00:08 +21: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 内置终端可以手动跑 JDK 命令 工具链参数按原样透传，不重写也不重排
+00:09 +22: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 内置终端可以手动跑 JDK 命令 委托不再以空格切割,引号操作数作为单个参数送达
+00:09 +23: D:/MyNewProjects/qfli_java/test/java_app_test.dart: 内置终端可以手动跑 JDK 命令 复合行不被 Java 委托接管,交回沙盒给出诚实提示
+00:09 +24: loading D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart
+00:10 +24: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: exhaustive shipped Java inventory includes every mirror with a genuine SHA256 source identity
+00:10 +25: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: exhaustive shipped Java inventory retains duplicate IDs instead of overwriting their payload
+00:10 +26: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: exhaustive shipped Java inventory enumerates extra tutorial lessons and reports exact inventory drift
+00:10 +27: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: exhaustive shipped Java inventory detects missing legacy examples and surplus unpaired examples
+00:10 +28: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: exhaustive shipped Java inventory fixture/output differences cannot reuse a passing mirror result
+00:10 +29: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: exhaustive shipped Java inventory compares every mirror with independently authored source and stdin
+00:10 +30: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: exhaustive shipped Java inventory damaged language tags, unsupported fixtures and absent outputs fail
+00:10 +31: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: exhaustive shipped Java inventory malformed/empty documents cannot pass by having no runnable snippets
+00:10 +32: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: exhaustive shipped Java inventory only one final line ending is normalized; whitespace stays significant
+00:10 +33: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: actual runner result collection drains both streams after the exit future resolves
+00:10 +34: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: actual runner result collection runtime deadline cancels the real result handle
+00:10 +35: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: actual runner result collection output cap cancels rather than silently truncating a success
+00:10 +36: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: catalog execution and evidence executes once and records all four identities without claiming a device pass
+00:10 +37: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: catalog execution and evidence actually executes a divergent tutorial payload and keeps the gate failed
+00:10 +38: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: catalog execution and evidence preserves stdin exactly and detects extra blank output lines
+00:10 +39: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: catalog execution and evidence launch timeout aborts the sweep and explicitly inventories unrun payloads
+00:10 +40: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: catalog execution and evidence late launch is canceled before its retained snapshot is removed
+00:10 +41: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: catalog execution and evidence unproven process exit retains its snapshot and aborts later payloads
+00:15 +42: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: bounded real host child processes feeds Unicode stdin and closes EOF without losing output bytes
+00:15 +43: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: bounded real host child processes kills a child that never exits and records its actual exit
+00:15 +44: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: bounded real host child processes a real excessive-output child fails the bounded verifier
+00:16 +45: D:/MyNewProjects/qfli_java/test/java_catalog_audit_test.dart: bounded real host child processes malformed UTF8 bytes cannot be replaced into a passing output
+00:16 +46: loading D:/MyNewProjects/qfli_java/test/java_content_render_test.dart
+00:16 +46: D:/MyNewProjects/qfli_java/test/java_content_render_test.dart: (setUpAll)
+00:17 +46: D:/MyNewProjects/qfli_java/test/java_content_render_test.dart: real-runner inline output on java example detail route
+00:18 +47: D:/MyNewProjects/qfli_java/test/java_content_render_test.dart: real-runner inline output on java tutorial lesson route
+00:19 +48: D:/MyNewProjects/qfli_java/test/java_content_render_test.dart: (tearDownAll)
+00:19 +48: loading D:/MyNewProjects/qfli_java/test/java_debugger_page_jvm_test.dart
+00:20 +48: D:/MyNewProjects/qfli_java/test/java_debugger_page_jvm_test.dart: page controls a genuine Unicode-package JVM breakpoint, local, step and output
+00:23 +49: loading D:/MyNewProjects/qfli_java/test/java_debugger_page_test.dart
+00:24 +49: D:/MyNewProjects/qfli_java/test/java_debugger_page_test.dart: validates the project and confines the entry before launching
+00:24 +50: D:/MyNewProjects/qfli_java/test/java_debugger_page_test.dart: defaults to the last browsed local project and preserves arguments
+00:25 +51: D:/MyNewProjects/qfli_java/test/java_debugger_page_test.dart: real session actions, verified breakpoints, frames and output are reachable
+00:25 +52: D:/MyNewProjects/qfli_java/test/java_debugger_page_test.dart: stop works while compilation or attach is pending
+00:25 +53: D:/MyNewProjects/qfli_java/test/java_debugger_page_test.dart: toolchain failure remains explicit after termination
+00:26 +54: D:/MyNewProjects/qfli_java/test/java_debugger_page_test.dart: late attach or pause cannot reopen controls while stopping
+00:26 +55: D:/MyNewProjects/qfli_java/test/java_debugger_page_test.dart: output retains a bounded tail with actual stdout and stderr
+00:26 +56: D:/MyNewProjects/qfli_java/test/java_debugger_page_test.dart: resuming rejects late stack data and disposal stops the session
+00:26 +57: D:/MyNewProjects/qfli_java/test/java_debugger_page_test.dart: a narrow dark page keeps controls and errors within the viewport
+00:26 +58: loading D:/MyNewProjects/qfli_java/test/java_debugger_test.dart
+00:27 +58: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: actual JDWP breakpoint, locals, stack, step into/over/out and resume
+00:29 +59: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: the in-app smoke uses the same actual desktop service and passes every assertion
+00:35 +60: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: concurrent sessions isolate targets, commands and cancellation
+00:38 +61: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: dirty multifile debug snapshot and actual breakpoint removal
+00:40 +62: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: user packages resembling JDK namespaces still receive class breakpoints
+00:42 +63: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: variable inspection reads Unicode and references without invoking user methods
+00:44 +64: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: actual pause/variables and termination of a running target
+00:46 +65: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: terminates a genuinely breakpoint-suspended target and can start again
+00:50 +66: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: invalid state/breakpoint has real errors without a simulated pause
+00:53 +67: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: Stop during preparation and compiler failure clean isolated state
+00:53 +68: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: Stop closes inherited pipes and preserves a separate live session
+00:58 +69: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: natural target exit bounds pipe drainage when a descendant remains alive
+01:02 +70: D:/MyNewProjects/qfli_java/test/java_debugger_test.dart: raw byte cap stops unbroken target output and waits for both JVMs
+01:04 +71: loading D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart
+01:05 +71: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaDescriptors decodes primitive, object and array field descriptors
+01:05 +72: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaDescriptors rejects malformed descriptors with readable messages
+01:05 +73: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaDescriptors splits method descriptors into parameters and return type
+01:05 +74: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaDescriptors decodes the traced main method descriptor
+01:05 +75: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaDescriptors rejects malformed method descriptors
+01:05 +76: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaDescriptors parseAny accepts both descriptor shapes
+01:05 +77: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaDescriptors writes descriptors from Java type names
+01:05 +78: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaDescriptors round trips every fixture descriptor through the writer
+01:05 +79: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaDescriptors rejects unwritable type names
+01:05 +80: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace splits headers, frames and the caused-by chain
+01:05 +81: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace reads frames with module prefixes, native and unknown sources
+01:05 +82: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace counts application frames separately from runtime frames
+01:05 +83: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace re-renders the full trace when nothing is filtered
+01:05 +84: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace drops runtime frames and the now-inaccurate more-markers
+01:05 +85: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace filters frames by class or file substring
+01:05 +86: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace caps long traces and says how many frames were omitted
+01:05 +87: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace notes when a filter keeps nothing
+01:05 +88: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace keeps suppressed throwables and wrapped messages
+01:05 +89: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace keeps suppression markers on their own throwable only
+01:05 +90: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace recognizes Unicode frames with versioned module and loader prefixes
+01:05 +91: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace keeps unrelated text out of the frame list
+01:05 +92: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace accepts a custom throwable that does not end in Exception
+01:05 +93: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace does not mistake javac diagnostics or banners for throwables
+01:05 +94: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaStackTrace returns an empty report for text that is not a trace
+01:05 +95: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaClassFile recognises the class-file magic
+01:05 +96: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaClassFile reports the Java 17 target version
+01:05 +97: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaClassFile reports modifiers, hierarchy and attributes
+01:05 +98: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaClassFile decodes fields with descriptors and modifiers
+01:05 +99: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaClassFile decodes method signatures including varargs arrays
+01:05 +100: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaClassFile summarises the constant pool without dumping it
+01:05 +101: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaClassFile rejects truncated bytes instead of guessing
+01:05 +102: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaClassFile decodes real javac modified UTF8 names and string constants
+01:05 +103: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaClassFile does not report method varargs flags as field transient flags
+01:05 +104: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaClassFile reads the four-byte CONSTANT_Dynamic record from a real loadable class
+01:05 +105: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaClassFile rejects trailing bytes instead of accepting concatenated files
+01:05 +106: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaManifest parses the committed fixture manifest
+01:05 +107: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaManifest unfolds continuation lines
+01:05 +108: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaManifest reads named sections and multi-release flags
+01:05 +109: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaManifest unfolds at the byte level so split UTF-8 survives
+01:05 +110: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaJarInspection lists the real archive entries
+01:05 +111: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaJarInspection reads and inflates the manifest entry
+01:05 +112: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaJarInspection inflated class entry matches the standalone class fixture
+01:05 +113: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaJarInspection reports entries with real compressed and inflated sizes
+01:05 +114: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaJarInspection rejects non-archive bytes with readable messages
+01:05 +115: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaJarInspection records a missing manifest instead of failing the listing
+01:05 +116: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaJarInspection checks manifest CRC instead of displaying corrupted bytes
+01:05 +117: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaJarInspection rejects forged local metadata and central directory lengths
+01:05 +118: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaJarInspection validates the end record comment instead of matching any signature
+01:05 +119: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaJarInspection bounds inflated bytes even when the declared size was forged small
+01:05 +120: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaJarInspection rejects a manifest over its independent 1 MB inspection limit
+01:05 +121: D:/MyNewProjects/qfli_java/test/java_developer_tools_test.dart: JavaBytesFormat prints binary units with one decimal
+01:05 +122: loading D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart
+01:05 +122: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: tools tab wiring the Java section carries the original and inspected developer cards
+01:05 +123: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: tools tab wiring the standalone grid renders every Java card directly
+01:06 +124: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: shared native picker adapter uses the actual OHOS URI picker and readUri contract
+01:06 +125: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: shared native picker adapter rejects a large local file before reading its bytes
+01:06 +126: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaDescriptorToolPage decodes the default method descriptor
+01:06 +127: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaDescriptorToolPage decodes a field descriptor when the input has no parentheses
+01:06 +128: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaDescriptorToolPage reports an invalid descriptor instead of a wrong answer
+01:06 +129: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaDescriptorToolPage writes field and method descriptors from Java types
+01:07 +130: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaDescriptorToolPage surfaces the reverse-direction error
+01:07 +131: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaStackTraceToolPage summarises the sample trace and keeps application frames
+01:07 +132: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaStackTraceToolPage shows runtime frames when the switch is turned off
+01:07 +133: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaStackTraceToolPage filters frames by class or file text
+01:07 +134: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaStackTraceToolPage says honestly when the input is not a trace
+01:07 +135: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaClassFileToolPage inspects the committed Java 17 class fixture
+01:07 +136: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaClassFileToolPage reports bytes that are not a class file
+01:07 +137: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaClassFileToolPage cancelling the picker leaves the page empty
+01:07 +138: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaClassFileToolPage a failing picker is reported instead of thrown
+01:07 +139: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaJarToolPage inspects the committed JAR fixture
+01:07 +140: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: JavaJarToolPage reports a non-archive file
+01:08 +141: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: layout JavaDescriptorToolPage renders in dark mode without overflow
+01:08 +142: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: layout JavaStackTraceToolPage renders in dark mode without overflow
+01:08 +143: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: layout JavaClassFileToolPage renders in dark mode without overflow
+01:08 +144: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: layout JavaJarToolPage renders in dark mode without overflow
+01:08 +145: D:/MyNewProjects/qfli_java/test/java_developer_tool_pages_test.dart: layout the JAR page lays out its loaded results on a phone
+01:08 +146: loading D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart
+01:08 +146: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: raw toolchain preserves real output paused across process exit
+01:11 +147: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: Run accepts Java17 and rejects newer host APIs before execution
+01:12 +148: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: Run bounds real javac compilation before starting user code
+01:12 +149: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: Run output byte limit kills a real compiler rather than truncating a success
+01:13 +150: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: core analyzer receives every snapshot and preserves exact offsets
+01:14 +151: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: core adapter reports unavailable tools without claiming clean syntax
+01:14 +152: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: an unreadable local JAR cannot be reported as clean source
+01:15 +153: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: real desktop javac is terminated before its scratch files are deleted
+01:16 +154: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: all dirty source buffers overlay a multi-file package without writes
+01:18 +155: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: new unsaved public classes keep their filenames and are not saved
+01:19 +156: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: same-name files map exact javac ranges across CRLF, tabs and emoji
+01:20 +157: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: syntax errors and compiler warnings remain separate severities
+01:21 +158: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: release 17 rejects APIs and syntax introduced by newer host JDKs
+01:22 +159: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: local lib/libs JARs resolve but their annotation processors never run
+01:25 +160: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: outside buffers fail before starting a compiler
+01:25 +161: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: source/file/output limits do not become source diagnostics
+01:25 +162: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: cancels an active compiler and waits before cleaning its snapshot
+01:25 +163: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: pre-cancelled checks never create snapshots or start tools
+01:25 +164: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: timeout kills the active compiler and reports a tool status
+01:25 +165: D:/MyNewProjects/qfli_java/test/java_diagnostics_test.dart: missing JDK is unavailable rather than an invented syntax error
+01:25 +166: loading D:/MyNewProjects/qfli_java/test/java_runtime_acceptance_test.dart
+01:25 +166: D:/MyNewProjects/qfli_java/test/java_runtime_acceptance_test.dart: durable acceptance uses real diagnostics and debugger without claiming a host device pass
+01:34 +167: loading D:/MyNewProjects/qfli_java/test/java_tools_extra_test.dart
+01:34 +167: D:/MyNewProjects/qfli_java/test/java_tools_extra_test.dart: JavaReference lists the eight primitives and the keywords
+01:34 +168: D:/MyNewProjects/qfli_java/test/java_tools_extra_test.dart: JavaReference documents the Java escapes
+01:34 +169: loading D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart
+01:35 +169: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the page shows every tool card without opening anything
+01:35 +170: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: there is no single wrapper card around the whole page
+01:35 +171: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: tapping a card opens that tool page
+01:36 +172: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: a tool page offers copy buttons
+01:36 +173: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the shared 字符/Unicode card opens its core page
+01:36 +174: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the shared 时间戳 card opens its core page
+01:36 +175: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the shared URL 编解码 card opens its core page
+01:36 +176: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the shared 正则测试 card opens its core page
+01:36 +177: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the shared 颜色转换 card opens its core page
+01:37 +178: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the shared UUID 生成 card opens its core page
+01:37 +179: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the shared JSON 格式化 card opens its core page
+01:37 +180: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the Java integer card still converts input
+01:37 +181: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the Java string card still generates a literal
+01:37 +182: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the Java JSON card still generates records
+01:37 +183: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the Java reference card still shows language tables
+01:38 +184: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: a narrow window lays the cards out in one column
+01:38 +185: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: a wide window lays the cards out in several columns
+01:38 +186: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the page renders in dark mode
+01:38 +187: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: the page scrolls to reach the last group
+01:38 +188: D:/MyNewProjects/qfli_java/test/java_tools_page_test.dart: no overflow is reported in either orientation
+01:38 +189: loading D:/MyNewProjects/qfli_java/test/java_tools_test.dart
+01:38 +189: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: parseJavaInt reads decimal, hex, binary and octal literals
+01:38 +190: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: parseJavaInt ignores underscores inside literals
+01:38 +191: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: parseJavaInt rejects invalid input with a readable message
+01:38 +192: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaIntValue representations shows all four bases for a positive int
+01:38 +193: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaIntValue representations reinterprets the top bit as a negative value
+01:38 +194: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaIntValue representations byte truncates and reports overflow
+01:38 +195: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaIntValue representations a value inside the range does not report overflow
+01:38 +196: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaIntValue representations char is unsigned and exposes a character view
+01:38 +197: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: bit operations & | ^ combine patterns
+01:38 +198: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: bit operations ~ complements within the width
+01:38 +199: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: bit operations >> keeps the sign, >>> shifts in zeros
+01:38 +200: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: bit operations left shift overflows out of the width
+01:38 +201: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaString escapes the characters that matter
+01:38 +202: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaString keeps printable non-ASCII readable
+01:38 +203: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaString round-trips through a literal
+01:38 +204: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaString decodes \uXXXX escapes
+01:38 +205: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaString renders a text block
+01:38 +206: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaClassGenerator generates a POJO with typed fields
+01:38 +207: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaClassGenerator generates a record when asked
+01:38 +208: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaClassGenerator camel-cases awkward keys and guards leading digits
+01:38 +209: D:/MyNewProjects/qfli_java/test/java_tools_test.dart: JavaClassGenerator rejects a non-object root
+01:38 +210: loading D:/MyNewProjects/qfli_java/test/java_tools_wiring_test.dart
+01:39 +210: D:/MyNewProjects/qfli_java/test/java_tools_wiring_test.dart: the tools tab exposes every card at Size(360.0, 700.0) in light
+01:39 +211: D:/MyNewProjects/qfli_java/test/java_tools_wiring_test.dart: the tools tab exposes every card at Size(360.0, 700.0) in dark
+01:40 +212: D:/MyNewProjects/qfli_java/test/java_tools_wiring_test.dart: the tools tab exposes every card at Size(1100.0, 800.0) in light
+01:40 +213: D:/MyNewProjects/qfli_java/test/java_tools_wiring_test.dart: the tools tab exposes every card at Size(1100.0, 800.0) in dark
+01:40 +214: D:/MyNewProjects/qfli_java/test/java_tools_wiring_test.dart: the tools tab contains one terminal and eighteen unique tools
+01:40 +215: D:/MyNewProjects/qfli_java/test/java_tools_wiring_test.dart: a tool card on the tab opens its own page
+01:40 +216: D:/MyNewProjects/qfli_java/test/java_tools_wiring_test.dart: debugger card opens directly with the shell project store
+01:40 +217: D:/MyNewProjects/qfli_java/test/java_tools_wiring_test.dart: the standalone tools page remains available to the shell
+01:41 +218: loading D:/MyNewProjects/qfli_java/test/java_unicode_package_test.dart
+01:41 +218: D:/MyNewProjects/qfli_java/test/java_unicode_package_test.dart: real Run preserves a Chinese and supplementary Unicode package name
+01:41 +218 -1: D:/MyNewProjects/qfli_java/test/java_unicode_package_test.dart: real Run preserves a Chinese and supplementary Unicode package name [E]
+  Expected: <0>
+    Actual: <1>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 477:18  expect
+  test\java_unicode_package_test.dart 32:9            main.<fn>
+
+01:41 +218 -1: loading D:/MyNewProjects/qfli_java/test/mobile_jvm_launch_test.dart
+01:42 +218 -1: D:/MyNewProjects/qfli_java/test/mobile_jvm_launch_test.dart: creates the actual sandbox directory and preserves argument tokens
+01:42 +219 -1: D:/MyNewProjects/qfli_java/test/mobile_jvm_launch_test.dart: explicit per-call Java property follows the mobile default
+01:42 +220 -1: D:/MyNewProjects/qfli_java/test/mobile_jvm_launch_test.dart: Android javac uses JVM forwarding and retains explicit override
+01:42 +221 -1: D:/MyNewProjects/qfli_java/test/mobile_jvm_launch_test.dart: cached mobile preparation recreates a missing sandbox temp root
+01:42 +222 -1: D:/MyNewProjects/qfli_java/test/mobile_jvm_launch_test.dart: desktop toolchain does not inherit a cached mobile sandbox path
+01:42 +223 -1: D:/MyNewProjects/qfli_java/test/mobile_jvm_launch_test.dart: real JVM default Files temp APIs use the supplied mobile sandbox
+01:43 +224 -1: loading D:/MyNewProjects/qfli_java/test/ohos_jdk_process_test.dart
+01:43 +224 -1: D:/MyNewProjects/qfli_java/test/ohos_jdk_process_test.dart: drains final output and preserves UTF-8 across partial writes
+01:43 +225 -1: D:/MyNewProjects/qfli_java/test/ohos_jdk_process_test.dart: all JVM entry modes receive sandbox temp before caller options
+01:43 +226 -1: D:/MyNewProjects/qfli_java/test/ohos_jdk_process_test.dart: cancel waits for termination while output remains readable
+01:43 +227 -1: loading D:/MyNewProjects/qfli_java/test/spring_boot_bundle_test.dart
+01:43 +227 -1: D:/MyNewProjects/qfli_java/test/spring_boot_bundle_test.dart: lock file is well formed and pins the bundled version
+01:43 +228 -1: D:/MyNewProjects/qfli_java/test/spring_boot_bundle_test.dart: manifest lists exactly the locked artifacts
+01:43 +229 -1: D:/MyNewProjects/qfli_java/test/spring_boot_bundle_test.dart: every manifest entry is present with the locked size
+01:43 +230 -1: D:/MyNewProjects/qfli_java/test/spring_boot_bundle_test.dart: manifest rejects entries that are not plain file names
+01:43 +231 -1: loading D:/MyNewProjects/qfli_java/test/startup_test.dart
+01:44 +231 -1: D:/MyNewProjects/qfli_java/test/startup_test.dart: (setUpAll)
+01:44 +231 -1: D:/MyNewProjects/qfli_java/test/startup_test.dart: OHOS waits for home layout with progress channel available (variant: TargetPlatform.ohos)
+LTPO: Failed to check switch status: MissingPluginException(No implementation found for method checkLTPOSwitchStatus on channel flutter/nativevsync)
+01:45 +232 -1: D:/MyNewProjects/qfli_java/test/startup_test.dart: OHOS waits for home layout with progress channel missing (variant: TargetPlatform.ohos)
+01:45 +233 -1: D:/MyNewProjects/qfli_java/test/startup_test.dart: Android renders the Flutter loading screen immediately (variant: TargetPlatform.android)
+01:45 +234 -1: D:/MyNewProjects/qfli_java/test/startup_test.dart: (tearDownAll)
+01:45 +234 -1: Some tests failed.

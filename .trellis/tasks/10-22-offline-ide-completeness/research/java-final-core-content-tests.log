@@ -1,0 +1,30 @@
+00:00 +0: loading D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart
+00:00 +0: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: (setUpAll)
+00:00 +0: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content integrity 280 paired tutorials and examples retain all original IDs
+00:00 +1: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content integrity unique ids and titles
+00:00 +2: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content integrity 1:1 pairing by stable id
+00:00 +3: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content integrity each lesson and example has complete, real content
+00:00 +4: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content integrity no placeholder or ellipsis markers
+00:00 +5: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content integrity code is genuinely multi-line with a method body structure
+00:00 +6: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content integrity exactly one introductory Hello World style topic
+00:00 +7: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content integrity near-duplicate guard: distinct code bodies
+00:00 +8: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content integrity progression spans beginner, intermediate and advanced
+00:00 +9: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content migration all pre-migration Java records are cleared, others preserved
+00:00 +10: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content migration migration is idempotent on a second load
+00:00 +11: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java content migration a Java example saved after migration persists
+00:00 +12: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: line-break handling every Java example preserves real newlines through the adapter
+00:00 +13: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: line-break handling no literal backslash-n leak in Java string literals
+00:00 +14: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java page display/copy/import line breaks example code preserves real line breaks end to end
+00:00 +15: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: Java page display/copy/import line breaks import into a project writes real line breaks
+00:00 +16: D:/MyNewProjects/qfli_studio_core/test/java_content_test.dart: (tearDownAll)
+00:00 +16: loading D:/MyNewProjects/qfli_studio_core/test/java_content_render_test.dart
+00:01 +16: D:/MyNewProjects/qfli_studio_core/test/java_content_render_test.dart: (setUpAll)
+00:01 +16: D:/MyNewProjects/qfli_studio_core/test/java_content_render_test.dart: render java example page
+00:02 +17: D:/MyNewProjects/qfli_studio_core/test/java_content_render_test.dart: render java example-intermediate detail
+00:03 +18: D:/MyNewProjects/qfli_studio_core/test/java_content_render_test.dart: render java example-advanced detail
+00:04 +19: D:/MyNewProjects/qfli_studio_core/test/java_content_render_test.dart: render java tutorial page
+00:04 +20: D:/MyNewProjects/qfli_studio_core/test/java_content_render_test.dart: render example detail route with inline output (layout fixture)
+00:04 +21: D:/MyNewProjects/qfli_studio_core/test/java_content_render_test.dart: render tutorial lesson route with inline output (layout fixture)
+00:05 +22: D:/MyNewProjects/qfli_studio_core/test/java_content_render_test.dart: render java import dialog shows class name only
+00:05 +23: D:/MyNewProjects/qfli_studio_core/test/java_content_render_test.dart: (tearDownAll)
+00:05 +23: All tests passed!

@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "kind": "java-runtime-acceptance",
+  "expectedBundleName": "com.azurekiln.qfli.java",
+  "expectedOhosPullPath": "/data/app/el2/100/base/com.azurekiln.qfli.java/files/qfli-java-runtime-acceptance.json",
+  "startedAtUtc": "2026-10-22T07:16:36.273856Z",
+  "operatingSystem": "ohos",
+  "operatingSystemVersion": "Linux 5.10.210 #1 SMP Sat Sep 12 10:50:46 CST 2026",
+  "dartVersion": "3.11.5 (stable) (Sat May 9 19:46:48 2026 +0800) on \"ohos_x64\"",
+  "reportFile": "/data/storage/el2/base/files/qfli-java-runtime-acceptance.json",
+  "workDirectory": "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA",
+  "status": "complete",
+  "ok": true,
+  "deviceGatePassed": true,
+  "diagnosticsDeviceGatePassed": true,
+  "debuggerDeviceGatePassed": true,
+  "stage": "complete",
+  "updatedAtUtc": "2026-10-22T07:16:54.725955Z",
+  "runtime": {
+    "ok": true,
+    "jdkHome": "/data/storage/el2/base/haps/entry/files/usr",
+    "javaProbe": {
+      "ok": true,
+      "arguments": [
+        "java",
+        "-Xms16m",
+        "-Xmx128m",
+        "-XX:+UseSerialGC",
+        "-XshowSettings:properties",
+        "-version"
+      ],
+      "cleanupConfirmed": true,
+      "exitCode": 0,
+      "outputLimitExceeded": false,
+      "stdout": "",
+      "stderr": "Property settings:\n    file.encoding = UTF-8\n    file.separator = /\n    java.class.path = \n    java.class.version = 61.0\n    java.home = /data/storage/el2/base/haps/entry/files/usr\n    java.io.tmpdir = /data/storage/el2/base/haps/entry/files/usr/tmp\n    java.library.path = /data/storage/el1/bundle/libs/x86_64\n        /usr/java/packages/lib\n        /usr/lib64\n        /lib64\n        /lib\n        /usr/lib\n    java.runtime.name = OpenJDK Runtime Environment\n    java.runtime.version = 17.0.20-internal+0-adhoc.root.source\n    java.specification.maintenance.version = 1\n    java.specification.name = Java Platform API Specification\n    java.specification.vendor = Oracle Corporation\n    java.specification.version = 17\n    java.vendor = N/A\n    java.vendor.url = https://openjdk.java.net/\n    java.vendor.url.bug = https://bugreport.java.com/bugreport/\n    java.version = 17.0.20-internal\n    java.version.date = 2026-07-21\n    java.vm.compressedOopsMode = 32-bit\n    java.vm.info = interpreted mode\n    java.vm.name = OpenJDK 64-Bit Zero VM\n    java.vm.specification.name = Java Virtual Machine Specification\n    java.vm.specification.vendor = Oracle Corporation\n    java.vm.specification.version = 17\n    java.vm.vendor = Oracle Corporation\n    java.vm.version = 17.0.20-internal+0-adhoc.root.source\n    jdk.debug = release\n    line.separator = \\n \n    native.encoding = UTF-8\n    os.arch = amd64\n    os.name = Linux\n    os.version = 5.10.210\n    path.separator = :\n    sun.arch.data.model = 64\n    sun.boot.library.path = /data/storage/el1/bundle/libs/x86_64\n    sun.cpu.endian = little\n    sun.io.unicode.encoding = UnicodeLittle\n    sun.java.launcher = SUN_STANDARD\n    sun.jnu.encoding = UTF-8\n    user.dir = /data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA\n    user.home = ?\n    user.language = en\n    user.name = ?\n\nopenjdk version \"17.0.20-internal\" 2026-07-21\nOpenJDK Runtime Environment (build 17.0.20-internal+0-adhoc.root.source)\nOpenJDK 64-Bit Zero VM (build 17.0.20-internal+0-adhoc.root.source, interpreted mode)\n"
+    },
+    "javacProbe": {
+      "ok": true,
+      "arguments": [
+        "javac",
+        "-J-Xms16m",
+        "-J-Xmx128m",
+        "-J-XX:+UseSerialGC",
+        "-version"
+      ],
+      "cleanupConfirmed": true,
+      "exitCode": 0,
+      "outputLimitExceeded": false,
+      "stdout": "javac 17.0.20-internal\n",
+      "stderr": ""
+    },
+    "javaVersion": "17.0.20-internal",
+    "javaVmName": "OpenJDK 64-Bit Zero VM",
+    "javaRuntimeVersion": "17.0.20-internal+0-adhoc.root.source",
+    "osArch": "amd64",
+    "isJava17Runtime": true,
+    "isJavac17Compiler": true
+  },
+  "diagnostics": {
+    "ok": true,
+    "cleanupConfirmed": true,
+    "offsetUnits": "UTF-16 code units",
+    "checks": {
+      "typeErrors.complete": true,
+      "typeErrors.validUtf16Ranges": true,
+      "typeErrors.count": true,
+      "typeErrors.Main.java.exactRange": true,
+      "typeErrors.Helper.java.exactRange": true,
+      "typeErrors.noUserExecution": true,
+      "typeErrors.noSourceWrites": true,
+      "typeErrors.newBufferNotSaved": true,
+      "typeErrors.noProjectOutputs": true,
+      "typeErrors.scratchClean": true,
+      "syntaxError.complete": true,
+      "syntaxError.validUtf16Ranges": true,
+      "syntaxError.exactInsertion": true,
+      "syntaxError.noUserExecution": true,
+      "syntaxError.noSourceWrites": true,
+      "syntaxError.newBufferNotSaved": true,
+      "syntaxError.noProjectOutputs": true,
+      "syntaxError.scratchClean": true,
+      "clean.complete": true,
+      "clean.validUtf16Ranges": true,
+      "clean.noDiagnostics": true,
+      "clean.noUserExecution": true,
+      "clean.noSourceWrites": true,
+      "clean.newBufferNotSaved": true,
+      "clean.noProjectOutputs": true,
+      "clean.scratchClean": true
+    },
+    "cases": {
+      "typeErrors": {
+        "status": "complete",
+        "message": null,
+        "buffers": {
+          "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Main.java": {
+            "text": "package probe;\r\npublic class Main {\r\n  static { mark(); }\r\n  static void mark() { try { java.nio.file.Files.writeString(java.nio.file.Path.of(\"/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/USER_CODE_WAS_EXECUTED\"), \"EXECUTED\"); } catch (java.io.IOException e) { throw new RuntimeException(e); } }\r\n  public static void main(String[] args) { mark(); }\r\n  String unicode = \"😀中文\";\r\n  String message = Helper.edited();\r\n  int extra = Extra.answer();\r\n\tint number = \"wrong\";\r\n}\r\n",
+            "utf16Length": 514,
+            "sha256": "fe3e753ab6e90a6668c39611f6baace09cc0fcfdf5027f32d39bf71146bbf401"
+          },
+          "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Helper.java": {
+            "text": "package probe;\r\npublic class Helper {\r\n  static String edited() { String text = \"😀中文\"; return 42; }\r\n}\r\n",
+            "utf16Length": 105,
+            "sha256": "960c71cf09925116b4749a4fc5c10833a6fbb1eb89b1b33359c3a740db664459"
+          },
+          "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Extra.java": {
+            "text": "package probe;\r\npublic class Extra { static int answer() { return 17; } }\r\n",
+            "utf16Length": 75,
+            "sha256": "f146ecaed4354eded1fc46d80088fefaa4157f8dfdf4032c3825a71489bec44f"
+          }
+        },
+        "diagnostics": [
+          {
+            "path": "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Helper.java",
+            "offset": 95,
+            "length": 2,
+            "line": 3,
+            "column": 57,
+            "severity": "error",
+            "code": "compiler.err.prob.found.req",
+            "message": "incompatible types: int cannot be converted to java.lang.String",
+            "fragment": "42"
+          },
+          {
+            "path": "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Main.java",
+            "offset": 501,
+            "length": 7,
+            "line": 9,
+            "column": 22,
+            "severity": "error",
+            "code": "compiler.err.prob.found.req",
+            "message": "incompatible types: java.lang.String cannot be converted to int",
+            "fragment": "\"wrong\""
+          }
+        ]
+      },
+      "syntaxError": {
+        "status": "complete",
+        "message": null,
+        "buffers": {
+          "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Main.java": {
+            "text": "package probe;\r\npublic class Main {\r\n  static { mark(); }\r\n  static void mark() { try { java.nio.file.Files.writeString(java.nio.file.Path.of(\"/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/USER_CODE_WAS_EXECUTED\"), \"EXECUTED\"); } catch (java.io.IOException e) { throw new RuntimeException(e); } }\r\n  public static void main(String[] args) { mark(); }\r\n  String unicode = \"😀中文\";\r\n  String message = Helper.edited();\r\n  int extra = Extra.answer();\r\n\tint number = ;\r\n}\r\n",
+            "utf16Length": 507,
+            "sha256": "c60074d4cb97d6a324721df5ecd4d5bd7569835705aee629060aa5d5460a9d5c"
+          },
+          "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Helper.java": {
+            "text": "package probe;\r\npublic class Helper {\r\n  static String edited() { String text = \"😀中文\"; return \"ok\"; }\r\n}\r\n",
+            "utf16Length": 107,
+            "sha256": "2353b706cd4575c180475412f02ba4d868068bd30cb140bf2b95a5b3b634e74a"
+          },
+          "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Extra.java": {
+            "text": "package probe;\r\npublic class Extra { static int answer() { return 17; } }\r\n",
+            "utf16Length": 75,
+            "sha256": "f146ecaed4354eded1fc46d80088fefaa4157f8dfdf4032c3825a71489bec44f"
+          }
+        },
+        "diagnostics": [
+          {
+            "path": "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Main.java",
+            "offset": 501,
+            "length": 0,
+            "line": 9,
+            "column": 22,
+            "severity": "error",
+            "code": "compiler.err.illegal.start.of.expr",
+            "message": "illegal start of expression",
+            "fragment": ""
+          }
+        ]
+      },
+      "clean": {
+        "status": "complete",
+        "message": null,
+        "buffers": {
+          "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Main.java": {
+            "text": "package probe;\r\npublic class Main {\r\n  static { mark(); }\r\n  static void mark() { try { java.nio.file.Files.writeString(java.nio.file.Path.of(\"/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/USER_CODE_WAS_EXECUTED\"), \"EXECUTED\"); } catch (java.io.IOException e) { throw new RuntimeException(e); } }\r\n  public static void main(String[] args) { mark(); }\r\n  String unicode = \"😀中文\";\r\n  String message = Helper.edited();\r\n  int extra = Extra.answer();\r\n\tint number = 17;\r\n}\r\n",
+            "utf16Length": 509,
+            "sha256": "8e25fc5e3e8f75b9e86b424c555e538cd4d0f75825afcc4f508193fa68039080"
+          },
+          "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Helper.java": {
+            "text": "package probe;\r\npublic class Helper {\r\n  static String edited() { String text = \"😀中文\"; return \"ok\"; }\r\n}\r\n",
+            "utf16Length": 107,
+            "sha256": "2353b706cd4575c180475412f02ba4d868068bd30cb140bf2b95a5b3b634e74a"
+          },
+          "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Extra.java": {
+            "text": "package probe;\r\npublic class Extra { static int answer() { return 17; } }\r\n",
+            "utf16Length": 75,
+            "sha256": "f146ecaed4354eded1fc46d80088fefaa4157f8dfdf4032c3825a71489bec44f"
+          }
+        },
+        "diagnostics": []
+      }
+    },
+    "diskSources": {
+      "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Main.java": {
+        "text": "package probe; public class Main { invalid saved buffer }",
+        "sha256Before": "0da2629a30f01689f3c65e25885fb865ad62ee150f8aa01d6f4a4a84c4abe928",
+        "sha256After": "0da2629a30f01689f3c65e25885fb865ad62ee150f8aa01d6f4a4a84c4abe928"
+      },
+      "/data/storage/el2/base/files/qfli_java_runtime_acceptance_LMPJBA/diagnostics-project/probe/Helper.java": {
+        "text": "package probe; public class Helper { invalid saved buffer }",
+        "sha256Before": "d6d09892cca06b2b674b788473fcd145f2699977f76840224bec7b35e4e30ec1",
+        "sha256After": "d6d09892cca06b2b674b788473fcd145f2699977f76840224bec7b35e4e30ec1"
+      }
+    }
+  },
+  "debugger": {
+    "platform": "ohos",
+    "os": "Linux 5.10.210 #1 SMP Sat Sep 12 10:50:46 CST 2026",
+    "checks": {
+      "runtimeProbe": true,
+      "breakpoint": true,
+      "localsBefore": true,
+      "stackMain": true,
+      "stepOver": true,
+      "stepInto": true,
+      "stackCaller": true,
+      "localsAfterStep": true,
+      "stepOut": true,
+      "dynamicBreakpoint": true,
+      "resumeExit": true,
+      "actualStdout": true,
+      "noDebuggerErrors": true,
+      "originalSource": true,
+      "repeatLaunch": true,
+      "terminateSuspended": true
+    },
+    "ok": true,
+    "javaVersion": "17.0.20-internal",
+    "abi": "amd64",
+    "vm": {
+      "name": "OpenJDK 64-Bit Zero VM",
+      "version": "17.0.20-internal",
+      "canPopFrames": false,
+      "canForceEarlyReturn": false
+    }
+  },
+  "cleanupConfirmed": true,
+  "finishedAtUtc": "2026-10-22T07:16:54.725905Z"
+}

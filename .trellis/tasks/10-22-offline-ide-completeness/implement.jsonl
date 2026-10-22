@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/tools-tab.md","reason":"Direct tools tab and product ownership"}
+{"file":".trellis/spec/frontend/content-performance.md","reason":"Catalog compatibility"}
+{"file":".trellis/spec/backend/mobile-jdk.md","reason":"Actual Java toolchain and native process contract"}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Reuse runner and product hooks"}
