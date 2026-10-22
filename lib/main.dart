@@ -15,6 +15,7 @@ import 'package:qfli_studio_core/terminal/shell/command_parser.dart';
 import 'package:qfli_studio_core/terminal/shell/sandbox_shell_backend.dart';
 
 import 'java_runner.dart';
+import 'java_diagnostics.dart';
 import 'java_tools_page.dart';
 
 /// 本 App 的产品名。窗口标题、任务切换器和应用内顶栏都读它。
@@ -30,10 +31,11 @@ StudioProfile _createJavaProfile() => StudioProfile(
   appTitle: _appTitle,
   templates: [ProjectTemplate.empty, ProjectTemplate.java],
   runner: JavaProgramRunner(),
+  codeAnalyzer: JavaDiagnosticAnalyzer(),
   // Java 工具直接嵌入共享 shell 的「工具」tab，终端复用 shell 提供的入口。
   toolsTabBuilder: (store, onOpenTerminal) =>
-      JavaToolsGrid(onOpenTerminal: onOpenTerminal),
-  toolsPageBuilder: (_) => const JavaToolsPage(),
+      JavaToolsGrid(store: store, onOpenTerminal: onOpenTerminal),
+  toolsPageBuilder: (store) => JavaToolsPage(store: store),
   isOffline: true,
   productKey: StudioProductCatalog.jvmxKey,
   showHomeTabs: false,

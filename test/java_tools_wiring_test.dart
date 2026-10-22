@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qfli_java/java_tools_page.dart';
+import 'package:qfli_java/java_debugger_page.dart';
 import 'package:qfli_studio_core/pages/offline_tool_pages.dart';
 import 'package:qfli_studio_core/pages/tools_grid.dart';
 import 'package:qfli_studio_core/widgets/tool_widgets.dart';
@@ -90,7 +91,7 @@ void main() {
 
         expect(find.byType(JavaToolsGrid), findsOneWidget);
         expect(find.byType(ToolsGrid), findsOneWidget);
-        expect(javaTools, hasLength(4));
+        expect(javaTools, hasLength(9));
         expect(commonTools, hasLength(9));
         expect(find.byType(JavaToolsPage), findsNothing);
         expect(find.byType(Scaffold), findsOneWidget);
@@ -122,7 +123,7 @@ void main() {
     }
   }
 
-  testWidgets('the tools tab contains one terminal and thirteen unique tools', (
+  testWidgets('the tools tab contains one terminal and eighteen unique tools', (
     tester,
   ) async {
     await mountTab(tester, size: const Size(1100, 2400), onOpenTerminal: () {});
@@ -136,8 +137,8 @@ void main() {
       ...javaTools.map((tool) => tool.title),
       ...commonTools.map((tool) => tool.title),
     ]);
-    expect(titles, hasLength(14));
-    expect(titles.toSet(), hasLength(14));
+    expect(titles, hasLength(19));
+    expect(titles.toSet(), hasLength(19));
   });
 
   testWidgets('a tool card on the tab opens its own page', (tester) async {
@@ -154,6 +155,20 @@ void main() {
     expect(find.byType(Base64ToolPage), findsOneWidget);
     expect(find.byType(FunctionsTab), findsNothing);
     expect(find.text('URL-safe 字母表（无填充）'), findsOneWidget);
+  });
+
+  testWidgets('debugger card opens directly with the shell project store', (
+    tester,
+  ) async {
+    await mountTab(tester, onOpenTerminal: () {});
+    final grid = tester.widget<JavaToolsGrid>(find.byType(JavaToolsGrid));
+    final card = await revealCard(tester, JavaDebuggerPage.title);
+    await tester.tap(card);
+    await tester.pumpAndSettle();
+    final page = tester.widget<JavaDebuggerPage>(find.byType(JavaDebuggerPage));
+    expect(page.store, same(grid.store));
+    expect(page.store, isNotNull);
+    expect(find.text('启动调试'), findsOneWidget);
   });
 
   testWidgets('the standalone tools page remains available to the shell', (

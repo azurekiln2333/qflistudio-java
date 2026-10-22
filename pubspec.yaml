@@ -19,6 +19,7 @@ dependencies:
   # 不显式声明的话 flutter analyze 会报 depend_on_referenced_packages——
   # 只是靠传递依赖拿到了包，哪天上游不带了就编不过。
   path: ^1.9.1
+  archive: ^4.0.7
 
 dependency_overrides:
   re_editor:
