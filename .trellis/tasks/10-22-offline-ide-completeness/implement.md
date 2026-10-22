@@ -43,4 +43,14 @@ captured. Final app235/235tests and analysisPASS; core Java23/23PASS.
 Core Java content commit9a1c8b9e33bfa938d2b8ad2fc58164c631d1cc75 pushed and
 exact github/main hash verified. Java device window100 EXPLICITLY RELEASED to
 Web91 at global119, emulator remains live; no further Java device operations.
-Java product commit/push and cross-product/physical ARM64 gates remain below.
+Java product commit/push outcomes and remaining cross-product/physical ARM64
+gates are recorded below.
+
+Java product commits completed and non-force pushed to github/main, verified by
+exact ls-remote f461881c2604d81b36b602f354361f584d4077b6:
+142a9f0db39dfe61f5088a7562839d30d09074de (process/mobile tmp fix),
+a377d1ba33f57ced75d2b54912517b4a25f723ae (tools/diagnostics/debugger),
+f461881c2604d81b36b602f354361f584d4077b6 (full audit/harness/evidence).
+The remaining commit/push checkbox applies to outstanding product owners and
+umbrella integration; Java's owned source and evidence are committed. Session
+progress is recorded without archiving this still-in-progress umbrella task.
