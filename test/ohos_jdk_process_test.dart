@@ -15,7 +15,6 @@ void main() {
 
   setUp(() {
     home = Directory.systemTemp.createTempSync('qfli_jvm_transport_');
-    Directory(p.join(home.path, 'tmp')).createSync();
   });
 
   tearDown(() async {
@@ -43,7 +42,12 @@ void main() {
       messenger.setMockMethodCallHandler(channel, (call) async {
         final args = call.arguments as Map;
         if (call.method == 'start') {
-          expect(args['args'], ['java', '-version']);
+          expect(args['args'], [
+            'java',
+            '-Djava.io.tmpdir=${p.join(home.path, 'tmp')}',
+            '-version',
+          ]);
+          expect(Directory(p.join(home.path, 'tmp')).existsSync(), isTrue);
           expect(args['input'], '/dev/null');
           output = File(args['output'] as String)..writeAsBytesSync([]);
           error = File(args['error'] as String)..writeAsBytesSync([]);
@@ -68,6 +72,51 @@ void main() {
       expect(await process.exitCode, 7);
       expect(await stdout, '\u4f60\u597d');
       expect(await stderr, 'diagnostic\n');
+    },
+  );
+
+  test(
+    'all JVM entry modes receive sandbox temp before caller options',
+    () async {
+      final invocations = <List<String>>[
+        ['Main'],
+        ['-m', 'jdk.compiler/com.sun.tools.javac.Main', '-version'],
+        ['--add-modules', 'jdk.jdi', 'DebugHelper'],
+        ['-Djava.io.tmpdir=/explicit/caller/value', 'Main'],
+      ];
+      var started = 0;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        final args = call.arguments as Map;
+        switch (call.method) {
+          case 'start':
+            expect(args['args'], [
+              'java',
+              '-Djava.io.tmpdir=${p.join(home.path, 'tmp')}',
+              ...invocations[started++],
+            ]);
+            expect(Directory(p.join(home.path, 'tmp')).existsSync(), isTrue);
+            File(args['output'] as String).writeAsStringSync('');
+            File(args['error'] as String).writeAsStringSync('');
+            return 100 + started;
+          case 'poll':
+            return 0;
+          default:
+            throw StateError(call.method);
+        }
+      });
+      for (final arguments in invocations) {
+        final process = await OhosJdkProcess.start(
+          home: home.path,
+          libraryDirectory: home.path,
+          arguments: arguments,
+          workingDirectory: home.path,
+        );
+        final stdout = process.stdout.drain<void>();
+        final stderr = process.stderr.drain<void>();
+        expect(await process.exitCode, 0);
+        await Future.wait([stdout, stderr]);
+      }
+      expect(started, invocations.length);
     },
   );
 
