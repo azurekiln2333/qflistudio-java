@@ -86,3 +86,16 @@ install. No private signing material belongs in reports or messages.
 
 Do not archive the umbrella task or mark the original goal complete from this
 handoff. Product commits/pushes are recorded in the task ledger after execution.
+
+## Commits and remote verification
+
+- Core Java content:9a1c8b9e33bfa938d2b8ad2fc58164c631d1cc75, pushed and exact
+  github/main verified before releasing the shared index.
+- Java process/mobile fix:142a9f0db39dfe61f5088a7562839d30d09074de.
+- Java tools/diagnostics/debugger:a377d1ba33f57ced75d2b54912517b4a25f723ae.
+- Java exhaustive harness/evidence:f461881c2604d81b36b602f354361f584d4077b6.
+
+All three Java work commits were non-force pushed together; exact github/main
+ls-remote matched f461881c2604d81b36b602f354361f584d4077b6. A subsequent docs
+handoff commit records these results. Java working tree was clean after the
+work commits. No common workspace/explorer or other products' files were staged.
