@@ -1,0 +1,1025 @@
+{
+  "scope": "host baseline only; not OHOS acceptance",
+  "time": "2026-10-22T02:45:59.904659+00:00",
+  "java": "openjdk version \"17.0.20.1\" 2026-08-18\nOpenJDK Runtime Environment (build 17.0.20.1+1-1-24.04-Ubuntu)\nOpenJDK 64-Bit Server VM (build 17.0.20.1+1-1-24.04-Ubuntu, mixed mode, sharing)\n",
+  "sources": [
+    {
+      "path": "/mnt/d/MyNewProjects/qfli_studio_core/assets/content/examples.json",
+      "sha256": "8d6b333852871dafc5c3d18a9b9fb22d4dd783a7c8594b8a61e887ca678986c9"
+    },
+    {
+      "path": "/mnt/d/MyNewProjects/qfli_studio_core/assets/content/tutorials.json",
+      "sha256": "ead9a068fb5f11f87cbf6d7501756d561aa24680eaf441fe6a3ebdec6afd5672"
+    },
+    {
+      "path": "/mnt/d/MyNewProjects/qfli_studio_core/assets/tutorials/java.json",
+      "sha256": "8578497d27cfd8165db61673afac4724af1b2788a4dd64607899327546c1d03b"
+    }
+  ],
+  "expected": 100,
+  "mirrorCount": 400,
+  "results": [
+    {
+      "id": "java-example-001",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "Hello, Java!\n这一行接着上一行\n",
+      "stderr": "",
+      "expectedOutput": "Hello, Java!\n这一行接着上一行",
+      "sourceSha256": "f626b299e4615762cfa250e9a074aedb35c46ab2f47d552f2a1cff0119563a2d"
+    },
+    {
+      "id": "java-example-002",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "age=20\nprice=19.9\nactive=true\ngrade=A\n",
+      "stderr": "",
+      "expectedOutput": "age=20\nprice=19.9\nactive=true\ngrade=A",
+      "sourceSha256": "b1cdb2b6602301d16963dcfbe7d3ee795dd1f82b521ee05988617c5d437fd865"
+    },
+    {
+      "id": "java-example-003",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "a / b = 3\na % b = 1\na / 2.0 = 3.5\n(a + b) * 2 = 18\n",
+      "stderr": "",
+      "expectedOutput": "a / b = 3\na % b = 1\na / 2.0 = 3.5\n(a + b) * 2 = 18",
+      "sourceSha256": "5770662c0dc075792fbd002f604bbe19bc22b811ac36a743158f8d826efc12e6"
+    },
+    {
+      "id": "java-example-004",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "long=300\ndouble=300.0\ntruncated=3\n",
+      "stderr": "",
+      "expectedOutput": "long=300\ndouble=300.0\ntruncated=3",
+      "sourceSha256": "01f65fba81577aca7f5c1e59c31b88412ef64a37d1cc0665fa174c280ea996ff"
+    },
+    {
+      "id": "java-example-005",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "length=4\nupper=JAVA\ncontains=true\nsub=Java\n",
+      "stderr": "",
+      "expectedOutput": "length=4\nupper=JAVA\ncontains=true\nsub=Java",
+      "sourceSha256": "bd7520e91fb67cfe4b7373438af70d2f0f334e99989632aa2f0adf70f69c0549"
+    },
+    {
+      "id": "java-example-006",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "及格\n",
+      "stderr": "",
+      "expectedOutput": "及格",
+      "sourceSha256": "a9dae860e72bd1c08f59a51678609639b8449989f492dccf9306ab5bdaaa0908"
+    },
+    {
+      "id": "java-example-007",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "SAT -> 周末\n",
+      "stderr": "",
+      "expectedOutput": "SAT -> 周末",
+      "sourceSha256": "07cb3147bc6bcac86bc9d264cb5fb5ab5f5877fbea7a8fb97d55cee0250d00c5"
+    },
+    {
+      "id": "java-example-008",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "sum=15\n",
+      "stderr": "",
+      "expectedOutput": "sum=15",
+      "sourceSha256": "de48f56ce8fe0548bc99226aecd9e3f7d99ca21a78b409b0c4f5b4f79913a6fa"
+    },
+    {
+      "id": "java-example-009",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "count=3\nonce=1\n",
+      "stderr": "",
+      "expectedOutput": "count=3\nonce=1",
+      "sourceSha256": "bd3e62289e5be62c50b752ebc42bc81903f4a176c16f8cad3665fa5a477ec195"
+    },
+    {
+      "id": "java-example-010",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "length=3\nfirst=90\ntotal=253\n",
+      "stderr": "",
+      "expectedOutput": "length=3\nfirst=90\ntotal=253",
+      "sourceSha256": "84b5aef83d3490c531a31b762ea49f7ae677aa4e16b3aa95a1dc86e348f970f4"
+    },
+    {
+      "id": "java-example-011",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "add=7\n你好, Java\n",
+      "stderr": "",
+      "expectedOutput": "add=7\n你好, Java",
+      "sourceSha256": "49ab221735a68d82328c063811b8d69910ed757181b7aafaa5cb17950fd2efa4"
+    },
+    {
+      "id": "java-example-012",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "factorial(5)=120\nfib(7)=13\n",
+      "stderr": "",
+      "expectedOutput": "factorial(5)=120\nfib(7)=13",
+      "sourceSha256": "d71ac598963fd0836b1d8b570c80b7d8dc498d02df249f3436526fbcfb67927a"
+    },
+    {
+      "id": "java-example-013",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "sum=10\nsay=文本:hi\nsay=数字:42\n",
+      "stderr": "",
+      "expectedOutput": "sum=10\nsay=文本:hi\nsay=数字:42",
+      "sourceSha256": "139c945185007fcccf3293bea9c11942d780acc44f18e41bc72fc496cd29f3f8"
+    },
+    {
+      "id": "java-example-014",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "name=HIGH\nweight=3\n",
+      "stderr": "",
+      "expectedOutput": "name=HIGH\nweight=3",
+      "sourceSha256": "96b31f5a1d64d6099fad48bce64322745bc911234325adeef337deb1102fdf26"
+    },
+    {
+      "id": "java-example-015",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "total=354\naverage=88.5\nmax=95\n",
+      "stderr": "",
+      "expectedOutput": "total=354\naverage=88.5\nmax=95",
+      "sourceSha256": "1292f8412be2afb9b211cd04b8984714db1d37a33f2052b42112494860621ff9"
+    },
+    {
+      "id": "java-example-016",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "旺财 年龄 3\n旺财 汪汪\n",
+      "stderr": "",
+      "expectedOutput": "旺财 年龄 3\n旺财 汪汪",
+      "sourceSha256": "b9598511a3a08d47529aad422fdc3c75766f135cfa9d119fb7179fb89903a053"
+    },
+    {
+      "id": "java-example-017",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "(3, 4)\n",
+      "stderr": "",
+      "expectedOutput": "(3, 4)",
+      "sourceSha256": "573e5522b99cabad0fa2b18f6eb958721af36ca710760fd5442725743795d33f"
+    },
+    {
+      "id": "java-example-018",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "balance=150\n",
+      "stderr": "",
+      "expectedOutput": "balance=150",
+      "sourceSha256": "bb99dd6f471b5617a3b93f5992475653ef50574ab7e5d5fc2c32d3c72e5b41e2"
+    },
+    {
+      "id": "java-example-019",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "咪咪: 喵\n",
+      "stderr": "",
+      "expectedOutput": "咪咪: 喵",
+      "sourceSha256": "206d5a2e3395ab027066b045cfcff840082e1141b5ac4ed6cf5c397fe372d8b1"
+    },
+    {
+      "id": "java-example-020",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "area=4.0\narea=3.14159\n",
+      "stderr": "",
+      "expectedOutput": "area=4.0\narea=3.14159",
+      "sourceSha256": "72be01aadb9c9bbf38da29d84f9e2ea6ecaf1f785acfced8230eaf1958ab77d5"
+    },
+    {
+      "id": "java-example-021",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "标题\n正文\n",
+      "stderr": "",
+      "expectedOutput": "标题\n正文",
+      "sourceSha256": "d008abf9688317fb5ced07f6ffefe441b7a318ff3a71a049648b3b4d6c2c9eb1"
+    },
+    {
+      "id": "java-example-022",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "你好, R2\n",
+      "stderr": "",
+      "expectedOutput": "你好, R2",
+      "sourceSha256": "59d06d3c469a3363d3ea8e8e615ed38909fd1cf42defd6e86e1759ef7ffa7618"
+    },
+    {
+      "id": "java-example-023",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "created=3\n",
+      "stderr": "",
+      "expectedOutput": "created=3",
+      "sourceSha256": "1ba69c193e6c1e99e3e22328f8378be554e1d420ef477fedf87ecd49a1364110"
+    },
+    {
+      "id": "java-example-024",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "DATA\n",
+      "stderr": "",
+      "expectedOutput": "DATA",
+      "sourceSha256": "5025d4bb608fa3ba92d830cf3d85ba94f2d3c8f6b774d201c9072b9e2b8bbae0"
+    },
+    {
+      "id": "java-example-025",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "Point[x=2, y=3]\nx=2\nequal=true\n",
+      "stderr": "",
+      "expectedOutput": "Point[x=2, y=3]\nx=2\nequal=true",
+      "sourceSha256": "c30f8403c97e089a7954e7747224c4abf7204c6c07a84dce3579446de01b6cca"
+    },
+    {
+      "id": "java-example-026",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "equals=true\nhashSame=true\n",
+      "stderr": "",
+      "expectedOutput": "equals=true\nhashSame=true",
+      "sourceSha256": "b8dee123805f6c8687822de5d7bda6ab223573987d19a354d58da86048479bc2"
+    },
+    {
+      "id": "java-example-027",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "add=7\nmul=12\n",
+      "stderr": "",
+      "expectedOutput": "add=7\nmul=12",
+      "sourceSha256": "e09dc92189a2e784f606909f569dfc9bc21d828dcecc5e04725e9fc647feee72"
+    },
+    {
+      "id": "java-example-028",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "张三 岁数 30\n",
+      "stderr": "",
+      "expectedOutput": "张三 岁数 30",
+      "sourceSha256": "ed0c4cbda47ec0f086d14734c726f28cf1d6e880c5f3640826956c13d8f3a7e5"
+    },
+    {
+      "id": "java-example-029",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "small == true\nlarge == false\nlarge equals true\n",
+      "stderr": "",
+      "expectedOutput": "small == true\nlarge == false\nlarge equals true",
+      "sourceSha256": "cca49eaf740ca02fcf8bd47103c572ab7474e67575c6ef4811a3497c24dce187"
+    },
+    {
+      "id": "java-example-030",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "balance=110\n",
+      "stderr": "",
+      "expectedOutput": "balance=110",
+      "sourceSha256": "9a1f321e48296ce7fae1bf8e35699ce084ea3dc0335cb428de3e8a479e916df8"
+    },
+    {
+      "id": "java-example-031",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "1,2,3,4,5,\n,5,4,3,2,1\n",
+      "stderr": "",
+      "expectedOutput": "1,2,3,4,5,\n,5,4,3,2,1",
+      "sourceSha256": "8c803f1bbc0fc6d6a10bf516b6afc672acb1a9ceb30cb67c7a03e9485c5365e5"
+    },
+    {
+      "id": "java-example-032",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "year=2024\nid=001\nreplaced=a#b#\n",
+      "stderr": "",
+      "expectedOutput": "year=2024\nid=001\nreplaced=a#b#",
+      "sourceSha256": "d0bb076f53cced6b2cd174134abaea87cfc31e0b7eb84dcdd0980fb0d74050b7"
+    },
+    {
+      "id": "java-example-033",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "sum=0.3\ntotal=59.97\ndiv=3.33\n",
+      "stderr": "",
+      "expectedOutput": "sum=0.3\ntotal=59.97\ndiv=3.33",
+      "sourceSha256": "0c72fe05776fc35aa74806f622a3745ce69c53586887942b82dd4c7a2a2ac9aa"
+    },
+    {
+      "id": "java-example-034",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "next=2024-02-01\nleap=true\nformatted=2024-02-01\n",
+      "stderr": "",
+      "expectedOutput": "next=2024-02-01\nleap=true\nformatted=2024-02-01",
+      "sourceSha256": "6ce0df96af1b2db1a374eb680a29339691ec3a485a07e4ae6f42c8cffb096607"
+    },
+    {
+      "id": "java-example-035",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "张三\n未知\n张三\n",
+      "stderr": "",
+      "expectedOutput": "张三\n未知\n张三",
+      "sourceSha256": "11b1199c2c7a75c793f45abd3a98256bf9f4182f0aaa4fa804fb296456119c5a"
+    },
+    {
+      "id": "java-example-036",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "size=3\nget(1)=Kotlin\ncontains=true\nafterRemove=[Kotlin, Java]\n",
+      "stderr": "",
+      "expectedOutput": "size=3\nget(1)=Kotlin\ncontains=true\nafterRemove=[Kotlin, Java]",
+      "sourceSha256": "90a7fba8543b44eda31b972301e6c8fcfcb3b21c778e3f562c8cec9b77d83d3e"
+    },
+    {
+      "id": "java-example-037",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "added1=true\nadded2=false\nsize=2\ncommon=[java]\n",
+      "stderr": "",
+      "expectedOutput": "added1=true\nadded2=false\nsize=2\ncommon=[java]",
+      "sourceSha256": "76be51b3b7dad958a55b655c0f4f0901d8d218ac03ba9bbefed3e088b94caa2f"
+    },
+    {
+      "id": "java-example-038",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "a=3\nmissing=0\na->3\nb->1\n",
+      "stderr": "",
+      "expectedOutput": "a=3\nmissing=0\na->3\nb->1",
+      "sourceSha256": "06de6c7fea35b4cfe4001d2dc59c76d60e6181a6da07dfe0a1487bc4c77116de"
+    },
+    {
+      "id": "java-example-039",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "[Person[name=乙, age=25], Person[name=丙, age=30], Person[name=甲, age=30]]\n",
+      "stderr": "",
+      "expectedOutput": "[Person[name=乙, age=25], Person[name=丙, age=30], Person[name=甲, age=30]]",
+      "sourceSha256": "4793b625d2bfbffe9bc8cbfa346137f793bf1ae1ffb7e3882753a051671fe802"
+    },
+    {
+      "id": "java-example-040",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "a\n1\n",
+      "stderr": "",
+      "expectedOutput": "a\n1",
+      "sourceSha256": "5f7c8e1c0caa274ff7fa450a90758141fd75c96cc33bead596acd41408f324c8"
+    },
+    {
+      "id": "java-example-041",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "sum=6.5\n[1, 2]\n",
+      "stderr": "",
+      "expectedOutput": "sum=6.5\n[1, 2]",
+      "sourceSha256": "08e74f185e5a765fe6e32712b8582b36864d144cc225c3e068d0f187313cf0ff"
+    },
+    {
+      "id": "java-example-042",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "[1, 2, 4, 5]\nindex=2\n[7, 7, 7]\n",
+      "stderr": "",
+      "expectedOutput": "[1, 2, 4, 5]\nindex=2\n[7, 7, 7]",
+      "sourceSha256": "32754e143cc81aa17e867de7999822613245a7ee69ec876e166e71714c07ba62"
+    },
+    {
+      "id": "java-example-043",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "[1, 3, 5]\n",
+      "stderr": "",
+      "expectedOutput": "[1, 3, 5]",
+      "sourceSha256": "5569c37f8ef4d466cff22408f99233024e7803d3eea2031532e7295014995d05"
+    },
+    {
+      "id": "java-example-044",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "9\npear\n",
+      "stderr": "",
+      "expectedOutput": "9\npear",
+      "sourceSha256": "a0cd26e8f1a5eb4346381181340d57eb262767d5b241c1c6b93215c63ee43afb"
+    },
+    {
+      "id": "java-example-045",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "the 3\nfox 2\ndog 1\nlazy 1\nquick 1\n",
+      "stderr": "",
+      "expectedOutput": "the 3\nfox 2\ndog 1\nlazy 1\nquick 1",
+      "sourceSha256": "b2637aa7e2490e47c187014b000bfa2f9ed8685a5995405ddbb2422f2b6d6375"
+    },
+    {
+      "id": "java-example-046",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "42\n-1\n",
+      "stderr": "",
+      "expectedOutput": "42\n-1",
+      "sourceSha256": "5c9e4da7b12951342ad0a4449c6646857367e6e64ec1d8f277379f006037c621"
+    },
+    {
+      "id": "java-example-047",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "ok:10|done\nbad|done\n",
+      "stderr": "",
+      "expectedOutput": "ok:10|done\nbad|done",
+      "sourceSha256": "cf3b07ad2f64e335500982333a80528509cc9490c1da9243f8771c33aea7c344"
+    },
+    {
+      "id": "java-example-048",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "open db\nusing db\nclose db\n",
+      "stderr": "",
+      "expectedOutput": "open db\nusing db\nclose db",
+      "sourceSha256": "d235075271bca37eb91c3ff6c86e803ef626040489dcb88167d92c087072d310"
+    },
+    {
+      "id": "java-example-049",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "缺少 30\nshortfall=30\n",
+      "stderr": "",
+      "expectedOutput": "缺少 30\nshortfall=30",
+      "sourceSha256": "f114f51c97afd740e51c9c7dd017f08b8b02fa8ea6391f6a864080e7e9ab4c5f"
+    },
+    {
+      "id": "java-example-050",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "lines=2\ncontains=true\n",
+      "stderr": "",
+      "expectedOutput": "lines=2\ncontains=true",
+      "sourceSha256": "6c4f2cec50dadbaf7fc251d1d01db8c21d0fe41b005a3b7c4fac416fabcfa97b"
+    },
+    {
+      "id": "java-example-051",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "line:a\nline:b\n",
+      "stderr": "",
+      "expectedOutput": "line:a\nline:b",
+      "sourceSha256": "36fa8c6e7051e913296650da0d2d8002aaff86bc2f8b3c1100b16218d597ed55"
+    },
+    {
+      "id": "java-example-052",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "isDir=true\nname=b\nexists=true\n",
+      "stderr": "",
+      "expectedOutput": "isDir=true\nname=b\nexists=true",
+      "sourceSha256": "4bc1c209dd2151ed9aa70b9273d8704195e326860561ec1c16835f28ea35330e"
+    },
+    {
+      "id": "java-example-053",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "bytes=6\nfirst=中\n",
+      "stderr": "",
+      "expectedOutput": "bytes=6\nfirst=中",
+      "sourceSha256": "0fab8dcaadab680cf545c6eaa718b1d527c6a68ffc0a8ec7b6d51c116a877e10"
+    },
+    {
+      "id": "java-example-054",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "User[name=Alice, age=30]\n",
+      "stderr": "",
+      "expectedOutput": "User[name=Alice, age=30]",
+      "sourceSha256": "b6ff029899bee89f4a96cf261b657e61b9f11daecbc31bdf1a97a8f8d283aa39"
+    },
+    {
+      "id": "java-example-055",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "correct=你好\nwrongMatches=false\n",
+      "stderr": "",
+      "expectedOutput": "correct=你好\nwrongMatches=false",
+      "sourceSha256": "ce2f5ab616ea4feaec34da9048527f86b3286cacaad3e5ca862f40e9f057bd38"
+    },
+    {
+      "id": "java-example-056",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "host=localhost\nport=8080\nsize=2\n",
+      "stderr": "",
+      "expectedOutput": "host=localhost\nport=8080\nsize=2",
+      "sourceSha256": "82e4b46b4ebe013621215fd621efbc8e2446feeb9a6219550cb3862be9a84f5e"
+    },
+    {
+      "id": "java-example-057",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "total=6\n",
+      "stderr": "",
+      "expectedOutput": "total=6",
+      "sourceSha256": "311d3b888723e1c3d6793ba89e75ee9f97391c46bc5d827f08c48918ae156917"
+    },
+    {
+      "id": "java-example-058",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "work\nclose B\nclose A\ncaught boom\n",
+      "stderr": "",
+      "expectedOutput": "work\nclose B\nclose A\ncaught boom",
+      "sourceSha256": "a5a850f2fed67ecb6c78c3cbdca1efe213ec449341d5a7c910c047a0aea35e47"
+    },
+    {
+      "id": "java-example-059",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "5\nok\nerror=除数不能为 0\n",
+      "stderr": "",
+      "expectedOutput": "5\nok\nerror=除数不能为 0",
+      "sourceSha256": "f85248e513e0bf973978d99016e45a9d359f2a07e87741e0609dacf057882730"
+    },
+    {
+      "id": "java-example-060",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "INFO=2\nERROR=1\nmalformed=1\n",
+      "stderr": "",
+      "expectedOutput": "INFO=2\nERROR=1\nmalformed=1",
+      "sourceSha256": "b405c601723c24c57a05e02ad666c93f7f696d549bd1b32d11ea0d1189addceb"
+    },
+    {
+      "id": "java-example-061",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "7\n12\n",
+      "stderr": "",
+      "expectedOutput": "7\n12",
+      "sourceSha256": "51681928134907395460619844115dd94d0175243712f2d5f9f5442186622f9c"
+    },
+    {
+      "id": "java-example-062",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "square=25\nisEven=true\nconsume:data\nsupplied\n",
+      "stderr": "",
+      "expectedOutput": "square=25\nisEven=true\nconsume:data\nsupplied",
+      "sourceSha256": "49c9288fec91aaa506677aa4d4709985135f9544245b8bd5bb101c5708851c97"
+    },
+    {
+      "id": "java-example-063",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "length=4\n[A, B, C]\n",
+      "stderr": "",
+      "expectedOutput": "length=4\n[A, B, C]",
+      "sourceSha256": "b5d4dab952083d87377a5bb9b91e718c8dfea7748004cb20795bcf378df557b6"
+    },
+    {
+      "id": "java-example-064",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "[4, 16, 36]\nsum=21\n",
+      "stderr": "",
+      "expectedOutput": "[4, 16, 36]\nsum=21",
+      "sourceSha256": "0b13a1ecb4ce840c00e3043fd81e810791aaa867b754f007ce3bf92af7aa4e12"
+    },
+    {
+      "id": "java-example-065",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "sum=14\nmax=5\ncount=3\n",
+      "stderr": "",
+      "expectedOutput": "sum=14\nmax=5\ncount=3",
+      "sourceSha256": "0153e90901563278ff57458393e4f99d62fecda7db2f0f609d84773eeefc5a60"
+    },
+    {
+      "id": "java-example-066",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "red=[apple, cherry]\njoined=apple,banana,cherry\n",
+      "stderr": "",
+      "expectedOutput": "red=[apple, cherry]\njoined=apple,banana,cherry",
+      "sourceSha256": "092ef11b6eddb520d99ab9ee99e924d262eeb6320f5ca63f3a8bf45ffee73f1a"
+    },
+    {
+      "id": "java-example-067",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "[1, 2, 3, 4]\n[a, b, c, d]\n",
+      "stderr": "",
+      "expectedOutput": "[1, 2, 3, 4]\n[a, b, c, d]",
+      "sourceSha256": "602a3dde62067e8e364aca7afb8fa42481b1675c9f374145573ab701f98ba75a"
+    },
+    {
+      "id": "java-example-068",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "[5, 4, 3]\n5\n",
+      "stderr": "",
+      "expectedOutput": "[5, 4, 3]\n5",
+      "sourceSha256": "adfef31590e1268d24ca6cc99cd6e24b7d442a74ab8d5f684c25aac1c50fefe1"
+    },
+    {
+      "id": "java-example-069",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "peek:a\nkeep:a\npeek:b\npeek:c\nkeep:c\n",
+      "stderr": "",
+      "expectedOutput": "peek:a\nkeep:a\npeek:b\npeek:c\nkeep:c",
+      "sourceSha256": "f66dfd83502dff28b9544e5dbb4a4117fa962a13462845e8afcf4004581251a9"
+    },
+    {
+      "id": "java-example-070",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "sequential=500000500000\nparallel=500000500000\nequal=true\n",
+      "stderr": "",
+      "expectedOutput": "sequential=500000500000\nparallel=500000500000\nequal=true",
+      "sourceSha256": "0c5449fcebde66b414991259d019068cd69ec791e15a2116908f2225f3812022"
+    },
+    {
+      "id": "java-example-071",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "sum=30\ndoubled=20\n",
+      "stderr": "",
+      "expectedOutput": "sum=30\ndoubled=20",
+      "sourceSha256": "0108f58ffe72df6e6c6cb8391058711ed00666783f2fe7a4a1a6cf001a58b2dc"
+    },
+    {
+      "id": "java-example-072",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "carol\n5\nnone\n",
+      "stderr": "",
+      "expectedOutput": "carol\n5\nnone",
+      "sourceSha256": "b543b377cbfb94b94b2d4eb81d74e7bde2234fb9b0cd241fb75a820dd8114e27"
+    },
+    {
+      "id": "java-example-073",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "[bag=5, pen=5, book=1]\n",
+      "stderr": "",
+      "expectedOutput": "[bag=5, pen=5, book=1]",
+      "sourceSha256": "32f82e1113c923af54850a7526172f899564a8035f3b3f70d9bf86b5d69b1c4b"
+    },
+    {
+      "id": "java-example-074",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "five=2\ndone\n",
+      "stderr": "",
+      "expectedOutput": "five=2\ndone",
+      "sourceSha256": "cebd44da529c6ca72a077ffcf27c6efb6875f8ac586d59dc50f6ce36eb99cdf6"
+    },
+    {
+      "id": "java-example-075",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "[bob:95, ann:80, cara:80]\n",
+      "stderr": "",
+      "expectedOutput": "[bob:95, ann:80, cara:80]",
+      "sourceSha256": "3a658a7eb3c4e5542f866785150923830d404373fe7b7074e08e89e6b0748989"
+    },
+    {
+      "id": "java-example-076",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "worker running\nmain done\n",
+      "stderr": "",
+      "expectedOutput": "worker running\nmain done",
+      "sourceSha256": "8ef4c75f627bc193b5cc10651ce267f997602f6afd8b3db4da0deddb117e5b2c"
+    },
+    {
+      "id": "java-example-077",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "count=4000\n",
+      "stderr": "",
+      "expectedOutput": "count=4000",
+      "sourceSha256": "ff5b8cd447f18842c99a1e842734cf1513b6241987065b3f88a1efc4c1a23c4a"
+    },
+    {
+      "id": "java-example-078",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "counter=4000\n",
+      "stderr": "",
+      "expectedOutput": "counter=4000",
+      "sourceSha256": "4bdec6b27345354a439289105efb7457069a4960ba10ceb5d53baef8ff5593a4"
+    },
+    {
+      "id": "java-example-079",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "a=2\nb=6\n",
+      "stderr": "",
+      "expectedOutput": "a=2\nb=6",
+      "sourceSha256": "93b9755c15e2ad3d1f94f69da4b30a08856c839d88237f86360a4ee1c0146983"
+    },
+    {
+      "id": "java-example-080",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "timeout\ndone\n",
+      "stderr": "",
+      "expectedOutput": "timeout\ndone",
+      "sourceSha256": "527f1f72bf7585397aee963ca6c817dccd1a890bf8fb2e14f021b5cbd584ed8a"
+    },
+    {
+      "id": "java-example-081",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "hits=2000\n",
+      "stderr": "",
+      "expectedOutput": "hits=2000",
+      "sourceSha256": "01f06cecb9c30d9a7d5438aec0c36f48658a370b813824352d77b02d2d9eb759"
+    },
+    {
+      "id": "java-example-082",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "work done\nwork done\nwork done\nall done\n",
+      "stderr": "",
+      "expectedOutput": "work done\nwork done\nwork done\nall done",
+      "sourceSha256": "93fa6d847be89c5be2f14b49e5cafd02ef930465222b2fa05d2669abb2ab3876"
+    },
+    {
+      "id": "java-example-083",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "stopped\nmain done\n",
+      "stderr": "",
+      "expectedOutput": "stopped\nmain done",
+      "sourceSha256": "a5937c66a966de738b997feb64e865f18a73668af078437e4767b486499b7cd1"
+    },
+    {
+      "id": "java-example-084",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "AB\nBA\nfinished\n",
+      "stderr": "",
+      "expectedOutput": "AB\nBA\nfinished",
+      "sourceSha256": "5b67c53e6ba6f5494b2092187c86712ce7ed525b34881ab1b939f1a05879acc3"
+    },
+    {
+      "id": "java-example-085",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "total=600\n",
+      "stderr": "",
+      "expectedOutput": "total=600",
+      "sourceSha256": "b12ade9d1a02263d842427636084b4e80b75037627d9e545d9450ca2c66b3ed4"
+    },
+    {
+      "id": "java-example-086",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "same=true\nvalue=changed\n",
+      "stderr": "",
+      "expectedOutput": "same=true\nvalue=changed",
+      "sourceSha256": "a7ae0ade04db988dc113c9f4d319154eda413a85512346c415c20d6bd5aa9642"
+    },
+    {
+      "id": "java-example-087",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "支付宝支付 100\n微信支付 200\n",
+      "stderr": "",
+      "expectedOutput": "支付宝支付 100\n微信支付 200",
+      "sourceSha256": "ee5a8101445681d592549ebb3cc3bf5d46291f0446ba663eaae7c46713f4c8b1"
+    },
+    {
+      "id": "java-example-088",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "POST /api (2000ms)\n",
+      "stderr": "",
+      "expectedOutput": "POST /api (2000ms)",
+      "sourceSha256": "a34c0fa12781ecb842aa8dea01af8b8dc18258553f28e2ee0b9e04b96d26ba3e"
+    },
+    {
+      "id": "java-example-089",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "none=100\npercent10=90\nminus20=80\n",
+      "stderr": "",
+      "expectedOutput": "none=100\npercent10=90\nminus20=80",
+      "sourceSha256": "7334a0e9c8d6522659f6e94c4675b8cbb1e4a2143bac2948e82ea15da48a1e63"
+    },
+    {
+      "id": "java-example-090",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "订阅者A: Hello\n订阅者B: Hello\n",
+      "stderr": "",
+      "expectedOutput": "订阅者A: Hello\n订阅者B: Hello",
+      "sourceSha256": "99d10cd7c7e73909b64e0c5d356ccf51367ed2d682342a5dd2f2032769b40551"
+    },
+    {
+      "id": "java-example-091",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "[1, 2, 5, 7, 9]\nindex=3\nmissing=-1\n",
+      "stderr": "",
+      "expectedOutput": "[1, 2, 5, 7, 9]\nindex=3\nmissing=-1",
+      "sourceSha256": "2378e456e6206500a0f4feb59d26754644c03e8149408d3ce38f01b27c5c2817"
+    },
+    {
+      "id": "java-example-092",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "fib=102334155\n",
+      "stderr": "",
+      "expectedOutput": "fib=102334155",
+      "sourceSha256": "9da511352d28b70e62f8debdf314c522f7c3d50dd1686c1628d0e877a4accc70"
+    },
+    {
+      "id": "java-example-093",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "[A, B, C, D]\n",
+      "stderr": "",
+      "expectedOutput": "[A, B, C, D]",
+      "sourceSha256": "715673ac181f91fc7ac07476d09b3ead0c39e6157af2f832d58a389c36bc185a"
+    },
+    {
+      "id": "java-example-094",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "basket=[apple]\nimmutable\n",
+      "stderr": "",
+      "expectedOutput": "basket=[apple]\nimmutable",
+      "sourceSha256": "04041b7b56ad5bb06c1e99c27ae71080a0157538bd26f4099f829325b75efdb2"
+    },
+    {
+      "id": "java-example-095",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "square=9.0\ncircle>0=true\n正方形 side=2.0\npermitted=2\n",
+      "stderr": "",
+      "expectedOutput": "square=9.0\ncircle>0=true\n正方形 side=2.0\npermitted=2",
+      "sourceSha256": "de59315bc909b875b5f87b826db994b5db640d650f2fbc036c0aa1f6ad99319e"
+    },
+    {
+      "id": "java-example-096",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "name=ann\nage=30\n",
+      "stderr": "",
+      "expectedOutput": "name=ann\nage=30",
+      "sourceSha256": "54b4c8b47c65e943404ea52d9162f89cdcf9ab45472b3e5908b6d2c3a11bec08"
+    },
+    {
+      "id": "java-example-097",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "Hello, guest\ncount=0\n",
+      "stderr": "",
+      "expectedOutput": "Hello, guest\ncount=0",
+      "sourceSha256": "e2f6c5e7cc8667ac97164ab753a9ecc43c5bef792c18cf72e41e05fd129e1187"
+    },
+    {
+      "id": "java-example-098",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "1. [x] 写代码\n2. [ ] 写测试\n",
+      "stderr": "",
+      "expectedOutput": "1. [x] 写代码\n2. [ ] 写测试",
+      "sourceSha256": "886da497db4dbfbc896842fd70a392111d708cecf322b3fdb18db7e54328ee92"
+    },
+    {
+      "id": "java-example-099",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "brute=true\nset=true\n",
+      "stderr": "",
+      "expectedOutput": "brute=true\nset=true",
+      "sourceSha256": "e972788f8b530ab3d9aed99c060078583c35925429d0b0b6829c3c518b8436cb"
+    },
+    {
+      "id": "java-example-100",
+      "status": "passed",
+      "compileExit": 0,
+      "exitCode": 0,
+      "stdout": "byOwner={ann=2, bob=1}\ncompletion=0.0\nerror=标题不能为空\n",
+      "stderr": "",
+      "expectedOutput": "byOwner={ann=2, bob=1}\ncompletion=0.0\nerror=标题不能为空",
+      "sourceSha256": "18e43a7b4f27c5fef3704f55d1345f216bd2f7d8ca34a1ffb75c912149aeb190"
+    }
+  ],
+  "passed": 100,
+  "failed": 0
+}

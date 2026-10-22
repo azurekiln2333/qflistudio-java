@@ -1,0 +1,27 @@
+{
+  "before": {
+    "tutorials": {
+      "unrelatedCount": 1540,
+      "unrelatedAndMetadataSha256": "3ae6dd4bee46608bd844deac17092a0649bb6652995b64ed42f19f3e8ecf7943",
+      "javaCount": 100
+    },
+    "examples": {
+      "unrelatedCount": 1540,
+      "unrelatedAndMetadataSha256": "f65037685733ef2cebfdb5a4267eebbe8ae82c3dcaf36256325e51c69185dde5",
+      "javaCount": 100
+    }
+  },
+  "after": {
+    "tutorials": {
+      "unrelatedCount": 1540,
+      "unrelatedAndMetadataSha256": "3ae6dd4bee46608bd844deac17092a0649bb6652995b64ed42f19f3e8ecf7943",
+      "javaCount": 280
+    },
+    "examples": {
+      "unrelatedCount": 1540,
+      "unrelatedAndMetadataSha256": "f65037685733ef2cebfdb5a4267eebbe8ae82c3dcaf36256325e51c69185dde5",
+      "javaCount": 280
+    }
+  },
+  "unchanged": true
+}

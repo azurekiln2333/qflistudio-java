@@ -1,0 +1,37 @@
+{
+  "startedUtc": "2026-10-22T07:09:57.6182735Z",
+  "target": "tools/java_runtime_acceptance.dart",
+  "platform": "ohos-x64",
+  "javaToolOptions": "-Xms16m -Xmx256m -XX:+UseSerialGC",
+  "buildExitCode": 0,
+  "profileRestored": true,
+  "environmentRestored": true,
+  "logPath": "D:\\MyNewProjects\\qfli_java\\build\\java-runtime-acceptance-ohos-x64-build.log",
+  "hap": {
+    "path": "D:\\MyNewProjects\\qfli_java\\ohos\\entry\\build\\default\\outputs\\default\\entry-default-signed.hap",
+    "bytes": 194411333,
+    "sha256": "b3e3354dd16e5e546df0ac545203f613d9402ab353b31b32f3f08d355ea13682",
+    "signedOutput": true,
+    "abi": "x86_64",
+    "verifiedElfCount": 43,
+    "stagedJdkLibraryCount": 40,
+    "jdkAssets": [
+      {
+        "path": "resources/rawfile/jdk-x86_64.json",
+        "bytes": 2222,
+        "sha256": "dc3f2932fcba2ff3504e79ad8023eb034bfd534ea670a33ed37da2de1897454e"
+      },
+      {
+        "path": "resources/rawfile/jdk-x86_64.zip",
+        "bytes": 49396996,
+        "sha256": "c06da209e2008fe799516d3a44344cc0b732c8c3b4f085a63968c8f39d580e46"
+      }
+    ]
+  },
+  "error": null,
+  "originalProfileSha256": "a18ba4389f4f0ff53b8d883dbb4d4da74f8147597a73eec8651fc9b454a3bbf6",
+  "recoveryProfilePath": "D:\\MyNewProjects\\qfli_java\\build\\ohos-audit-profile-20261022T070957618-90304.original",
+  "temporaryProfileSha256": "807ecbdbdf531cb58df5cbf85574b6bbd46a9fd67d4eb24ce022340d9cb6f578",
+  "restoredProfileSha256": "a18ba4389f4f0ff53b8d883dbb4d4da74f8147597a73eec8651fc9b454a3bbf6",
+  "finishedUtc": "2026-10-22T07:10:20.5536068Z"
+}
