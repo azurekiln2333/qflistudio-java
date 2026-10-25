@@ -21,6 +21,7 @@ Make every standalone language app a useful offline IDE and ensure all learning 
 | R11 | Python modules/package management in sandbox; investigate pip or bundled common compatible modules. | Runtime-specific import inventory, real offline module installation/management and execution. Python root. |
 | R12 | Standalone apps remain completely offline. | New-feature source and profile/route tests; exclude network-dependent features. All roots. |
 | R13 | Thorough checks, conventional commits, push where possible. | Current final checks, scoped commit hashes and actual remote results. Every owner. |
+| R14 | Rewrite the Java README in Simplified Chinese, Traditional Chinese and English. | Same supported scope and confidence across three linked files; controlled Chinese review, `python scripts/ste-lint-zh.py <file>`, local-link checks, scoped conventional commit and verified non-force push. Four existing Java Herdr Pi share separate file ownership. |
 
 ## Confirmed current facts
 
