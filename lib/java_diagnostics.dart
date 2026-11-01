@@ -106,10 +106,13 @@ class JavaDiagnosticAnalyzer implements CodeAnalyzer {
   @override
   Future<CodeAnalysisResult> analyze(CodeAnalysisRequest request) async {
     final project = p.normalize(p.absolute(request.projectPath));
+    final projectIdentity = _pathIdentity(project);
     final cancellation = JavaAnalysisCancellation();
-    _activeChecks[project]?.cancel();
-    _activeChecks[project] = cancellation;
+    _activeChecks[projectIdentity]?.cancel();
+    _activeChecks[projectIdentity] = cancellation;
     try {
+      final issue = await _requestIssue(request);
+      if (issue != null) return CodeAnalysisResult(unavailableReason: issue);
       final result = await analyzeProject(
         projectPath: project,
         unsavedBuffers: {
@@ -119,7 +122,9 @@ class JavaDiagnosticAnalyzer implements CodeAnalyzer {
         cancellation: cancellation,
       );
       if (result.status != JavaAnalysisStatus.complete) {
-        return CodeAnalysisResult(unavailableReason: result.message);
+        return CodeAnalysisResult(
+          unavailableReason: result.message ?? 'Java 本地检查未完成。',
+        );
       }
       return CodeAnalysisResult(
         // Some compiler failures (for example an unreadable JAR) have no
@@ -152,10 +157,48 @@ class JavaDiagnosticAnalyzer implements CodeAnalyzer {
         ],
       );
     } finally {
-      if (identical(_activeChecks[project], cancellation)) {
-        _activeChecks.remove(project);
+      if (identical(_activeChecks[projectIdentity], cancellation)) {
+        _activeChecks.remove(projectIdentity);
       }
     }
+  }
+
+  Future<String?> _requestIssue(CodeAnalysisRequest request) async {
+    if (request.language.toLowerCase() != 'java' ||
+        p.extension(request.activeFilePath).toLowerCase() != '.java') {
+      return 'Java 检查器仅支持活动 Java 源文件（.java）。';
+    }
+    final root = request.projectPath;
+    if (!_canonicalPath(root) ||
+        request.revision < 0 ||
+        request.documents.length > maxSources) {
+      return 'Java 项目快照无效或超过本地检查范围。';
+    }
+    try {
+      if (await FileSystemEntity.type(root, followLinks: false) !=
+              FileSystemEntityType.directory ||
+          !p.equals(await Directory(root).resolveSymbolicLinks(), root) ||
+          !await _ownedSnapshotPath(root, request.activeFilePath)) {
+        return '活动 Java 文件必须属于当前项目的规范物理路径。';
+      }
+      final seen = <String>{};
+      CodeDocumentSnapshot? active;
+      for (final document in request.documents) {
+        if (!await _ownedSnapshotPath(root, document.path) ||
+            !seen.add(_pathIdentity(document.path)) ||
+            document.revision < 0 ||
+            !_validUtf16(document.text)) {
+          return 'Java 文档快照包含无效路径、重复别名或无效内容/版本。';
+        }
+        if (p.equals(document.path, request.activeFilePath)) active = document;
+      }
+      if (active == null || active.revision != request.revision) {
+        return '活动 Java 文件缺少当前版本的编辑器快照，请重新检查。';
+      }
+    } on FileSystemException {
+      return '无法验证 Java 文档快照的项目归属，请重新打开文件。';
+    }
+    return null;
   }
 
   Future<JavaAnalysisResult> analyzeProject({
@@ -167,39 +210,56 @@ class JavaDiagnosticAnalyzer implements CodeAnalyzer {
     Directory? scratch;
     try {
       control.check();
+      final capturedBuffers = Map<String, String>.of(unsavedBuffers);
       final project = p.normalize(p.absolute(projectPath));
-      if (!await Directory(project).exists()) {
+      if (!await Directory(project).exists() ||
+          !p.equals(await Directory(project).resolveSymbolicLinks(), project)) {
         return const JavaAnalysisResult(
           status: JavaAnalysisStatus.failed,
-          message: 'Java 项目目录不存在。',
+          message: 'Java 项目目录不存在或不是规范物理路径。',
         );
       }
-      // Copy the caller's map before the first asynchronous snapshot read.
+      // Validate every capture, while compiling only Java buffers below.
       final buffers = <String, String>{};
-      for (final entry in unsavedBuffers.entries) {
+      final seen = <String>{};
+      for (final entry in capturedBuffers.entries) {
         final path = p.normalize(
           p.isAbsolute(entry.key) ? entry.key : p.join(project, entry.key),
         );
-        if (!p.isWithin(project, path)) {
+        if (!await _ownedSnapshotPath(project, path) ||
+            !seen.add(_pathIdentity(path)) ||
+            !_validUtf16(entry.value)) {
           return const JavaAnalysisResult(
             status: JavaAnalysisStatus.failed,
-            message: '未保存的 Java 文件不在当前项目内。',
+            message: '未保存的文件不在当前项目内，或包含重复别名/无效文本。',
           );
         }
         if (p.extension(path).toLowerCase() == '.java') {
           buffers[path] = entry.value;
         }
       }
-      final paths = {
-        ...JavaProgramRunner.collectProjectJavaFiles(Directory(project)),
-        ...buffers.keys,
-      }.toList()..sort();
+      final bufferTexts = {
+        for (final entry in buffers.entries)
+          _pathIdentity(entry.key): entry.value,
+      };
+      final paths = <String, String>{
+        for (final path in buffers.keys) _pathIdentity(path): path,
+        // Keep the saved filename's case: javac requires Main.java even when
+        // Windows accepts an editor capture spelling it MAIN.JAVA.
+        for (final path in JavaProgramRunner.collectProjectJavaFiles(
+          Directory(project),
+        ))
+          _pathIdentity(path): path,
+      }.values.toList()..sort();
       if (paths.length > maxSources) {
         throw const _AnalysisStopped(JavaAnalysisStatus.limitExceeded);
       }
       control.check();
       if (paths.isEmpty) {
-        return const JavaAnalysisResult(status: JavaAnalysisStatus.complete);
+        return const JavaAnalysisResult(
+          status: JavaAnalysisStatus.unavailable,
+          message: '当前项目没有可检查的 Java 源文件。',
+        );
       }
       String? mobileTemporary;
       if (MobileJdk.isMobile && temporaryDirectory == null) {
@@ -220,7 +280,12 @@ class JavaDiagnosticAnalyzer implements CodeAnalyzer {
       var totalBytes = 0;
       for (final path in paths) {
         control.check();
-        final buffer = buffers[path];
+        if (!await _ownedSnapshotPath(project, path)) {
+          throw const FormatException(
+            'Java source is outside physical project',
+          );
+        }
+        final buffer = bufferTexts[_pathIdentity(path)];
         if (buffer == null) {
           // Stat before reading so an oversized saved file is never loaded.
           totalBytes += await File(path).length();
@@ -251,6 +316,9 @@ class JavaDiagnosticAnalyzer implements CodeAnalyzer {
       var jarBytes = 0;
       for (final jar in jars) {
         control.check();
+        if (!await _ownedSnapshotPath(project, jar)) {
+          throw const FormatException('Java JAR is outside physical project');
+        }
         jarBytes += await File(jar).length();
         if (jarBytes > maxJarBytes) {
           throw const _AnalysisStopped(JavaAnalysisStatus.limitExceeded);
@@ -416,14 +484,22 @@ class JavaDiagnosticAnalyzer implements CodeAnalyzer {
     // after the child has actually exited (including the OHOS native child).
     final stdout = collect(process.stdout);
     final stderr = collect(process.stderr);
+    // Transport failures may precede the native exit acknowledgement. Observe
+    // them now, while retaining the later awaits that report the real failure.
+    stdout.ignore();
+    stderr.ignore();
     control.active = process.cancel;
-    if (control.stopped != null) await process.cancel?.call();
+    // A late-started compiler still owns its snapshot even when cancellation
+    // fails. The control retries cleanup; only actual exit permits unwinding.
+    if (control.stopped != null) control.cancelActive();
     try {
       final code = await process.exitCode;
-      final output = await stdout;
-      final error = await stderr;
+      // Wait for both pipes even if the first one failed. The default
+      // non-eager join preserves its failure while retaining snapshot ownership
+      // until the other collector also settles.
+      final output = await Future.wait<List<String>>([stdout, stderr]);
       control.check();
-      return _ToolOutput(code, output, error);
+      return _ToolOutput(code, output[0], output[1]);
     } finally {
       control.active = null;
     }
@@ -483,6 +559,55 @@ class JavaDiagnosticAnalyzer implements CodeAnalyzer {
 
 String _decodeField(String value) => utf8.decode(base64.decode(value));
 
+bool _canonicalPath(String path) =>
+    path.isNotEmpty &&
+    !path.contains('\u0000') &&
+    _validUtf16(path) &&
+    p.isAbsolute(path) &&
+    path == p.normalize(path);
+
+String _pathIdentity(String path) =>
+    Platform.isWindows ? path.toLowerCase() : path;
+
+/// New unsaved files are valid only beneath an existing physical owned parent.
+/// Resolving the nearest existing ancestor also detects links to missing files.
+Future<bool> _ownedSnapshotPath(String root, String path) async {
+  if (!_canonicalPath(path) || !p.isWithin(root, path)) return false;
+  var current = path;
+  while (true) {
+    final type = await FileSystemEntity.type(current, followLinks: false);
+    if (type == FileSystemEntityType.notFound) {
+      if (p.equals(current, root)) return false;
+      current = p.dirname(current);
+      continue;
+    }
+    if (type == FileSystemEntityType.link ||
+        (p.equals(current, path)
+            ? type != FileSystemEntityType.file
+            : type != FileSystemEntityType.directory)) {
+      return false;
+    }
+    final resolved = type == FileSystemEntityType.file
+        ? await File(current).resolveSymbolicLinks()
+        : await Directory(current).resolveSymbolicLinks();
+    return p.equals(resolved, current);
+  }
+}
+
+bool _validUtf16(String text) {
+  for (var index = 0; index < text.length; index++) {
+    final unit = text.codeUnitAt(index);
+    if (unit >= 0xd800 && unit <= 0xdbff) {
+      if (++index >= text.length) return false;
+      final low = text.codeUnitAt(index);
+      if (low < 0xdc00 || low > 0xdfff) return false;
+    } else if (unit >= 0xdc00 && unit <= 0xdfff) {
+      return false;
+    }
+  }
+  return true;
+}
+
 class _SnapshotSource {
   const _SnapshotSource(this.path, this.text);
   final String path;
@@ -510,6 +635,9 @@ class _AnalysisControl {
 
   final JavaAnalysisCancellation? cancellation;
   late final Timer _timer;
+  Timer? _cancelRetry;
+  bool _cancelling = false;
+  bool _disposed = false;
   Future<void> Function()? active;
   JavaAnalysisStatus? stopped;
 
@@ -518,11 +646,27 @@ class _AnalysisControl {
   void stop(JavaAnalysisStatus status) {
     if (stopped != null) return;
     stopped = status;
+    cancelActive();
+  }
+
+  void cancelActive() {
     final cancel = active;
-    if (cancel != null) {
-      // _run awaits exit and the streams; the stop request itself stays sync.
-      unawaited(cancel().catchError((Object _) {}));
-    }
+    if (_disposed || _cancelling || cancel == null || stopped == null) return;
+    _cancelling = true;
+    // _run retains the actual exit/stream waits and the snapshot. A failed
+    // native cleanup attempt must leave a retry owner instead of an orphan.
+    unawaited(
+      Future<void>.sync(cancel)
+          .catchError((Object _) {
+            if (!_disposed) {
+              _cancelRetry = Timer(
+                const Duration(milliseconds: 100),
+                cancelActive,
+              );
+            }
+          })
+          .whenComplete(() => _cancelling = false),
+    );
   }
 
   void check() {
@@ -532,7 +676,9 @@ class _AnalysisControl {
   }
 
   void dispose() {
+    _disposed = true;
     _timer.cancel();
+    _cancelRetry?.cancel();
     cancellation?._listeners.remove(_cancel);
   }
 }

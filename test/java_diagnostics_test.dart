@@ -39,6 +39,260 @@ void main() {
 
   void expectClean() => expect(temporary.listSync(), isEmpty);
 
+  CodeAnalysisRequest request(
+    String activePath, {
+    String language = 'java',
+    int revision = 3,
+    List<CodeDocumentSnapshot>? documents,
+  }) => CodeAnalysisRequest(
+    projectPath: project.path,
+    activeFilePath: activePath,
+    language: language,
+    revision: revision,
+    documents:
+        documents ??
+        [
+          CodeDocumentSnapshot(
+            path: activePath,
+            text: File(activePath).readAsStringSync(),
+            revision: revision,
+          ),
+        ],
+  );
+
+  test('unsupported active files never start javac or claim clean', () async {
+    final readme = write('README.md', '# Project');
+    final runner = _ControlledRunner(unavailable: true);
+    final provider = analyzer(runner: runner);
+    for (final language in ['markdown', 'java']) {
+      final result = await provider.analyze(
+        request(readme.path, language: language),
+      );
+      expect(result.unavailableReason, contains('.java'));
+      expect(result.diagnostics, isEmpty);
+    }
+    write('Main.java', 'public class Main {}');
+    final result = await provider.analyze(request(readme.path));
+    expect(result.unavailableReason, contains('.java'));
+    expect(result.diagnostics, isEmpty);
+    expect(runner.calls, 0);
+    expectClean();
+  });
+
+  test(
+    'wrong language and invalid active captures fail before javac',
+    () async {
+      final file = write('Main.java', 'public class Main {}');
+      final runner = _ControlledRunner(unavailable: true);
+      final provider = analyzer(runner: runner);
+      final valid = CodeDocumentSnapshot(
+        path: file.path,
+        text: 'class Main {}',
+        revision: 3,
+      );
+      for (final invalid in [
+        request(file.path, language: 'kotlin'),
+        request(file.path, documents: []),
+        request(file.path, revision: 4, documents: [valid]),
+        request(file.path, revision: -1, documents: [valid]),
+        request(file.path, documents: [valid, valid]),
+        request(
+          file.path,
+          documents: [
+            CodeDocumentSnapshot(
+              path: 'Main.java',
+              text: 'class Main {}',
+              revision: 3,
+            ),
+          ],
+        ),
+        request(
+          file.path,
+          documents: [
+            CodeDocumentSnapshot(
+              path: p.join(project.path, 'nested', '..', 'Main.java'),
+              text: 'class Main {}',
+              revision: 3,
+            ),
+          ],
+        ),
+        request(
+          file.path,
+          documents: [
+            CodeDocumentSnapshot(
+              path: file.path,
+              text: String.fromCharCode(0xd800),
+              revision: 3,
+            ),
+          ],
+        ),
+        request(
+          file.path,
+          documents: [
+            valid,
+            CodeDocumentSnapshot(
+              path: p.join(project.path, 'README.md'),
+              text: 'other',
+              revision: -1,
+            ),
+          ],
+        ),
+        request(
+          file.path,
+          documents: [
+            valid,
+            CodeDocumentSnapshot(
+              path: p.join(project.parent.path, 'Foreign.md'),
+              text: 'foreign non-Java capture',
+              revision: 0,
+            ),
+          ],
+        ),
+        request(
+          p.join(project.parent.path, 'Foreign.java'),
+          documents: [valid],
+        ),
+      ]) {
+        final result = await provider.analyze(invalid);
+        expect(result.unavailableReason, isNotEmpty);
+        expect(result.diagnostics, isEmpty);
+      }
+      expect(runner.calls, 0);
+      expectClean();
+    },
+  );
+
+  test(
+    'linked active files and missing paths under linked parents are rejected',
+    () async {
+      final foreign = Directory(p.join(temporary.path, 'foreign'))
+        ..createSync();
+      File(
+        p.join(foreign.path, 'Main.java'),
+      ).writeAsStringSync('class Main {}');
+      final link = Link(p.join(project.path, 'linked'));
+      await link.create(foreign.path);
+      try {
+        final runner = _ControlledRunner(unavailable: true);
+        for (final name in ['Main.java', 'New.java']) {
+          final path = p.join(link.path, name);
+          final result = await analyzer(runner: runner).analyze(
+            request(
+              path,
+              documents: [
+                CodeDocumentSnapshot(
+                  path: path,
+                  text: 'class Main {}',
+                  revision: 3,
+                ),
+              ],
+            ),
+          );
+          expect(result.unavailableReason, isNotEmpty);
+          expect(result.diagnostics, isEmpty);
+        }
+        expect(runner.calls, 0);
+        expect(temporary.listSync().map((file) => p.basename(file.path)), [
+          'foreign',
+        ]);
+      } finally {
+        await link.delete();
+      }
+    },
+  );
+
+  for (final useCaseAlias in [false, true]) {
+    test(
+      'a new editor request cancels the prior project check (case alias=$useCaseAlias)',
+      () async {
+        final file = write('Main.java', 'public class Main {}');
+        final runner = _SupersedingRunner();
+        final provider = analyzer(runner: runner);
+        final first = provider.analyze(request(file.path));
+        try {
+          await runner.started.future.timeout(const Duration(seconds: 2));
+          final secondRoot = useCaseAlias
+              ? project.path.toUpperCase()
+              : project.path;
+          final second = await provider.analyze(
+            CodeAnalysisRequest(
+              projectPath: secondRoot,
+              activeFilePath: file.path,
+              language: 'java',
+              revision: 4,
+              documents: [
+                CodeDocumentSnapshot(
+                  path: file.path,
+                  text: 'public class Main { int edited = 4; }',
+                  revision: 4,
+                ),
+              ],
+            ),
+          );
+          final superseded = await first.timeout(const Duration(seconds: 2));
+          expect(superseded.unavailableReason, contains('取消'));
+          expect(second.unavailableReason, contains('missing JDK'));
+          expect(runner.calls, 2);
+          expect(runner.cancellations, 1);
+          expect(file.readAsStringSync(), 'public class Main {}');
+          expectClean();
+        } finally {
+          runner.finish();
+          await first;
+        }
+      },
+      skip: useCaseAlias && !Platform.isWindows,
+    );
+  }
+
+  test(
+    'a raw project without Java sources is unavailable before tools',
+    () async {
+      write('README.md', '# Project');
+      final runner = _ControlledRunner(unavailable: true);
+      final result = await analyzer(
+        runner: runner,
+      ).analyzeProject(projectPath: project.path);
+      expect(result.status, JavaAnalysisStatus.unavailable);
+      expect(result.message, contains('没有可检查'));
+      expect(result.diagnostics, isEmpty);
+      expect(runner.calls, 0);
+      expectClean();
+    },
+  );
+
+  test(
+    'real public adapter checks Java while ignoring other owned file types',
+    () async {
+      final file = write('Main.java', 'public class Main { int n = 1; }');
+      final readme = write('README.md', '# Saved');
+      const text =
+          'public class Main {\r\n String s = "😀中文"; int n = 2;\r\n static { if (true) throw new AssertionError("must not execute"); }\r\n}';
+      final result = await analyzer().analyze(
+        request(
+          file.path,
+          documents: [
+            CodeDocumentSnapshot(path: file.path, text: text, revision: 3),
+            CodeDocumentSnapshot(
+              path: readme.path,
+              text: 'not valid Java }',
+              revision: 9,
+            ),
+          ],
+        ),
+      );
+      expect(result.unavailableReason, isNull);
+      expect(result.diagnostics, isEmpty);
+      expect(file.readAsStringSync(), 'public class Main { int n = 1; }');
+      expect(readme.readAsStringSync(), '# Saved');
+      expect(project.listSync().map((file) => p.basename(file.path)).toSet(), {
+        'Main.java',
+        'README.md',
+      });
+      expectClean();
+    },
+  );
+
   test(
     'raw toolchain preserves real output paused across process exit',
     () async {
@@ -210,6 +464,44 @@ void main() {
     );
     expectClean();
   });
+
+  test(
+    'Windows identity aliases cannot duplicate captures or lose a dirty overlay',
+    () async {
+      final file = write('Main.java', 'public class Main { int n = 1; }');
+      final alias = file.path.toUpperCase();
+      const text = 'public class Main { int n = "dirty"; }';
+      final captured = CodeDocumentSnapshot(
+        path: alias,
+        text: text,
+        revision: 3,
+      );
+      final runner = _ControlledRunner(unavailable: true);
+      final duplicate = await analyzer(runner: runner).analyze(
+        request(
+          file.path,
+          documents: [
+            captured,
+            CodeDocumentSnapshot(path: file.path, text: text, revision: 3),
+          ],
+        ),
+      );
+      expect(duplicate.unavailableReason, isNotEmpty);
+      expect(runner.calls, 0);
+      final result = await analyzer().analyze(
+        request(file.path, documents: [captured]),
+      );
+      expect(result.unavailableReason, isNull);
+      final error = result.diagnostics.singleWhere(
+        (diagnostic) => diagnostic.code == 'compiler.err.prob.found.req',
+      );
+      expect(p.equals(error.filePath, file.path), isTrue);
+      expect(text.substring(error.startOffset, error.endOffset), '"dirty"');
+      expect(file.readAsStringSync(), 'public class Main { int n = 1; }');
+      expectClean();
+    },
+    skip: !Platform.isWindows,
+  );
 
   test(
     'real desktop javac is terminated before its scratch files are deleted',
@@ -604,6 +896,114 @@ public class DangerProcessor extends AbstractProcessor {
     expectClean();
   });
 
+  test(
+    'early transport failure waits for actual exit before cleanup',
+    () async {
+      final source = write('Main.java', 'class Main {}');
+      final runner = _FailingStreamRunner();
+      var completed = false;
+      final analysis = analyzer(runner: runner)
+          .analyzeProject(projectPath: project.path)
+          .then((result) {
+            completed = true;
+            return result;
+          });
+      try {
+        final snapshot = await runner.started.future;
+        runner.stderr.addError(const FileSystemException('native poll failed'));
+        await Future<void>.delayed(Duration.zero);
+        expect(completed, isFalse);
+        expect(Directory(snapshot).existsSync(), isTrue);
+        runner.exit.complete(137);
+        await runner.stderr.close();
+        final result = await analysis;
+        expect(result.status, JavaAnalysisStatus.failed);
+        expect(result.message, contains('native poll failed'));
+        expect(result.diagnostics, isEmpty);
+        expect(source.readAsStringSync(), 'class Main {}');
+        expectClean();
+      } finally {
+        if (!runner.exit.isCompleted) runner.exit.complete(137);
+        await runner.stderr.close();
+        await analysis;
+      }
+    },
+  );
+
+  test(
+    'stdout failure retains the snapshot until stderr reaches EOF after exit',
+    () async {
+      final source = write('Main.java', 'class Main {}');
+      final runner = _SeparateDrainFailureRunner();
+      var completed = false;
+      final analysis = analyzer(runner: runner)
+          .analyzeProject(projectPath: project.path)
+          .then((result) {
+            completed = true;
+            return result;
+          });
+      try {
+        final snapshot = await runner.started.future;
+        runner.stdout.addError(
+          const FileSystemException('stdout transport failed'),
+        );
+        await runner.stdout.close();
+        runner.exit.complete(137);
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        expect(completed, isFalse);
+        expect(Directory(snapshot).existsSync(), isTrue);
+
+        runner.stderr.add('final stderr before EOF');
+        await runner.stderr.close();
+        final result = await analysis;
+        expect(result.status, JavaAnalysisStatus.failed);
+        expect(result.message, contains('stdout transport failed'));
+        expect(result.diagnostics, isEmpty);
+        expect(source.readAsStringSync(), 'class Main {}');
+        expectClean();
+      } finally {
+        if (!runner.exit.isCompleted) runner.exit.complete(137);
+        await Future.wait([runner.stdout.close(), runner.stderr.close()]);
+        await analysis;
+      }
+    },
+  );
+
+  test(
+    'late-start cancellation retries failure and retains the live snapshot',
+    () async {
+      final source = write('Main.java', 'class Main {}');
+      final runner = _LateCancellationRunner();
+      final cancellation = JavaAnalysisCancellation();
+      var completed = false;
+      final analysis = analyzer(runner: runner)
+          .analyzeProject(projectPath: project.path, cancellation: cancellation)
+          .then((result) {
+            completed = true;
+            return result;
+          });
+      try {
+        final snapshot = await runner.started.future;
+        cancellation.cancel();
+        runner.release.complete();
+        await runner.retryStarted.future.timeout(const Duration(seconds: 2));
+        expect(runner.cancellations, 2);
+        expect(completed, isFalse);
+        expect(Directory(snapshot).existsSync(), isTrue);
+        runner.exit.complete(137);
+        final result = await analysis;
+        expect(result.status, JavaAnalysisStatus.cancelled);
+        expect(result.diagnostics, isEmpty);
+        expect(source.readAsStringSync(), 'class Main {}');
+        expectClean();
+      } finally {
+        if (!runner.release.isCompleted) runner.release.complete();
+        if (!runner.exit.isCompleted) runner.exit.complete(137);
+        await analysis;
+      }
+    },
+  );
+
   test('timeout kills the active compiler and reports a tool status', () async {
     write('Main.java', 'class Main {}');
     final runner = _ControlledRunner();
@@ -684,6 +1084,129 @@ class _ControlledRunner extends JavaProgramRunner {
         snapshotExistedAtCancel = Directory(workingDirectory).existsSync();
         if (!exit.isCompleted) exit.complete(-1);
         await exit.future;
+      },
+    );
+  }
+}
+
+class _FailingStreamRunner extends JavaProgramRunner {
+  final started = Completer<String>();
+  final exit = Completer<int>();
+  final stderr = StreamController<String>();
+
+  @override
+  Future<ProgramRunResult?> runToolchainCommand({
+    required String workingDirectory,
+    required List<String> arguments,
+    bool isolatedEnvironment = false,
+  }) async {
+    started.complete(workingDirectory);
+    return ProgramRunResult(
+      title: 'failing transport',
+      stdout: const Stream.empty(),
+      stderr: stderr.stream,
+      exitCode: exit.future,
+      cancel: () async {
+        if (!exit.isCompleted) exit.complete(137);
+        await exit.future;
+      },
+    );
+  }
+}
+
+class _SeparateDrainFailureRunner extends JavaProgramRunner {
+  final started = Completer<String>();
+  final exit = Completer<int>();
+  final stdout = StreamController<String>();
+  final stderr = StreamController<String>();
+
+  @override
+  Future<ProgramRunResult?> runToolchainCommand({
+    required String workingDirectory,
+    required List<String> arguments,
+    bool isolatedEnvironment = false,
+  }) async {
+    started.complete(workingDirectory);
+    return ProgramRunResult(
+      title: 'transport with independently drained pipes',
+      stdout: stdout.stream,
+      stderr: stderr.stream,
+      exitCode: exit.future,
+      cancel: () async {
+        if (!exit.isCompleted) exit.complete(137);
+        await exit.future;
+      },
+    );
+  }
+}
+
+class _LateCancellationRunner extends JavaProgramRunner {
+  final started = Completer<String>();
+  final release = Completer<void>();
+  final exit = Completer<int>();
+  final retryStarted = Completer<void>();
+  int cancellations = 0;
+
+  @override
+  Future<ProgramRunResult?> runToolchainCommand({
+    required String workingDirectory,
+    required List<String> arguments,
+    bool isolatedEnvironment = false,
+  }) async {
+    started.complete(workingDirectory);
+    await release.future;
+    return ProgramRunResult(
+      title: 'late compiler',
+      stdout: const Stream.empty(),
+      stderr: const Stream.empty(),
+      exitCode: exit.future,
+      cancel: () async {
+        cancellations++;
+        if (cancellations == 1) {
+          throw const FileSystemException('first native cancel failed');
+        }
+        retryStarted.complete();
+        await exit.future;
+      },
+    );
+  }
+}
+
+class _SupersedingRunner extends JavaProgramRunner {
+  final started = Completer<void>();
+  final _exit = Completer<int>();
+  int calls = 0;
+  int cancellations = 0;
+
+  void finish() {
+    if (!_exit.isCompleted) _exit.complete(-1);
+  }
+
+  @override
+  Future<ProgramRunResult?> runToolchainCommand({
+    required String workingDirectory,
+    required List<String> arguments,
+    bool isolatedEnvironment = false,
+  }) async {
+    calls++;
+    if (calls > 1) {
+      return ProgramRunResult(
+        title: 'unavailable',
+        stdout: const Stream.empty(),
+        stderr: Stream.value('missing JDK'),
+        exitCode: Future.value(kProgramNotRunExitCode),
+      );
+    }
+    started.complete();
+    return ProgramRunResult(
+      title: 'superseded javac',
+      stdout: const Stream.empty(),
+      stderr: const Stream.empty(),
+      exitCode: _exit.future,
+      cancel: () async {
+        cancellations++;
+        finish();
+        await _exit.future;
       },
     );
   }
