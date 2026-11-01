@@ -303,3 +303,99 @@ validation. Its tested SHA-256 is
 229b98b41520281e643359ca115d03252c329fc955464d04427d2cc1738d665c.
 Independent progress-record review passed. This checkpoint records evidence
 only; Java product/runtime changes remain uncommitted pending their own gates.
+
+## October 26 Java EE environment request R15
+
+- [x] Confirmed environment scope beyond the JDK. qflisql owns the database.
+- [x] Dispatched all four existing Herdr Pi in workspace w28. Authoritative
+  live state confirmed all four working after their assignments.
+- [x] Recorded single-decoder config and exclusive source ownership in
+  research/javaee-environment-contract-20261026.md.
+- [ ] Complete product runner dependency/resource/deployment integration.
+- [ ] Package and validate missing offline framework/JSON/JDBC/JSP artifacts.
+- [ ] Complete direct environment tool and non-overwriting fresh scaffold.
+- [ ] Confirm the SQL owner's real JDBC connectivity contract.
+- [ ] Independently review, obtain fresh host grant and execute actual HTTP,
+  form, resource, JSON/JSP and Stop/restart acceptance through the runner.
+- [ ] Verify installed OHOS independently, commit verified owned batches and
+  push each configured remote. Keep every unverified R1-R15 gate open.
+
+### Source and first host checkpoint
+
+The four Pi delivered isolated Boot/Jakarta and legacy Servlet/JSP/JSTL
+profiles, locked offline packs, a central project decoder, deployment/runtime
+integration, the environment tool and fresh-project scaffolds. Pack validation
+passed 1294 checks. All eight corrupt-pack controls were caught. Read-only
+offline verification matched 43 Boot JARs, nine legacy JARs and 89 license
+documents with no network requests.
+
+The repaired host protocol passed 59 pure controls and independent source
+review. C accepted it at event882. Actual grant883 ran the scoped formatter
+and failed with exit65 on two Dart parse defects. Analysis, Flutter tests and
+the JVM did not run. Eleven permitted formatter changes were retained.
+The original tool dd4673 returned terminal1. Relay c70002 returned terminal0.
+All owned Jobs were terminal/active0 with closed handles. The final actual
+relay observation was 7.3265895 seconds after ACK. Event886 and root proof887
+record safe resource release, not validation success.
+
+Both parse corrections passed independent source review: the bundle library
+directive precedes imports, and the HTTP helper invokes its async closure
+without the extra parenthesis. New READY890 binds the formatted and repaired
+4142-input snapshot at unchanged core5b3c48c7. Readiness SHA-256 is
+f2e21cb640c85f6aaac694f762434cce1bf053f4e0b09eaeddd8b48cf8c70cd1.
+Its source manifest is
+e72ec14d6e2a9ad195ad19e9d27545a1139166f15a33b45f70b9a3853ed0a2ce.
+No new grant or SDK run follows from READY. The actual HTTP, qflisql,
+Java17-runtime and installed-OHOS gates remain open.
+
+Evidence: research/javaee-host-gate/runs/20261026T081503565719Z/ contains
+the raw formatter logs, exact Job records, original tool observations and
+root-publication-proof.json. Grant883 is consumed and cannot be replayed.
+
+### Actual current-source gate905
+
+Fresh grant905 consumed READY890. Its fresh pre-ACK inventory matched all
+4142 frozen inputs. Scoped formatting passed and changed only the bundle
+module and HTTP test. Analysis then exited1 with 31 diagnostics. The selected
+tests, actual HTTP and JVM did not run. The diagnostics concern Java-owned
+nullability, fixture argument signatures, imports and lint findings.
+
+The original execution40783b retained session83491 until actual terminal
+7e43b2, exit1. Its outer PID was79256 with creation FILETIME
+134374829562315473. All owned Jobs reached active0 with verified identities
+and closed handles. Relay620fe3 actually exited0 and delivered event908.
+The final relay observation records ACK+16.8536404 seconds. Publication proof
+reports delivered=true and passed=false. C independently accepted resource
+release at910. Safe resource release does not establish product acceptance.
+
+Evidence: research/javaee-host-gate/runs/20261026T100919743197Z/ contains the
+format/analysis logs, original and relay observations and publication proof.
+Grant905 is consumed. Source repairs require independent review and a new
+readiness snapshot. Another SDK/JVM run requires a separate fresh grant.
+Actual HTTP, qflisql, Java17-runtime, installed-OHOS and unverified R1-R15
+requirements remain open. The shared core and unrelated work stay preserved.
+
+All 31 diagnostics received mechanical source repairs in ten owned files.
+Independent source review passed with no blockers. Negative matcher assertions
+remain discriminating. Template fixtures explicitly declare their absent JSTL
+capability. The UI reads the captured nullable configuration safely. No warning
+suppression or assertion removal was introduced. Scoped whitespace checks pass.
+Actual formatting, analysis and runtime validation of these repairs remain
+unrun. research/javaee-analysis-repair-20261026.json records the original
+diagnostics and reviewed file hashes.
+
+NEWREADY917 freezes the reviewed repairs as readiness-20261026-04.json.
+Its SHA-256 is
+af68350e2cc2e01eeea81b5599dc48b92ec062ea9061cd61b42b47aa31f95ddc.
+The 4142-input canonical digest is
+e90a916375bb9b8848ac65db38709ca3534db0433c057e7ed5f33d0d9cafb032.
+Relative to READY890, only the ten reviewed files and four matching package
+aliases changed. No input was added or removed. Core and protocol hashes
+remain unchanged. This readiness requests a separate grant and starts no SDK.
+
+C explicitly deferred scheduling at event918. Its native memory point at
+2026-10-26T10:38:48.0810189Z recorded 934133760 bytes of commit headroom.
+This is an attributed point observation, not a capacity guarantee. No Java
+host reservation or new grant exists. C plans source binding review and its
+narrow controls before Java, subject to a fresh capacity decision. READY917
+remains frozen. No SDK/JVM launch or consumed-grant replay follows this defer.

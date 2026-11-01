@@ -4,6 +4,7 @@ import 'package:qfli_java/java_tools_page.dart';
 import 'package:qfli_java/java_debugger_page.dart';
 import 'package:qfli_java/java_tools_pages.dart';
 import 'package:qfli_java/java_developer_tool_pages.dart';
+import 'package:qfli_java/java_web_environment_page.dart';
 import 'package:qfli_studio_core/pages/content_tools_pages.dart';
 import 'package:qfli_studio_core/pages/offline_tool_pages.dart';
 import 'package:qfli_studio_core/pages/tools_grid.dart';
@@ -96,10 +97,11 @@ void main() {
       JavaClassFileToolPage.title,
       JavaJarToolPage.title,
       JavaDebuggerPage.title,
+      JavaWebEnvironmentPage.title,
     ]);
     expect(commonTools, hasLength(9));
     final titles = [...javaTools, ...commonTools].map((tool) => tool.title);
-    expect(titles.toSet(), hasLength(18), reason: 'no duplicated tool cards');
+    expect(titles.toSet(), hasLength(19), reason: 'no duplicated tool cards');
     expect(find.text('Java'), findsOneWidget);
     expect(find.text('通用'), findsOneWidget);
   });
@@ -163,6 +165,19 @@ void main() {
       expect(find.byType(JavaJsonToolPage), findsNothing);
     });
   }
+
+  testWidgets('the JavaEE environment card opens its own page', (tester) async {
+    await mount(tester, size: const Size(1100, 2400));
+    expect(find.byType(JavaWebEnvironmentPage), findsNothing);
+    await tester.tap(await revealCard(tester, JavaWebEnvironmentPage.title));
+    await settle(tester);
+
+    expect(find.byType(JavaWebEnvironmentPage), findsOneWidget);
+    expect(find.byType(JavaToolsPage), findsNothing);
+    // Nothing is inspected until a project is chosen, so no file access runs.
+    expect(find.text('请选择一个本地项目'), findsOneWidget);
+    expect(find.textContaining('尚未检查项目'), findsOneWidget);
+  });
 
   testWidgets('the Java integer card still converts input', (tester) async {
     await mount(tester, size: const Size(1100, 2400));

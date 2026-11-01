@@ -5,6 +5,7 @@ import 'package:qfli_studio_core/store/project_store.dart';
 import 'java_debugger_page.dart';
 import 'java_developer_tool_pages.dart';
 import 'java_tools_pages.dart';
+import 'java_web_environment_page.dart';
 
 /// Java-specific tools contributed to the shared tools grid.
 ///
@@ -62,7 +63,15 @@ List<ToolDefinition> _javaTools([ProjectStore? store]) => [
     builder: (_) => const JavaJarToolPage(),
   ),
   _debuggerTool(store),
+  _javaWebEnvironmentTool(store),
 ];
+
+ToolDefinition _javaWebEnvironmentTool([ProjectStore? store]) => ToolDefinition(
+  icon: Icons.dns_outlined,
+  title: JavaWebEnvironmentPage.title,
+  description: '检查离线包与项目配置，按需创建环境',
+  builder: (_) => JavaWebEnvironmentPage(store: store),
+);
 
 ToolDefinition _debuggerTool([ProjectStore? store]) => ToolDefinition(
   icon: Icons.pest_control_outlined,

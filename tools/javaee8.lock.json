@@ -1,0 +1,390 @@
+{
+  "packId": "javaee8",
+  "displayName": "Java EE 8",
+  "version": "9.0.123",
+  "apiLevel": "Java EE 8: Servlet 4.0, JSP 2.3, EL 3.0, JSTL 1.2",
+  "javaTarget": 17,
+  "servletNamespace": "javax.servlet",
+  "containerVersion": "9.0.123",
+  "assetDirectory": "assets/javaee8",
+  "note": "Profile \"javaee8\". Isolated javax pack: it shares no artifact with the spring-boot pack and contains no Spring Framework. Container assets only; the launcher is p5 scope.",
+  "profiles": [
+    "javaee8"
+  ],
+  "artifacts": [
+    {
+      "mavenPath": "javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar",
+      "file": "javax.servlet-api-4.0.1.jar",
+      "sha256": "83a03dd877d3674576f0da7b90755c8524af099ccf0607fc61aa971535ad7c60",
+      "bytes": 95505,
+      "artifactId": "javax.servlet-api",
+      "version": "4.0.1",
+      "role": "servlet",
+      "scope": "compile",
+      "license": "CDDL-1.0 OR GPL-2.0-with-classpath-exception",
+      "status": "verified",
+      "purpose": "Servlet 4.0 API for javac only",
+      "versionEvidence": "no Spring Boot BOM applies; the version comes from the artifact metadata recorded at acquisition",
+      "licenseFiles": [
+        "META-INF_LICENSE.txt"
+      ],
+      "licenseDocumentAvailable": true,
+      "groupId": "javax.servlet",
+      "publishedDigest": "sha1",
+      "publishedDigestVerified": true,
+      "publishedDigestAt": "2026-10-26T04:28:30Z",
+      "licenseEntries": [
+        "META-INF_LICENSE.txt"
+      ],
+      "licenseHashes": {
+        "META-INF_LICENSE.txt": {
+          "bytes": 36116,
+          "sha256": "a4c80869daf4350b6773bd5e6ee1d0a6cc52b63db3a3d2dc20961b0cdd272a5c"
+        }
+      }
+    },
+    {
+      "mavenPath": "javax/servlet/jsp/javax.servlet.jsp-api/2.3.3/javax.servlet.jsp-api-2.3.3.jar",
+      "file": "javax.servlet.jsp-api-2.3.3.jar",
+      "sha256": "409a534d275ef0958a2c1692472da30e3706bfe6933d56c039376f53f13689b7",
+      "bytes": 54200,
+      "artifactId": "javax.servlet.jsp-api",
+      "version": "2.3.3",
+      "role": "jsp",
+      "scope": "compile",
+      "license": "CDDL-1.0 OR GPL-2.0-with-classpath-exception",
+      "status": "verified",
+      "purpose": "JSP 2.3 API for javac only",
+      "versionEvidence": "no Spring Boot BOM applies; the version comes from the artifact metadata recorded at acquisition",
+      "licenseFiles": [
+        "META-INF_maven_javax.servlet.jsp_javax.servlet.jsp-api_pom.xml"
+      ],
+      "licenseDocumentAvailable": true,
+      "licenseDocumentNote": "The archive ships no standalone licence file. This documented POM is the packaged licence evidence and is stored beside the pack. Licence block: <license> <name>CDDL + GPLv2 with classpath exception</name> <url>://oss.oracle.com/licenses/CDDL+GPL-1.1</url> <distribution>repo</distribution> <comments>A business-friendly OSS license</comments> </license>",
+      "groupId": "javax.servlet.jsp",
+      "publishedDigest": "sha1",
+      "publishedDigestVerified": true,
+      "publishedDigestAt": "2026-10-26T04:28:30Z",
+      "licenseEntries": [
+        "META-INF/maven/javax.servlet.jsp/javax.servlet.jsp-api/pom.xml"
+      ],
+      "licenseHashes": {
+        "META-INF_maven_javax.servlet.jsp_javax.servlet.jsp-api_pom.xml": {
+          "bytes": 12502,
+          "sha256": "814c71e10870ff788535f8f8f9ba7568b872522c93f7f29dc9da6e84e2965f28"
+        }
+      }
+    },
+    {
+      "mavenPath": "javax/servlet/jsp/jstl/javax.servlet.jsp.jstl-api/1.2.2/javax.servlet.jsp.jstl-api-1.2.2.jar",
+      "file": "javax.servlet.jsp.jstl-api-1.2.2.jar",
+      "sha256": "5524b3542fe832b76386e72f60f737b83ba064ff12aa5cd0cd42afa191af4d90",
+      "bytes": 45905,
+      "artifactId": "javax.servlet.jsp.jstl-api",
+      "version": "1.2.2",
+      "role": "jstl",
+      "scope": "runtime",
+      "license": "CDDL-1.0 OR GPL-2.0-with-classpath-exception",
+      "status": "verified",
+      "purpose": "JSTL 1.2 API",
+      "versionEvidence": "no Spring Boot BOM applies; the version comes from the artifact metadata recorded at acquisition",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "licenseDocumentAvailable": true,
+      "groupId": "javax.servlet.jsp.jstl",
+      "publishedDigest": "sha1",
+      "publishedDigestVerified": true,
+      "publishedDigestAt": "2026-10-26T04:28:30Z",
+      "licenseEntries": [
+        "LICENSE"
+      ],
+      "licenseHashes": {
+        "LICENSE": {
+          "bytes": 39395,
+          "sha256": "1b087ad282cb3cd0a11e4e160318eab4ff0995aae7d22e6ac0d30367e196c6e3"
+        }
+      }
+    },
+    {
+      "mavenPath": "org/apache/tomcat/tomcat-annotations-api/9.0.123/tomcat-annotations-api-9.0.123.jar",
+      "file": "tomcat-annotations-api-9.0.123.jar",
+      "sha256": "a3e80cb7f94028f18b6ae7240e7592eebd4966082fe85eae0228a1aca960ea7f",
+      "bytes": 13363,
+      "artifactId": "tomcat-annotations-api",
+      "version": "9.0.123",
+      "role": "servlet",
+      "scope": "runtime",
+      "license": "Apache-2.0",
+      "status": "verified",
+      "purpose": "javax.annotation API used by the container",
+      "versionEvidence": "no Spring Boot BOM applies; the version comes from the artifact metadata recorded at acquisition",
+      "licenseFiles": [
+        "META-INF_LICENSE",
+        "META-INF_NOTICE"
+      ],
+      "licenseDocumentAvailable": true,
+      "groupId": "org.apache.tomcat",
+      "publishedDigest": "sha256",
+      "publishedDigestVerified": true,
+      "publishedDigestAt": "2026-10-26T04:28:30Z",
+      "licenseEntries": [
+        "META-INF_LICENSE",
+        "META-INF_NOTICE"
+      ],
+      "licenseHashes": {
+        "META-INF_LICENSE": {
+          "bytes": 11358,
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        "META-INF_NOTICE": {
+          "bytes": 167,
+          "sha256": "0317acaa42a5e48bec061cf009cb5c8b4b8ff845f3c6ba548f67c5c22c29fc96"
+        }
+      }
+    },
+    {
+      "mavenPath": "org/apache/tomcat/embed/tomcat-embed-core/9.0.123/tomcat-embed-core-9.0.123.jar",
+      "file": "tomcat-embed-core-9.0.123.jar",
+      "sha256": "b83d5d966835215ccbb18744b948d17b9da96bc3359d05b23ec00ab3b4d3e04f",
+      "bytes": 3758789,
+      "artifactId": "tomcat-embed-core",
+      "version": "9.0.123",
+      "role": "servlet",
+      "scope": "runtime",
+      "license": "Apache-2.0",
+      "status": "verified",
+      "purpose": "Servlet 4.0 container, javax namespace",
+      "versionEvidence": "no Spring Boot BOM applies; the version comes from the artifact metadata recorded at acquisition",
+      "licenseFiles": [
+        "META-INF_LICENSE",
+        "META-INF_NOTICE"
+      ],
+      "licenseDocumentAvailable": true,
+      "groupId": "org.apache.tomcat.embed",
+      "publishedDigest": "sha256",
+      "publishedDigestVerified": true,
+      "publishedDigestAt": "2026-10-26T04:28:30Z",
+      "licenseEntries": [
+        "META-INF_LICENSE",
+        "META-INF_NOTICE"
+      ],
+      "licenseHashes": {
+        "META-INF_LICENSE": {
+          "bytes": 30703,
+          "sha256": "eba97ee38af4094c4b4ef99f2e4451e325a364c14c8f95d486bb30bfc17df9c7"
+        },
+        "META-INF_NOTICE": {
+          "bytes": 821,
+          "sha256": "234d3234bb332895157270092fa2a11e80aa0b3d70d59e13de0eed4c2adb1790"
+        }
+      }
+    },
+    {
+      "mavenPath": "org/apache/tomcat/embed/tomcat-embed-el/9.0.123/tomcat-embed-el-9.0.123.jar",
+      "file": "tomcat-embed-el-9.0.123.jar",
+      "sha256": "c3668a06c5d9247f993890e0c137474e3dcf8ce7b03b61d99dd247f2dcbc73ec",
+      "bytes": 263639,
+      "artifactId": "tomcat-embed-el",
+      "version": "9.0.123",
+      "role": "servlet",
+      "scope": "runtime",
+      "license": "Apache-2.0",
+      "status": "verified",
+      "purpose": "EL implementation used by JSP",
+      "versionEvidence": "no Spring Boot BOM applies; the version comes from the artifact metadata recorded at acquisition",
+      "licenseFiles": [
+        "META-INF_LICENSE",
+        "META-INF_NOTICE"
+      ],
+      "licenseDocumentAvailable": true,
+      "groupId": "org.apache.tomcat.embed",
+      "publishedDigest": "sha256",
+      "publishedDigestVerified": true,
+      "publishedDigestAt": "2026-10-26T04:28:30Z",
+      "licenseEntries": [
+        "META-INF_LICENSE",
+        "META-INF_NOTICE"
+      ],
+      "licenseHashes": {
+        "META-INF_LICENSE": {
+          "bytes": 11358,
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        "META-INF_NOTICE": {
+          "bytes": 167,
+          "sha256": "0317acaa42a5e48bec061cf009cb5c8b4b8ff845f3c6ba548f67c5c22c29fc96"
+        }
+      }
+    },
+    {
+      "mavenPath": "org/apache/tomcat/embed/tomcat-embed-jasper/9.0.123/tomcat-embed-jasper-9.0.123.jar",
+      "file": "tomcat-embed-jasper-9.0.123.jar",
+      "sha256": "596e80c942f47c4951eb5f51034d3a54de8c2e1b9de76921ffbfbb1bcaefc38c",
+      "bytes": 658373,
+      "artifactId": "tomcat-embed-jasper",
+      "version": "9.0.123",
+      "role": "jsp",
+      "scope": "runtime",
+      "license": "Apache-2.0",
+      "status": "verified",
+      "purpose": "JSP engine with its own compiler path",
+      "versionEvidence": "no Spring Boot BOM applies; the version comes from the artifact metadata recorded at acquisition",
+      "licenseFiles": [
+        "META-INF_LICENSE",
+        "META-INF_NOTICE"
+      ],
+      "licenseDocumentAvailable": true,
+      "groupId": "org.apache.tomcat.embed",
+      "publishedDigest": "sha256",
+      "publishedDigestVerified": true,
+      "publishedDigestAt": "2026-10-26T04:28:30Z",
+      "licenseEntries": [
+        "META-INF_LICENSE",
+        "META-INF_NOTICE"
+      ],
+      "licenseHashes": {
+        "META-INF_LICENSE": {
+          "bytes": 11358,
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        "META-INF_NOTICE": {
+          "bytes": 167,
+          "sha256": "0317acaa42a5e48bec061cf009cb5c8b4b8ff845f3c6ba548f67c5c22c29fc96"
+        }
+      }
+    },
+    {
+      "mavenPath": "org/eclipse/jdt/ecj/3.46.100/ecj-3.46.100.jar",
+      "file": "ecj-3.46.100.jar",
+      "sha256": "74c93172475fee0cd4e6eefb44233516dd40525642da35d009146d97ea598229",
+      "bytes": 3384534,
+      "artifactId": "ecj",
+      "version": "3.46.100",
+      "role": "jsp",
+      "scope": "runtime",
+      "license": "EPL-2.0",
+      "status": "verified",
+      "purpose": "Compiler Jasper uses to compile JSP pages at run time",
+      "versionEvidence": "no Spring Boot BOM applies; the version comes from the artifact metadata recorded at acquisition",
+      "licenseFiles": [
+        "about.html"
+      ],
+      "licenseStatement": "The archive ships about.html as its licence document. No LICENSE entry exists in the jar.",
+      "licenseDocumentAvailable": true,
+      "groupId": "org.eclipse.jdt",
+      "publishedDigest": "sha1",
+      "publishedDigestVerified": true,
+      "publishedDigestAt": "2026-10-26T04:28:30Z",
+      "licenseEntries": [
+        "about.html"
+      ],
+      "licenseHashes": {
+        "about.html": {
+          "bytes": 1460,
+          "sha256": "ee66d2fb3b4c0d2ed2e7f698bc9ed4e3d6cf77fa5caf40ad03296125db1ac5f0"
+        }
+      }
+    },
+    {
+      "mavenPath": "org/glassfish/web/javax.servlet.jsp.jstl/1.2.5/javax.servlet.jsp.jstl-1.2.5.jar",
+      "file": "javax.servlet.jsp.jstl-1.2.5.jar",
+      "sha256": "1019e72c0f1aeded026e11c7ba26f0ced9a2f1f68075153dd74e9ede8dd3b601",
+      "bytes": 3684212,
+      "artifactId": "javax.servlet.jsp.jstl",
+      "version": "1.2.5",
+      "role": "jstl",
+      "scope": "runtime",
+      "license": "CDDL-1.0 OR GPL-2.0-with-classpath-exception",
+      "status": "verified",
+      "purpose": "JSTL 1.2 implementation and tag libraries",
+      "versionEvidence": "no Spring Boot BOM applies; the version comes from the artifact metadata recorded at acquisition",
+      "licenseFiles": [
+        "META-INF_maven_org.glassfish.web_javax.servlet.jsp.jstl_pom.xml"
+      ],
+      "licenseDocumentAvailable": true,
+      "licenseDocumentNote": "The archive ships no standalone licence file. This documented POM is the packaged licence evidence and is stored beside the pack. Licence block: <license> <name>CDDL + GPLv2 with classpath exception</name> <url>http://glassfish.dev.java.net/nonav/public/CDDL+GPL.html</url> <distribution>repo</distribution> <comments>A business-friendly OSS license</comments> </li",
+      "groupId": "org.glassfish.web",
+      "publishedDigest": "sha1",
+      "publishedDigestVerified": true,
+      "publishedDigestAt": "2026-10-26T04:28:30Z",
+      "licenseEntries": [
+        "META-INF/maven/org.glassfish.web/javax.servlet.jsp.jstl/pom.xml"
+      ],
+      "licenseHashes": {
+        "META-INF_maven_org.glassfish.web_javax.servlet.jsp.jstl_pom.xml": {
+          "bytes": 18221,
+          "sha256": "04dfa61e41d3f821130870f100084c00f54799a6b43ad4c8a00e507ece848e4e"
+        }
+      }
+    }
+  ],
+  "rules": {
+    "servletNamespacesAreExclusive": true,
+    "onePackPerDirectory": true,
+    "requirePinnedHashBeforeFetch": true,
+    "refuseUnmentionedMavenPath": true,
+    "verifyPublishedSha1": true,
+    "namespaces": {
+      "javax.servlet": "javaee8"
+    },
+    "forbiddenArtifacts": [
+      {
+        "pattern": "com/h2database/**",
+        "reason": "qflisql owns the database; no embedded database"
+      },
+      {
+        "pattern": "org/hsqldb/**",
+        "reason": "qflisql owns the database; no embedded database"
+      },
+      {
+        "pattern": "org/apache/derby/**",
+        "reason": "qflisql owns the database; no embedded database"
+      },
+      {
+        "pattern": "org/xerial/sqlite-jdbc/**",
+        "reason": "qflisql owns the database; no embedded database"
+      },
+      {
+        "pattern": "org/hibernate/**",
+        "reason": "no JPA or ORM entity manager"
+      },
+      {
+        "pattern": "jakarta/persistence/**",
+        "reason": "no JPA"
+      },
+      {
+        "pattern": "org/springframework/data/**",
+        "reason": "no Spring Data"
+      },
+      {
+        "pattern": "org/springframework/security/**",
+        "reason": "no Spring Security"
+      },
+      {
+        "pattern": "org/apache/tomcat/tomcat/**",
+        "reason": "a Tomcat distribution is not an embeddable runtime"
+      },
+      {
+        "pattern": "org/apache/tomcat/tomcat-catalina/**",
+        "reason": "a Tomcat distribution is not an embeddable runtime"
+      },
+      {
+        "pattern": "org/apache/tomcat/tomcat-util/**",
+        "reason": "a Tomcat distribution is not an embeddable runtime"
+      }
+    ],
+    "licenseNotices": {
+      "Apache-2.0": "copy META-INF/LICENSE* and META-INF/NOTICE* from the archive",
+      "GPL-2.0-with-classpath-exception": "copy the Universal FOSS Exception text from the archive",
+      "CDDL-1.0 OR GPL-2.0-with-classpath-exception": "copy META-INF/LICENSE* from the archive",
+      "EPL-2.0 OR GPL-2.0-with-classpath-exception": "copy META-INF/LICENSE* and META-INF/NOTICE* from the archive",
+      "EPL-2.0": "copy META-INF/LICENSE* from the archive"
+    },
+    "noFullEePlatform": "Only tomcat-embed-* artifacts. No EAR, EJB, JTA or full Tomcat distribution.",
+    "frozenProfileNames": [
+      "spring-boot",
+      "javaee8"
+    ]
+  }
+}

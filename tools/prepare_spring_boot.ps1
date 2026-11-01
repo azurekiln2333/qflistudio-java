@@ -1,110 +1,61 @@
 <#
 .SYNOPSIS
-Downloads and verifies the pinned Spring Boot dependency set used by the
-QFLIJVMX Spring Boot template and by the HarmonyOS feasibility probe.
+Materialises the Java EE offline packs from their frozen lock files.
 
 .DESCRIPTION
-Reads tools/spring_boot.lock.json (the source of truth) and fetches every
-recorded artifact from Maven Central, verifying each file's SHA-256 before it is
-accepted. Artifacts already present and matching are reused, so the script is
-idempotent. A hash mismatch aborts the run; a partially downloaded file is never
-left in place.
+This script is a thin forwarder. The real recipe is
+tools/prepare_javaee_packs.py, which:
 
-The output directory is ignored by Git. Only the lock file and this script are
-tracked, mirroring how native/openjdk pins its recipe inputs.
+  - treats tools/spring_boot.lock.json and tools/javaee8.lock.json as the only
+    source of truth, so normal preparation reconstructs exactly the frozen
+    artifacts and resolves no version;
+  - fetches a file only when the lock names it and disk does not already hold it;
+  - writes manifest.json and manifest.hashed.json from the lock;
+  - extracts every recorded licence document and records its digest.
+
+Two recipes would drift, so this script does not implement a second one.
+
+.PARAMETER Refresh
+Resolves versions freshly and writes a candidate lock for review. This is the
+only operation that reads maven-metadata.xml, and it never modifies the live
+lock. Cannot be combined with -VerifyOnly or -VerifyDigests.
 
 .EXAMPLE
 pwsh ./tools/prepare_spring_boot.ps1
-pwsh ./tools/prepare_spring_boot.ps1 -OutputDirectory build/spring_boot
+pwsh ./tools/prepare_spring_boot.ps1 -Packs javaee8 -VerifyOnly
+pwsh ./tools/prepare_spring_boot.ps1 -Packs all -Refresh
 #>
 [CmdletBinding()]
 param(
-    # Where verified JARs are written. Defaults to the in-repo asset directory so
-    # desktop runs can read them directly; the mobile packaging step copies from
-    # here into the app's assets.
-    [string]$OutputDirectory = (Join-Path $PSScriptRoot '../assets/spring_boot'),
+    # Which packs to prepare. 'all' covers spring-boot and javaee8.
+    [ValidateSet('all', 'spring-boot', 'javaee8')]
+    [string]$Packs = 'all',
 
-    # Maven Central mirror. Override for a different mirror when needed.
-    [string]$Repository = 'https://repo1.maven.org/maven2',
+    # Check present files read-only and write nothing.
+    [switch]$VerifyOnly,
 
-    # Verify hashes but fetch nothing (used to check a prepared directory).
-    [switch]$VerifyOnly
+    # Resolve versions freshly and write a candidate lock for review.
+    [switch]$Refresh,
+
+    # Cross-check every artifact against the repository's published digest.
+    [switch]$VerifyDigests,
+
+    # Foreground seconds for the whole run.
+    [int]$Budget = 85
 )
 
 $ErrorActionPreference = 'Stop'
 
-$lockPath = Join-Path $PSScriptRoot 'spring_boot.lock.json'
-if (-not (Test-Path -LiteralPath $lockPath)) {
-    throw "Lock file not found: $lockPath"
+$script = Join-Path $PSScriptRoot 'prepare_javaee_packs.py'
+if (-not (Test-Path -LiteralPath $script)) {
+    throw "Recipe not found: $script"
 }
 
-$lock = Get-Content -LiteralPath $lockPath -Raw | ConvertFrom-Json
-if (-not $lock.version -or -not $lock.artifacts) {
-    throw "Lock file is malformed: $lockPath"
-}
+$arguments = @($script, '--packs', $Packs, '--budget', "$Budget")
+if ($VerifyOnly) { $arguments += '--verify-only' }
+if ($Refresh) { $arguments += '--refresh' }
+if ($VerifyDigests) { $arguments += '--verify-digests' }
 
-$target = Join-Path $OutputDirectory $lock.version
-Write-Host "Spring Boot $($lock.version) -> $target"
-Write-Host "Artifacts: $($lock.artifacts.Count), repository: $Repository"
-
-if (-not $VerifyOnly) {
-    New-Item -ItemType Directory -Force -Path $target | Out-Null
-}
-
-$downloaded = 0
-$reused = 0
-$totalBytes = 0
-
-foreach ($artifact in $lock.artifacts) {
-    $destination = Join-Path $target $artifact.file
-    $expected = $artifact.sha256.ToLower()
-
-    if (Test-Path -LiteralPath $destination) {
-        $actual = (Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLower()
-        if ($actual -eq $expected) {
-            $reused++
-            $totalBytes += (Get-Item -LiteralPath $destination).Length
-            continue
-        }
-        Write-Host "  replacing mismatched $($artifact.file)"
-        Remove-Item -LiteralPath $destination -Force
-    }
-
-    if ($VerifyOnly) {
-        throw "Missing artifact: $($artifact.file)"
-    }
-
-    $uri = "$Repository/$($artifact.mavenPath)"
-    $partial = "$destination.partial"
-    try {
-        Invoke-WebRequest -Uri $uri -OutFile $partial -UseBasicParsing -TimeoutSec 300
-        $actual = (Get-FileHash -LiteralPath $partial -Algorithm SHA256).Hash.ToLower()
-        if ($actual -ne $expected) {
-            throw "SHA-256 mismatch for $($artifact.file) from $uri`nexpected: $expected`nactual:   $actual"
-        }
-        Move-Item -LiteralPath $partial -Destination $destination -Force
-        $downloaded++
-        $totalBytes += (Get-Item -LiteralPath $destination).Length
-        Write-Host "  fetched $($artifact.file)"
-    } finally {
-        if (Test-Path -LiteralPath $partial) { Remove-Item -LiteralPath $partial -Force }
-    }
-}
-
-Write-Host ''
-Write-Host "Verified $($lock.artifacts.Count) artifacts: $downloaded fetched, $reused reused."
-Write-Host "Total size: $([math]::Round($totalBytes / 1MB, 2)) MB"
-
-# The Flutter asset layer cannot enumerate a directory on every platform, so the
-# authoritative file list is written next to the JARs and read by
-# lib/spring_boot_bundle.dart. Regenerating it here keeps it in step with the
-# lock file instead of letting the two drift.
-if (-not $VerifyOnly) {
-    $manifestPath = Join-Path $target 'manifest.json'
-    $names = $lock.artifacts | ForEach-Object { $_.file } | Sort-Object
-    $json = ConvertTo-Json -InputObject @($names) -Depth 2
-    [IO.File]::WriteAllText($manifestPath, $json, [Text.UTF8Encoding]::new($false))
-    Write-Host "Manifest: $manifestPath ($($names.Count) entries)"
-}
-
-Write-Host "Ready at: $target"
+Write-Host "Forwarding to prepare_javaee_packs.py ($Packs)"
+& python @arguments
+exit $LASTEXITCODE

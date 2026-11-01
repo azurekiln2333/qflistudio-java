@@ -21,3 +21,26 @@ Existing four cards remain direct in tools tab. Add meaningful offline tools suc
 ## Compatibility, checks and rollback
 
 Preserve stable IDs, constructors, offline gates, local project/JAR resolution and native bridge. Focused tests then full Java analyze/test, all final content and core-consumer checks after common batches. Stage only owned paths; conventional commits per verified batch and non-force remote pushes. Roll back only owned failing batches without reverting others.
+
+## October 26 Java EE environment extension
+
+R15 adds an environment, not the user's announcement/user CRUD homework.
+qflisql remains the database owner. A packaged JDBC driver alone does not
+prove a reachable database or cross-app authentication. Keep connection
+availability explicit until the SQL owner publishes the actual contract.
+
+Current ordinary Java execution can keep a JVM alive and stop it. Its missing
+web behavior is dependency selection, main/test scoping, resource deployment,
+container entry dispatch, readiness and local preview metadata. The existing
+Spring bundle is not connected to that runner and lacks JSON/JDBC/JSP packs.
+
+Smallest product boundary: Java-owned runner, a single typed project decoder,
+pinned bundled dependencies, Java-owned environment tools and fresh scaffolds.
+No common-core/editor/SQL/native changes are implied. Ordinary console Java
+must retain its existing source collection and cancellation behavior. An
+explicit project config opts into web source/dependency/deployment semantics.
+Local services bind loopback. No runtime dependency downloads occur.
+
+The detailed ownership, configuration and acceptance contract lives in
+research/javaee-environment-contract-20261026.md. A Tomcat Servlet/JSP profile
+must not be described as full Java EE/Jakarta EE platform certification.

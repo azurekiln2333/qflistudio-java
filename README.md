@@ -140,6 +140,39 @@ flutter run -t tools/java_runtime_acceptance.dart -d DEVICE_ID
 flutter run -t lib/main.dart -d DEVICE_ID
 ```
 
+## Java EE 环境
+
+工具页提供 `JavaEE 环境`。
+该工具可检查依赖包与项目配置。
+该工具可生成基础项目。
+
+| profile | 离线运行依赖 |
+| --- | --- |
+| `javaee8` | Tomcat 9、Servlet、JSP、EL、JSTL |
+| `spring-boot` | Spring Boot 3、Spring MVC、JSON |
+
+开发阶段按锁文件下载依赖。
+
+```powershell
+python tools/prepare_javaee_packs.py --packs all
+python tools/prepare_javaee_packs.py --packs all --verify-only
+```
+
+运行阶段不下载依赖。
+点击编辑器的运行按钮。
+点击停止按钮结束服务。
+服务仅绑定 `127.0.0.1`。
+
+Boot 项目可启用 JDBC 与 MyBatis。
+基础项目默认关闭数据库依赖。
+qflisql 负责数据库。
+JDBC 接口仍待联调。
+
+本环境覆盖 Servlet 与 JSP。
+本项目未声明完整平台认证。
+真实 HTTP 验证尚未完成。
+OHOS 设备验证尚未完成。
+
 ## 平台验证范围
 
 以下结果只覆盖当时的源码。
@@ -161,8 +194,6 @@ flutter run -t lib/main.dart -d DEVICE_ID
   成功打包不证明真机通过。
 - Android API 28 运行尚未验证。
 - iOS 与 Web 不支持运行 Java。
-- Spring Boot 准备脚本与本地 JAR 组装代码可用。
-  界面模板尚未接入。
 
 ## 许可
 

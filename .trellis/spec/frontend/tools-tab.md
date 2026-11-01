@@ -107,11 +107,17 @@ the standalone Scaffold wrapper.
   `builder` opens `MaterialPageRoute<void>`. Common tool routes use only core.
   The terminal reuses the shell callback/terminal manager and does not create a
   second command backend.
-- Java supplies one `Java` section with exactly nine definitions: integer/bit,
+- Java supplies one `Java` section with exactly ten definitions: integer/bit,
   strings, JSON-to-Java, reference, JVM descriptors, stack traces, class
-  inspection, JAR/manifest inspection and the actual local debugger. Its standalone
-  grid contains 18 cards; the tab contains 19 including terminal, with no
+  inspection, JAR/manifest inspection, the actual local debugger and Java EE
+  environment inspection/scaffolds. Its standalone
+  grid contains 19 cards; the tab contains 20 including terminal, with no
   intermediate `功能` card. No duplicate generic pages/widgets remain in Java.
+- The Java EE card uses the single `JavaWebProject` decoder and packaged
+  dependency metadata. A configured address or a reachable local port does not
+  prove that the current owned server is ready. Its HTTP check is bounded and
+  restricted to loopback. Fresh scaffold writes validate paths and refuse
+  existing files. See backend `javaee-environment.md` for runtime ownership.
 - Every card uses `ToolCard`/`ToolsTheme`: height 132, maximum cross-axis extent
   320, spacing/radius 12 and inner padding 16. Titles have one line; descriptions
   have at most two. Layout follows available width and Material color scheme.
@@ -146,7 +152,7 @@ the standalone Scaffold wrapper.
 ## 5. Good / Base / Bad Cases
 
 - Good: Java profile returns `JavaToolsGrid(onOpenTerminal: onOpenTerminal)`.
-  The tab shows terminal, nine Java cards and nine common cards directly;
+  The tab shows terminal, ten Java cards and nine common cards directly;
   tapping the shared JSON card opens `JsonToolPage`, while Java generation
   still produces POJO/record source.
 - Base: `FunctionsTab(onOpenTerminal: openTerminal)` with no profile and no
@@ -173,11 +179,11 @@ the standalone Scaffold wrapper.
   form URL spaces/plus, known digest vectors, RFC UUID v3/v5 and v4 bits,
   regex groups/errors/truncation/replacement, color formats, Unicode BMP and
   supplementary points, and timestamp conversion behavior.
-- Java `test/java_tools_page_test.dart` verifies 18 unique standalone cards,
-  all nine common routes, distinct JSON routes, nine direct Java pages,
+- Java `test/java_tools_page_test.dart` verifies 19 unique standalone cards,
+  all nine common routes, distinct JSON routes, ten direct Java pages,
   narrow/wide columns, dark theme, scrolling and no overflow.
   `test/java_tools_wiring_test.dart` mounts real `FunctionsTab` with
-  `javaProfile`: 19 unique ordered cards, terminal callback, one Scaffold and
+  `javaProfile`: 20 unique ordered cards, terminal callback, one Scaffold and
   AppBar, no `功能`, every card hit-testable in narrow/wide and light/dark.
 - `scrollUntilVisible` may find cached sliver content before its final
   `ensureVisible` jump has laid out. Target the whole `ToolCard` and pump

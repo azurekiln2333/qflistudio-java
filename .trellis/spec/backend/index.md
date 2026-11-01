@@ -17,6 +17,7 @@ This directory contains guidelines for backend development. Fill in each file wi
 | [Mobile JDK](./mobile-jdk.md) | Native toolchain, installation, process transport, and device gates | Implemented |
 | [Java Analysis and Debugging](./java-analysis-debug.md) | Unsaved-buffer compiler diagnostics, real local JDI sessions, tools UI and lifecycle | Implemented |
 | [Java Catalog Audit](./java-catalog-audit.md) | 280 topics, mirror inventory, bounded host/OHOS verification and emulator builds | Implemented |
+| [Java EE Environment](./javaee-environment.md) | Offline Servlet/JSP and Boot profiles, dependency integrity, deployment and HTTP lifecycle | Source integration; runtime gates tracked in active task |
 | [Directory Structure](./directory-structure.md) | Module organization and file layout | To fill |
 | [Database Guidelines](./database-guidelines.md) | ORM patterns, queries, migrations | To fill |
 | [Error Handling](./error-handling.md) | Error types, handling strategies | To fill |

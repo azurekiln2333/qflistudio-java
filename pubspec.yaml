@@ -35,9 +35,14 @@ flutter:
   uses-material-design: true
   assets:
     - assets/app_icon.png
-    # Spring Boot dependency set (see tools/prepare_spring_boot.ps1).
-    # Declared as a directory so the pinned JAR list and its manifest are
-    # packaged together; lib/spring_boot_bundle.dart reads the manifest to
-    # discover the exact files at run time. The JARs themselves are ignored by
-    # Git and reproduced from tools/spring_boot.lock.json.
+    # Java EE offline dependency packs (see tools/prepare_javaee_packs.py).
+    # Declared as directories so the pinned JAR list, its hashed manifest and the
+    # licence documents are packaged together; lib/spring_boot_bundle.dart reads
+    # the hashed manifest to discover and verify the exact files at run time.
+    # Directory declarations are not recursive, so each subdirectory that holds
+    # assets is declared on its own line.
+    # The JARs are ignored by Git and reproduced from the lock files.
     - assets/spring_boot/3.5.16/
+    - assets/spring_boot/3.5.16/licenses/
+    - assets/javaee8/
+    - assets/javaee8/licenses/

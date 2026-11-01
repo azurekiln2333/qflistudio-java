@@ -134,6 +134,33 @@ Restore the normal entry after acceptance.
 flutter run -t lib/main.dart -d DEVICE_ID
 ```
 
+## Java EE environment
+
+The tools page includes `JavaEE 环境`. It inspects dependency packs and project
+configuration. It can create a basic project.
+
+| Profile | Offline runtime dependencies |
+| --- | --- |
+| `javaee8` | Tomcat 9, Servlet, JSP, EL and JSTL |
+| `spring-boot` | Spring Boot 3, Spring MVC and JSON |
+
+Prepare dependencies from the lock files during development:
+
+```powershell
+python tools/prepare_javaee_packs.py --packs all
+python tools/prepare_javaee_packs.py --packs all --verify-only
+```
+
+The runtime downloads no dependencies. Use the editor's Run button to start
+the project. Use Stop to end the service. Services bind only to `127.0.0.1`.
+
+Boot projects can opt into JDBC and MyBatis. Basic projects leave database
+dependencies disabled. qflisql owns the database. JDBC integration remains
+pending.
+
+This environment covers Servlet and JSP. The project claims no full platform
+certification. Real HTTP acceptance and OHOS device acceptance remain pending.
+
 ## Verification scope
 
 These results cover the source at the recorded dates.
@@ -155,8 +182,6 @@ Validate later revisions again on their target platforms.
   Successful packaging does not establish a device pass.
 - Android API 28 execution is unverified.
 - Java execution is unavailable on iOS and Web.
-- The Spring Boot preparation script and local JAR assembly code are available.
-  The UI template is not connected.
 
 ## License
 

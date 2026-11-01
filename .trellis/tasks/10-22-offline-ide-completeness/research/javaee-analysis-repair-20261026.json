@@ -1,0 +1,286 @@
+{
+  "status": "INDEPENDENT_SOURCE_REVIEW_PASS_RUNTIME_UNRUN",
+  "actualGate": 905,
+  "actualAnalysisIssueCount": 31,
+  "actualAnalysisIssues": [
+    {
+      "severity": "info",
+      "message": "Statements in an if should be enclosed in a block",
+      "path": "lib\\java_runner.dart",
+      "line": "1183",
+      "column": "13",
+      "code": "curly_braces_in_flow_control_structures"
+    },
+    {
+      "severity": "warning",
+      "message": "Unused import: 'dart:convert'",
+      "path": "lib\\java_web_environment_page.dart",
+      "line": "1",
+      "column": "8",
+      "code": "unused_import"
+    },
+    {
+      "severity": "warning",
+      "message": "Unused import: 'package:flutter/services.dart'",
+      "path": "lib\\java_web_environment_page.dart",
+      "line": "5",
+      "column": "8",
+      "code": "unused_import"
+    },
+    {
+      "severity": "error",
+      "message": "The property 'profile' can't be unconditionally accessed because the receiver can be 'null'",
+      "path": "lib\\java_web_environment_page.dart",
+      "line": "745",
+      "column": "24",
+      "code": "unchecked_use_of_nullable_value"
+    },
+    {
+      "severity": "info",
+      "message": "Use interpolation to compose strings and values",
+      "path": "lib\\java_web_templates.dart",
+      "line": "522",
+      "column": "7",
+      "code": "prefer_interpolation_to_compose_strings"
+    },
+    {
+      "severity": "warning",
+      "message": "The member '_decodeNameList' is annotated with 'visibleForTesting', but this annotation is only meaningful on declarations of public members",
+      "path": "lib\\spring_boot_bundle.dart",
+      "line": "574",
+      "column": "4",
+      "code": "invalid_visibility_annotation"
+    },
+    {
+      "severity": "warning",
+      "message": "A value for optional parameter 'config' isn't ever given",
+      "path": "test\\java_web_environment_page_test.dart",
+      "line": "111",
+      "column": "10",
+      "code": "unused_element_parameter"
+    },
+    {
+      "severity": "warning",
+      "message": "A value for optional parameter 'healthy' isn't ever given",
+      "path": "test\\java_web_environment_page_test.dart",
+      "line": "112",
+      "column": "10",
+      "code": "unused_element_parameter"
+    },
+    {
+      "severity": "warning",
+      "message": "A value for optional parameter 'pack' isn't ever given",
+      "path": "test\\java_web_environment_page_test.dart",
+      "line": "113",
+      "column": "10",
+      "code": "unused_element_parameter"
+    },
+    {
+      "severity": "info",
+      "message": "Statements in an if should be enclosed in a block",
+      "path": "test\\java_web_http_test.dart",
+      "line": "333",
+      "column": "7",
+      "code": "curly_braces_in_flow_control_structures"
+    },
+    {
+      "severity": "info",
+      "message": "Use 'isNotEmpty' instead of 'length' to test whether the collection is empty",
+      "path": "test\\java_web_runner_test.dart",
+      "line": "490",
+      "column": "26",
+      "code": "prefer_is_empty"
+    },
+    {
+      "severity": "error",
+      "message": "The named parameter 'jstl' is required, but there's no corresponding argument",
+      "path": "test\\java_web_templates_test.dart",
+      "line": "82",
+      "column": "27",
+      "code": "missing_required_argument"
+    },
+    {
+      "severity": "error",
+      "message": "The named parameter 'jstl' is required, but there's no corresponding argument",
+      "path": "test\\java_web_templates_test.dart",
+      "line": "91",
+      "column": "24",
+      "code": "missing_required_argument"
+    },
+    {
+      "severity": "error",
+      "message": "The named parameter 'jstl' is required, but there's no corresponding argument",
+      "path": "test\\java_web_templates_test.dart",
+      "line": "115",
+      "column": "27",
+      "code": "missing_required_argument"
+    },
+    {
+      "severity": "error",
+      "message": "The named parameter 'jstl' is required, but there's no corresponding argument",
+      "path": "test\\java_web_templates_test.dart",
+      "line": "131",
+      "column": "24",
+      "code": "missing_required_argument"
+    },
+    {
+      "severity": "error",
+      "message": "The named parameter 'jstl' is required, but there's no corresponding argument",
+      "path": "test\\java_web_templates_test.dart",
+      "line": "187",
+      "column": "29",
+      "code": "missing_required_argument"
+    },
+    {
+      "severity": "error",
+      "message": "The named parameter 'jstl' is required, but there's no corresponding argument",
+      "path": "test\\java_web_templates_test.dart",
+      "line": "239",
+      "column": "26",
+      "code": "missing_required_argument"
+    },
+    {
+      "severity": "info",
+      "message": "Use the null-aware marker '?' rather than a null check via an 'if'",
+      "path": "test\\javaee_container_launcher_test.dart",
+      "line": "37",
+      "column": "3",
+      "code": "use_null_aware_elements"
+    },
+    {
+      "severity": "info",
+      "message": "Use the null-aware marker '?' rather than a null check via an 'if'",
+      "path": "test\\javaee_container_launcher_test.dart",
+      "line": "38",
+      "column": "3",
+      "code": "use_null_aware_elements"
+    },
+    {
+      "severity": "info",
+      "message": "Use the null-aware marker '?' rather than a null check via an 'if'",
+      "path": "test\\javaee_container_launcher_test.dart",
+      "line": "39",
+      "column": "3",
+      "code": "use_null_aware_elements"
+    },
+    {
+      "severity": "error",
+      "message": "Too many positional arguments: 2 expected, but 3 found",
+      "path": "test\\javaee_container_launcher_test.dart",
+      "line": "95",
+      "column": "47",
+      "code": "extra_positional_arguments_could_be_named"
+    },
+    {
+      "severity": "error",
+      "message": "Too many positional arguments: 2 expected, but 3 found",
+      "path": "test\\javaee_container_launcher_test.dart",
+      "line": "101",
+      "column": "50",
+      "code": "extra_positional_arguments_could_be_named"
+    },
+    {
+      "severity": "error",
+      "message": "Too many positional arguments: 2 expected, but 3 found",
+      "path": "test\\javaee_container_launcher_test.dart",
+      "line": "102",
+      "column": "53",
+      "code": "extra_positional_arguments_could_be_named"
+    },
+    {
+      "severity": "error",
+      "message": "Too many positional arguments: 2 expected, but 3 found",
+      "path": "test\\javaee_container_launcher_test.dart",
+      "line": "108",
+      "column": "43",
+      "code": "extra_positional_arguments_could_be_named"
+    },
+    {
+      "severity": "error",
+      "message": "Too many positional arguments: 2 expected, but 3 found",
+      "path": "test\\javaee_container_launcher_test.dart",
+      "line": "145",
+      "column": "60",
+      "code": "extra_positional_arguments_could_be_named"
+    },
+    {
+      "severity": "error",
+      "message": "Too many positional arguments: 2 expected, but 3 found",
+      "path": "test\\javaee_container_launcher_test.dart",
+      "line": "172",
+      "column": "46",
+      "code": "extra_positional_arguments_could_be_named"
+    },
+    {
+      "severity": "error",
+      "message": "The function 'Uint8List' isn't defined",
+      "path": "test\\spring_boot_bundle_test.dart",
+      "line": "479",
+      "column": "36",
+      "code": "undefined_function"
+    },
+    {
+      "severity": "info",
+      "message": "Use interpolation to compose strings and values",
+      "path": "test\\spring_boot_bundle_test.dart",
+      "line": "504",
+      "column": "9",
+      "code": "prefer_interpolation_to_compose_strings"
+    },
+    {
+      "severity": "info",
+      "message": "Use interpolation to compose strings and values",
+      "path": "test\\spring_boot_bundle_test.dart",
+      "line": "519",
+      "column": "9",
+      "code": "prefer_interpolation_to_compose_strings"
+    },
+    {
+      "severity": "error",
+      "message": "Undefined name 'Uint8List'",
+      "path": "test\\spring_boot_bundle_test.dart",
+      "line": "531",
+      "column": "21",
+      "code": "undefined_identifier"
+    },
+    {
+      "severity": "error",
+      "message": "Undefined name 'Uint8List'",
+      "path": "test\\spring_boot_bundle_test.dart",
+      "line": "600",
+      "column": "25",
+      "code": "undefined_identifier"
+    }
+  ],
+  "files": {
+    "lib/java_runner.dart": "c7e71ff678426949d8d221bf5e9380bf13a9e9708627d87690f7da506e7cc583",
+    "lib/java_web_environment_page.dart": "674b59b553f57ade0f4a9ccc2f9b8220c071a2b55cf93aaa80b7fffcca2d8cb8",
+    "lib/java_web_templates.dart": "47eebd9d462f136a6e8c92ff4f62cbd17b23d9bf5747505b8241573f7f366063",
+    "lib/spring_boot_bundle.dart": "362e5264eefd787574d5bd0d1b8aca2bc2ec6f68c5f2e1e8831ee065c0b6ce6d",
+    "test/java_web_environment_page_test.dart": "5ba22487364e9e9c444074ad2b44ac0de64f2d8e5ee34e2a3622a5b9d9fe73cf",
+    "test/java_web_http_test.dart": "13e938516301759ccade345bfd74a46408af1b2d1fe299f6a68a826b0d03229e",
+    "test/java_web_runner_test.dart": "191bf35a343261ae6382bcf5998d66abe13daaffbc6794c083d85e1e696c060c",
+    "test/java_web_templates_test.dart": "b705e29110cf9d34ae3b60d33630e448d54624979d8f8c44a32720d986813e0b",
+    "test/javaee_container_launcher_test.dart": "af7bd9132398eb4f171fb56c496cbc92c1d2d5ad25c3c53a8f5d2c1bc22e142d",
+    "test/spring_boot_bundle_test.dart": "aebf31cd86b51288b4401d166e9a19d8ff207e7b4a7345ed55c2853ec77e908e"
+  },
+  "sdkAfterRepairsStarted": false,
+  "testsAfterRepairsStarted": false,
+  "httpOrJvmAcceptance": false,
+  "coreChangedByJava": false,
+  "independentReviewer": "javaee_analysis_review",
+  "sourceReview": {
+    "findingsAddressed": 31,
+    "runtimeGroup": 18,
+    "uiGroup": 13,
+    "blockers": [],
+    "sourceChecks": [
+      "exact diagnostic-to-repair mapping",
+      "preserved negative matcher assertions",
+      "explicit JSTL capability fixtures",
+      "captured nullable project configuration",
+      "unchanged delayed fake defaults",
+      "scoped git diff --check"
+    ]
+  }
+}

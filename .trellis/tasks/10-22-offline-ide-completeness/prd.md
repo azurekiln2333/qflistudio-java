@@ -22,6 +22,7 @@ Make every standalone language app a useful offline IDE and ensure all learning 
 | R12 | Standalone apps remain completely offline. | New-feature source and profile/route tests; exclude network-dependent features. All roots. |
 | R13 | Thorough checks, conventional commits, push where possible. | Current final checks, scoped commit hashes and actual remote results. Every owner. |
 | R14 | Rewrite the Java README in Simplified Chinese, Traditional Chinese and English. | Same supported scope and confidence across three linked files; controlled Chinese review, `python scripts/ste-lint-zh.py <file>`, local-link checks, scoped conventional commit and verified non-force push. Four existing Java Herdr Pi share separate file ownership. |
+| R15 | Complete the Java EE environment beyond the JDK. qflisql owns the database. | Integrate offline Servlet/JSP, framework/JSON/JDBC packs, deployment and server lifecycle. Verify HTTP/form/JSP through the runner. Keep host and OHOS evidence separate. |
 
 ## Confirmed current facts
 
