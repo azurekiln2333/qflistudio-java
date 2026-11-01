@@ -87,6 +87,8 @@ Future<Map<String, Object?>> runJavaDebugSmoke({
     final stderr = version.stderr
         .transform(const Utf8Decoder(allowMalformed: true))
         .join();
+    stdout.ignore();
+    stderr.ignore();
     try {
       require(
         'runtimeProbe',

@@ -20,6 +20,8 @@ const _frames = [
 ];
 
 class _Session implements JavaDebugSession {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
   final controller = StreamController<JavaDebugEvent>.broadcast();
   final readyCompleter = Completer<void>();
   final doneCompleter = Completer<int>();
@@ -30,6 +32,12 @@ class _Session implements JavaDebugSession {
   Completer<List<JavaDebugFrame>>? stackReply;
   Completer<void>? stopReply;
   int stopCalls = 0;
+  int stopFailures = 0;
+  bool finishOnStop = true;
+  bool stopping = false;
+
+  @override
+  bool get isStopping => stopping && !doneCompleter.isCompleted;
 
   @override
   Stream<JavaDebugEvent> get events => controller.stream;
@@ -56,7 +64,22 @@ class _Session implements JavaDebugSession {
   @override
   Future<void> stop() async {
     stopCalls++;
+    stopping = true;
+    if (stopFailures > 0) {
+      stopFailures--;
+      emit(
+        const JavaDebugEvent(
+          JavaDebugEventKind.error,
+          message: 'controlled scratch cleanup failure',
+        ),
+      );
+      throw StateError('controlled scratch cleanup failure');
+    }
     if (stopReply != null) await stopReply!.future;
+    if (finishOnStop) finish();
+  }
+
+  void finish() {
     if (!readyCompleter.isCompleted) {
       readyCompleter.completeError(StateError('stopped before attach'));
     }
@@ -128,6 +151,8 @@ class _Debugger extends JavaDebugger {
     Map<String, String> unsavedBuffers = const {},
     List<JavaBreakpoint> breakpoints = const [],
     List<String> arguments = const [],
+    List<String>? sourceFiles,
+    bool stopOnEntry = false,
   }) {
     this.projectPath = projectPath;
     this.entryFile = entryFile;
@@ -162,7 +187,11 @@ void main() {
     await session.controller.close();
   });
 
-  Future<void> mount(WidgetTester tester, {ProjectStore? store}) async {
+  Future<void> mount(
+    WidgetTester tester, {
+    ProjectStore? store,
+    bool pushed = false,
+  }) async {
     session = _Session();
     debugger = _Debugger(session);
     tester.view.physicalSize = const Size(1200, 3000);
@@ -171,12 +200,28 @@ void main() {
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
+    final page = JavaDebuggerPage(store: store, debugger: debugger);
     await tester.pumpWidget(
       MaterialApp(
-        home: JavaDebuggerPage(store: store, debugger: debugger),
+        home: pushed
+            ? Builder(
+                builder: (context) => Scaffold(
+                  body: TextButton(
+                    onPressed: () => Navigator.of(
+                      context,
+                    ).push<void>(MaterialPageRoute<void>(builder: (_) => page)),
+                    child: const Text('打开调试器'),
+                  ),
+                ),
+              )
+            : page,
       ),
     );
     await tester.pump();
+    if (pushed) {
+      await tester.tap(find.text('打开调试器'));
+      await tester.pumpAndSettle();
+    }
   }
 
   Future<void> start(WidgetTester tester) async {
@@ -313,6 +358,82 @@ void main() {
       tester.widget<ButtonStyleButton>(button('启动调试')).onPressed,
       isNotNull,
     );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('failed cleanup keeps the session and exposes a stop retry', (
+    tester,
+  ) async {
+    await mount(tester);
+    await start(tester);
+    session.stopFailures = 1;
+    await tester.tap(button('停止'));
+    await tester.pumpAndSettle();
+    expect(session.stopCalls, 1);
+    expect(session.doneCompleter.isCompleted, isFalse);
+    expect(find.text('正在停止…'), findsOneWidget);
+    expect(find.text('已结束'), findsNothing);
+    expect(tester.widget<ButtonStyleButton>(button('启动调试')).onPressed, isNull);
+    expect(
+      tester.widget<ButtonStyleButton>(button('重试停止')).onPressed,
+      isNotNull,
+    );
+    await tester.tap(button('重试停止'));
+    await tester.pumpAndSettle();
+    expect(session.stopCalls, 2);
+    expect(session.doneCompleter.isCompleted, isTrue);
+    expect(find.text('已结束'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Back without a session leaves the route normally', (
+    tester,
+  ) async {
+    await mount(tester, pushed: true);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.byType(JavaDebuggerPage), findsNothing);
+    expect(find.text('打开调试器'), findsOneWidget);
+    expect(session.stopCalls, 0);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Back retains failed cleanup until retry really finishes', (
+    tester,
+  ) async {
+    await mount(tester, pushed: true);
+    await start(tester);
+    session.stopFailures = 1;
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.byType(JavaDebuggerPage), findsOneWidget);
+    expect(session.stopCalls, 1);
+    expect(session.doneCompleter.isCompleted, isFalse);
+    expect(find.text('正在停止…'), findsOneWidget);
+    expect(
+      tester.widget<ButtonStyleButton>(button('重试停止')).onPressed,
+      isNotNull,
+    );
+
+    session.stopReply = Completer<void>();
+    session.finishOnStop = false;
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    expect(session.stopCalls, 2);
+    expect(find.byType(JavaDebuggerPage), findsOneWidget);
+    session.stopReply!.complete();
+    await tester.pumpAndSettle();
+    expect(session.doneCompleter.isCompleted, isFalse);
+    expect(find.byType(JavaDebuggerPage), findsOneWidget);
+    expect(tester.widget<ButtonStyleButton>(button('停止')).onPressed, isNull);
+
+    session.finish();
+    await tester.pumpAndSettle();
+    expect(find.byType(JavaDebuggerPage), findsNothing);
+    expect(find.text('打开调试器'), findsOneWidget);
+    expect(session.stopCalls, 2);
     expect(tester.takeException(), isNull);
   });
 

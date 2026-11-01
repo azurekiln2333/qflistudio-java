@@ -17,12 +17,16 @@ class _ObservedDebugger extends JavaDebugger {
     Map<String, String> unsavedBuffers = const {},
     List<JavaBreakpoint> breakpoints = const [],
     List<String> arguments = const [],
+    List<String>? sourceFiles,
+    bool stopOnEntry = false,
   }) => session = super.launch(
     projectPath: projectPath,
     entryFile: entryFile,
     unsavedBuffers: unsavedBuffers,
     breakpoints: breakpoints,
     arguments: arguments,
+    sourceFiles: sourceFiles,
+    stopOnEntry: stopOnEntry,
   );
 }
 

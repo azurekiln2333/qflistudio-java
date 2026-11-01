@@ -45,6 +45,9 @@ class _JavaDebuggerPageState extends State<JavaDebuggerPage> {
   String _output = '';
   bool _commandPending = false;
   bool _stopRequested = false;
+  bool _stopInFlight = false;
+  Future<bool>? _stopAttempt;
+  bool _leaving = false;
   int _nextBreakpoint = 0;
   int _inspection = 0;
   int _selectedFrame = 0;
@@ -94,8 +97,8 @@ class _JavaDebuggerPageState extends State<JavaDebuggerPage> {
     _session = null;
     _inspection++;
     unawaited(_subscription?.cancel());
-    // The backend owns both JVMs and its snapshot. Leaving the page also stops
-    // a session that is still compiling/attaching, rather than orphaning it.
+    // Normal Back waits for cleanup before this State is disposed. A forced
+    // ancestor unmount cannot retain retry UI, so it requests best-effort stop.
     if (session != null) unawaited(session.stop().catchError((Object _) {}));
     for (final controller in [_project, _entry, _arguments, _class, _line]) {
       controller.dispose();
@@ -159,9 +162,17 @@ class _JavaDebuggerPageState extends State<JavaDebuggerPage> {
           );
         case JavaDebugEventKind.error:
           _error = event.message;
-          _phase = _DebugPhase.failed;
+          _phase = session.isStopping
+              ? _DebugPhase.stopping
+              : _DebugPhase.failed;
+          _location = null;
+          _frames = const [];
+          _variables = const [];
           _inspection++;
         case JavaDebugEventKind.terminated:
+          _location = null;
+          _frames = const [];
+          _variables = const [];
           _inspection++;
           if (_phase != _DebugPhase.failed) _phase = _DebugPhase.ended;
           _appendOutput('\n[进程结束：${event.exitCode ?? '?'}]\n');
@@ -202,7 +213,7 @@ class _JavaDebuggerPageState extends State<JavaDebuggerPage> {
   }
 
   void _start() {
-    if (_session != null) return;
+    if (_session != null || _leaving || _stopAttempt != null) return;
     final project = _project.text.trim();
     final entry = _entry.text.trim();
     if (!p.isAbsolute(project) || entry.isEmpty) {
@@ -226,6 +237,7 @@ class _JavaDebuggerPageState extends State<JavaDebuggerPage> {
       _variables = const [];
       _verified.clear();
       _stopRequested = false;
+      _stopInFlight = false;
       _phase = _DebugPhase.starting;
     });
     try {
@@ -275,6 +287,7 @@ class _JavaDebuggerPageState extends State<JavaDebuggerPage> {
     setState(() {
       _session = null;
       _commandPending = false;
+      _stopInFlight = false;
       _inspection++;
       if (_phase != _DebugPhase.failed) _phase = _DebugPhase.ended;
     });
@@ -298,18 +311,48 @@ class _JavaDebuggerPageState extends State<JavaDebuggerPage> {
     }
   }
 
-  Future<void> _stop() async {
+  Future<bool> _stop() {
     final session = _session;
-    if (session == null || _phase == _DebugPhase.stopping) return;
+    if (session == null) return Future.value(true);
+    return _stopAttempt ??= _stopCurrent(session).whenComplete(() {
+      _stopAttempt = null;
+    });
+  }
+
+  Future<bool> _stopCurrent(JavaDebugSession session) async {
     setState(() {
       _stopRequested = true;
+      _stopInFlight = true;
       _phase = _DebugPhase.stopping;
+      _location = null;
+      _frames = const [];
+      _variables = const [];
       _inspection++;
     });
     try {
       await session.stop();
+      await session.done;
+      return true;
     } catch (error) {
       if (_current(session)) setState(() => _error = '停止失败：$error');
+      return false;
+    } finally {
+      if (_current(session)) setState(() => _stopInFlight = false);
+    }
+  }
+
+  Future<void> _leave() async {
+    if (_leaving) return;
+    _leaving = true;
+    try {
+      if (!await _stop() || !mounted) return;
+      // Let the done watcher release the session and rebuild PopScope first.
+      await WidgetsBinding.instance.endOfFrame;
+      if (mounted && _session == null) {
+        await Navigator.of(context).maybePop();
+      }
+    } finally {
+      if (mounted) setState(() => _leaving = false);
     }
   }
 
@@ -407,7 +450,15 @@ class _JavaDebuggerPageState extends State<JavaDebuggerPage> {
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => PopScope<void>(
+    canPop: _session == null,
+    onPopInvokedWithResult: (didPop, result) {
+      if (!didPop) unawaited(_leave());
+    },
+    child: _buildPage(context),
+  );
+
+  Widget _buildPage(BuildContext context) {
     final active = _session != null;
     final paused = _phase == _DebugPhase.paused && !_commandPending;
     final running = _phase == _DebugPhase.running && !_commandPending;
@@ -457,7 +508,7 @@ class _JavaDebuggerPageState extends State<JavaDebuggerPage> {
             runSpacing: 8,
             children: [
               FilledButton.icon(
-                onPressed: active ? null : _start,
+                onPressed: active || _leaving ? null : _start,
                 icon: const Icon(Icons.play_arrow),
                 label: const Text('启动调试'),
               ),
@@ -484,11 +535,13 @@ class _JavaDebuggerPageState extends State<JavaDebuggerPage> {
                 child: const Text('单步跳出'),
               ),
               OutlinedButton.icon(
-                onPressed: active && _phase != _DebugPhase.stopping
-                    ? _stop
-                    : null,
+                onPressed: active && !_stopInFlight ? _stop : null,
                 icon: const Icon(Icons.stop),
-                label: const Text('停止'),
+                label: Text(
+                  _phase == _DebugPhase.stopping && !_stopInFlight
+                      ? '重试停止'
+                      : '停止',
+                ),
               ),
             ],
           ),
