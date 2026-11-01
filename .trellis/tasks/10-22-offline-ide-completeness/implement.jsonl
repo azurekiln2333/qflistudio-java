@@ -2,3 +2,6 @@
 {"file":".trellis/spec/frontend/content-performance.md","reason":"Catalog compatibility"}
 {"file":".trellis/spec/backend/mobile-jdk.md","reason":"Actual Java toolchain and native process contract"}
 {"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Reuse runner and product hooks"}
+{"file":".trellis/spec/backend/java-analysis-debug.md","reason":"Actual JDI lifecycle, unsaved compilation and no simulated debugger behavior"}
+{"file":".trellis/spec/backend/java-editor-debugger.md","reason":"Frozen shared debugger adaptation and actual source/pause/cleanup contract"}
+{"file":".trellis/tasks/10-22-offline-ide-completeness/research/java-shared-debugger-integration.md","reason":"Product-only integration with newly published shared debugger contract"}

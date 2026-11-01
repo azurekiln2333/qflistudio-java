@@ -39,6 +39,11 @@ function Replace-One([string]$Text, [string]$Pattern, [string]$Replacement) {
     return [regex]::Replace($Text, $Pattern, $Replacement)
 }
 
+function Invoke-BindingTool([string[]]$Arguments) {
+    & $python $bindingTool @Arguments
+    if ($LASTEXITCODE -ne 0) { throw "Build input/artifact binding failed with exit code $LASTEXITCODE." }
+}
+
 function Inspect-Hap([string]$Path) {
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $archive = [IO.Compression.ZipFile]::OpenRead($Path)
@@ -67,9 +72,18 @@ function Inspect-Hap([string]$Path) {
             finally { $stream.Dispose() }
         }
         $stagedLibraries = @(Get-ChildItem -LiteralPath (Join-Path $projectRoot 'ohos/entry/libs/x86_64') -Filter '*.so')
+        $verifiedStagedLibraries = @()
         foreach ($library in $stagedLibraries) {
-            if (@($nativeEntries | Where-Object { $_.FullName -eq "libs/x86_64/$($library.Name)" }).Count -ne 1) {
+            $packaged = @($nativeEntries | Where-Object { $_.FullName -eq "libs/x86_64/$($library.Name)" })
+            if ($packaged.Count -ne 1) {
                 throw "A staged JDK library is missing from the HAP: $($library.Name)"
+            }
+            $packagedHash = Get-EntryHash $packaged[0]
+            $stagedHash = (Get-FileHash -LiteralPath $library.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($packagedHash -ne $stagedHash) { throw "Packaged native library differs from its staged source: $($library.Name)" }
+            $verifiedStagedLibraries += [ordered]@{
+                path = $packaged[0].FullName; bytes = $packaged[0].Length
+                sha256 = $packagedHash; stagedSha256 = $stagedHash
             }
         }
         $assets = @()
@@ -86,14 +100,24 @@ function Inspect-Hap([string]$Path) {
         if (@($archive.Entries | Where-Object { $_.FullName -match '/jdk-arm64-v8a\.(json|zip)$' }).Count -ne 0) {
             throw 'The emulator HAP unexpectedly includes ARM64 JDK data.'
         }
+        $moduleEntries = @($archive.Entries | Where-Object { $_.FullName -match '(^|/)module\.json$' })
+        if ($moduleEntries.Count -ne 1) { throw 'Expected exactly one packed module.json.' }
+        $moduleReader = [IO.StreamReader]::new($moduleEntries[0].Open())
+        try { $packedModule = $moduleReader.ReadToEnd() | ConvertFrom-Json }
+        finally { $moduleReader.Dispose() }
+        if ($packedModule.app.bundleName -ne 'com.azurekiln.qfli.java') {
+            throw 'The HAP does not contain the Java application bundle.'
+        }
         return [ordered]@{
             path = $Path
             bytes = (Get-Item -LiteralPath $Path).Length
             sha256 = (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
             signedOutput = $Path -match '-signed\.hap$'
             abi = 'x86_64'
+            bundleName = $packedModule.app.bundleName
             verifiedElfCount = $nativeEntries.Count
             stagedJdkLibraryCount = $stagedLibraries.Count
+            stagedJdkLibraries = $verifiedStagedLibraries
             jdkAssets = $assets
         }
     }
@@ -108,6 +132,8 @@ foreach ($path in @($logFullPath, $reportFullPath)) {
 $targetFullPath = Resolve-ProjectPath $Target
 if (-not (Test-Path -LiteralPath $targetFullPath -PathType Leaf)) { throw "Target does not exist: $Target" }
 $flutter = (Get-Command flutter -ErrorAction Stop).Source
+$python = (Get-Command python -ErrorAction Stop).Source
+$bindingTool = Join-Path $PSScriptRoot 'verify_java_ohos_binding.py'
 $lockPath = Join-Path $buildDirectory '.ohos-audit-build.lock'
 $lock = [IO.File]::Open($lockPath, [IO.FileMode]::OpenOrCreate, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
 $originalBytes = $null
@@ -124,12 +150,34 @@ $report = [ordered]@{
     profileRestored = $false
     environmentRestored = $false
     logPath = $logFullPath
+    nativeOfflineBinding = $null
+    inputBinding = $null
     hap = $null
     error = $null
 }
 try {
     $originalBytes = [IO.File]::ReadAllBytes($profilePath)
     $report.originalProfileSha256 = Get-ByteHash $originalBytes
+    $nativeBindingInputs = @(
+        'ohos/entry/src/main/ets/entryability/EntryAbility.ets',
+        'ohos/entry/src/main/resources/base/profile/main_pages.json',
+        'ohos/entry/src/main/module.json5'
+    )
+    $isRuntimeAcceptance = $targetFullPath -ieq (Resolve-ProjectPath 'tools/java_runtime_acceptance.dart')
+    if ($isRuntimeAcceptance) {
+        $capturedNativeInputs = @($nativeBindingInputs | ForEach-Object {
+            [ordered]@{
+                path = $_
+                sha256 = (Get-FileHash -LiteralPath (Resolve-ProjectPath $_) -Algorithm SHA256).Hash.ToLowerInvariant()
+            }
+        })
+        $report.nativeOfflineBinding = [ordered]@{
+            inputs = $capturedNativeInputs
+            entryAbilitySha256 = $capturedNativeInputs[0].sha256
+            sourceUnchangedDuringBuild = $false
+            requiresMatchingInstalledHap = $true
+        }
+    }
     $backupPath = Join-Path $buildDirectory "ohos-audit-profile-$($started.ToString('yyyyMMddTHHmmssfff'))-$PID.original"
     [IO.File]::WriteAllBytes($backupPath, $originalBytes)
     $report.recoveryProfilePath = $backupPath
@@ -141,7 +189,34 @@ try {
     $report.temporaryProfileSha256 = (Get-FileHash -LiteralPath $profilePath -Algorithm SHA256).Hash.ToLowerInvariant()
     [Environment]::SetEnvironmentVariable('JAVA_TOOL_OPTIONS', $report.javaToolOptions, 'Process')
     Set-Location -LiteralPath $projectRoot
+    # Capture resolved package sources, configuration, shipped assets and staged
+    # JDK bytes. The managed entry profile has its own original/temporary/restored
+    # hashes. Key material is never enumerated or written into the report.
+    $inputManifestPath = "$reportFullPath.inputs.json"
+    Invoke-BindingTool -Arguments @('capture', '--repo', $projectRoot, '--target', $targetFullPath, '--output', $inputManifestPath)
+    $inputManifest = Get-Content -LiteralPath $inputManifestPath -Raw | ConvertFrom-Json
+    $report.target = $inputManifest.target
+    $report.inputBinding = [ordered]@{
+        schemaVersion = 1
+        manifestPath = $inputManifestPath
+        manifestSha256 = $inputManifest.manifestSha256
+        buildNonce = [Guid]::NewGuid().ToString('N')
+        resolvedCoreRoot = $inputManifest.roots.'package:qfli_studio_core'
+        sourceUnchangedDuringBuild = $false
+        installedPackageProven = $false
+        requiresExternalInstallEvidence = $true
+    }
     $flutterArguments = @('build', 'hap', '--debug', '--no-pub', '--target-platform', 'ohos-x64', '-t', $Target)
+    if ($isRuntimeAcceptance) {
+        # Only this freshly built target may invoke the native account refusal
+        # probe. The device driver must install the exact reported HAP and bind
+        # its runtime report back to these source hashes; defines alone are not
+        # proof that a previously installed package contains current native code.
+        $flutterArguments += '--dart-define=QFLI_JAVA_NATIVE_OFFLINE_SOURCE_BOUND=true'
+        $flutterArguments += "--dart-define=QFLI_JAVA_NATIVE_OFFLINE_SOURCE_SHA256=$($report.nativeOfflineBinding.entryAbilitySha256)"
+        $flutterArguments += "--dart-define=QFLI_JAVA_BUILD_NONCE=$($report.inputBinding.buildNonce)"
+        $flutterArguments += "--dart-define=QFLI_JAVA_BUILD_INPUTS_SHA256=$($report.inputBinding.manifestSha256)"
+    }
     Write-Output "Building $Target for x86_64; log: $logFullPath"
     # A tool may write warnings to stderr. Native exit status remains decisive.
     $ErrorActionPreference = 'Continue'
@@ -149,12 +224,27 @@ try {
     $report.buildExitCode = $LASTEXITCODE
     $ErrorActionPreference = 'Stop'
     if ($report.buildExitCode -ne 0) { throw "Flutter HAP build failed with exit code $($report.buildExitCode)." }
+    if ($isRuntimeAcceptance) {
+        foreach ($inputSource in $capturedNativeInputs) {
+            $currentHash = (Get-FileHash -LiteralPath (Resolve-ProjectPath $inputSource.path) -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($currentHash -ne $inputSource.sha256) {
+                throw "Native acceptance source changed during build: $($inputSource.path)"
+            }
+        }
+        $report.nativeOfflineBinding.sourceUnchangedDuringBuild = $true
+    }
     $outputs = Join-Path $projectRoot 'ohos/entry/build/default/outputs/default'
     $candidates = @(Get-ChildItem -LiteralPath $outputs -Filter '*-signed.hap' |
         Where-Object { $_.LastWriteTimeUtc -ge $started.AddSeconds(-2) } |
         Sort-Object LastWriteTimeUtc -Descending)
     if ($candidates.Count -eq 0) { throw 'No fresh signed HAP was produced; refusing to report an older package.' }
     $report.hap = Inspect-Hap $candidates[0].FullName
+    $currentTemporaryProfileHash = (Get-FileHash -LiteralPath $profilePath -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($currentTemporaryProfileHash -ne $report.temporaryProfileSha256) {
+        throw 'The managed temporary entry profile changed during build.'
+    }
+    Invoke-BindingTool -Arguments @('verify-inputs', '--manifest', $inputManifestPath)
+    $report.inputBinding.sourceUnchangedDuringBuild = $true
 }
 catch {
     $report.error = $_.Exception.Message

@@ -46,6 +46,8 @@ Future<void> _check() async {
       ))!;
       final output = result.stdout.toList();
       final error = result.stderr.toList();
+      output.ignore();
+      error.ignore();
       final code = await result.exitCode.timeout(const Duration(seconds: 60));
       return (stdout: await output, stderr: await error, code: code);
     }
@@ -95,6 +97,7 @@ public class Main {
       entryFile: p.join(root, 'src/Main.java'),
     ))!;
     final error = loop.stderr.toList();
+    error.ignore();
     final line = await loop.stdout.first.timeout(const Duration(seconds: 30));
     if (line != 'running') throw StateError('JVM did not start: $line');
     await loop.cancel!().timeout(const Duration(seconds: 10));

@@ -22,6 +22,15 @@ The Flutter channel is `qfli_jvmx/jdk`:
 the native child. `pollJava(pid): number | null` and `cancelJava(pid): void`
 accept only children owned by this bridge; cancel is idempotent after reaping.
 
+`OhosJdkProcess.cancel()` shares one in-flight/successful Future and resets a
+failed attempt for retry. A monitor failure is emitted once on stderr; it does
+not fabricate a terminal exit. `exitCode` remains pending until native `poll`
+reports an integer and local file/directory cleanup succeeds. Preserve streams,
+scratch and the known native status across failed cancel/poll/local cleanup.
+After a native status is known, retry local cleanup without killing or reaping
+that child again. Callers must attach stream-Future error observers immediately
+even when their later awaits deliberately wait for actual process exit first.
+
 ## 3. Contracts
 
 All layout fields (`home`, `java`, `javac`, `libraryDirectory`) are nonempty
@@ -62,6 +71,8 @@ toolchains do not inherit a cached mobile layout or this default.
 | Null/relative layout path | Dart `FormatException` |
 | Version command fails or has no expected version text | preparation fails; unavailable |
 | Native stream, fork, wait, cancel failure | `JDK_PROCESS_FAILED` |
+| Monitor/cancel/poll fails before real native exit | Original stream failure observable; exit and ownership pending; cleanup retry available |
+| Local cleanup fails after native exit N | Preserve N and scratch; retry deletion before completing exit with N |
 | javac fails | diagnostics, `kProgramNotRunExitCode`, no JVM run |
 | Java exits with N | return N |
 | Native child killed by signal S | return 128 + S |
@@ -80,6 +91,9 @@ toolchains do not inherit a cached mobile layout or this default.
 
 `flutter test` covers desktop compilation and the OHOS transport's fragmented
 UTF-8, final stream drainage, stdin path, cancellation, and exit status.
+Include failed cancel/poll followed by retry with a separate acknowledgement and
+real exit, plus local-delete failure after known exit. Assert streams/scratch and
+exit remain owned before cleanup succeeds, and no invented status is returned.
 `test/mobile_jvm_launch_test.dart` covers actual temporary-directory creation,
 cached-layout recovery, Java/javac option ordering, desktop isolation and real
 `Files.createTempFile`/`createTempDirectory` behavior. The OHOS transport test

@@ -34,6 +34,13 @@ immediately. A session exposes `ready`, `done`, `events`, `vmInfo`,
 - Source errors are completed analysis with diagnostics. Infrastructure,
   cancellation, timeout and unreadable-JAR failures must provide a nonnull
   `unavailableReason`; an empty diagnostic list alone cannot mean success.
+- The shared adapter must validate Java language/active extension, physical root
+  ownership, unique document identities and the active snapshot's exact revision
+  before compiling. An unsupported README is unavailable even when other Java
+  sources compile cleanly. An empty raw Java-source set is also unavailable.
+  Preserve saved filename casing when applying case-insensitive Windows captures.
+  Cancellation also keys the physical root by that same Windows-insensitive
+  identity, so changing only its spelling cannot create a second live check.
 - Debugging intentionally runs a saved or supplied snapshot. JDI helper and
   target use the same bounded runner/native bridge. Bind only loopback with an
   ephemeral listener; use atomic ordered command files on OHOS, whose stdin is
@@ -43,7 +50,27 @@ immediately. A session exposes `ready`, `done`, `events`, `vmInfo`,
   cancels owned processes, drains bounded output, then removes temporary state.
 - The direct Java debugger page uses saved project files and says so explicitly.
   It does not claim access to editor dirty buffers. Only controls supported by
-  the actual session state are actionable. Dispose stops the owned session.
+  the actual session state are actionable. Normal Back awaits successful Stop
+  and actual `done`, keeping the route available to retry after failure. Forced
+  ancestor teardown requests best-effort Stop; it cannot retain interactive UI.
+- Desktop process cancellation shares one in-flight Future and a successful
+  terminal result. Reset its cache after failure: a timed-out or failed request
+  must permit another Stop against the same owned worker. Await its actual exit
+  after the termination request; acknowledgement alone cannot release scratch.
+- Compiler cancellation retains its snapshot until actual exit and stream
+  drainage. A late-started compiler uses the same cleanup owner. Failed cancel
+  attempts retry after 100 ms, with one attempt in flight; disposing completed
+  analysis cancels the retry timer. Never let a failed cancel unwind into
+  snapshot deletion while its process still runs.
+- Observe stdout/stderr collection Futures immediately with `.ignore()` when
+  awaiting exit first, then await those original Futures to propagate transport
+  failures after real exit. This prevents early unhandled errors without turning
+  failed transport into clean diagnostics.
+- Join both stdout/stderr collectors without eager error completion after actual
+  exit. A failure in one pipe must not skip waiting for the other pipe before
+  deleting its snapshot. The debugger also retains both drains for a worker
+  returned after Stop begins: failed cancellation must not lose those Futures,
+  and a retry waits for their settled drainage before terminal publication.
 
 ## 4. Validation & Error Matrix
 
@@ -52,11 +79,14 @@ immediately. A session exposes `ready`, `done`, `events`, `vmInfo`,
 | Dirty path outside root | Unavailable/failure, no source write |
 | javac source error | Diagnostic on exact submitted buffer |
 | Missing/broken JDK or helper | Unavailable with actual reason |
+| Non-Java active file, missing/stale active snapshot | Unavailable before javac; never checked/clean |
 | Compiler timeout/output/source budget | Cancel owned check and report failure |
 | Unsupported JDI or attach failure | Actual error, no fake paused/clean state |
 | Stop during startup | Cancel late-started owned children too |
 | Descendant retains pipe after root exit | Bounded post-exit drainage |
 | Consumer pauses stream | Preserve buffered bytes within drain deadline |
+| Cancellation fails, or worker exits after an earlier timeout | Keep ownership; retry the same worker; never reuse a permanently failed Future |
+| Compiler starts after cancellation; first native cancel fails | Keep snapshot and exit wait, retry owned cleanup, then report cancelled |
 
 ## 5. Good/Base/Bad Cases
 
@@ -73,6 +103,22 @@ multi-file snapshots, Unicode offsets, cancellation, limits and no execution.
 Run the real-JVM widget route test for breakpoint/locals/step/output and source
 preservation. Unit/UI passes do not prove OHOS. Run the in-app runtime acceptance
 target on each available ABI, retain its detailed JSON and rebuild normal main.
+Exercise the unsupported README through real `EditorController.openPath` and
+`EditorAnalysisController`; Problems must show unavailable and never clean.
+Advance the widget fake clock beyond the analysis debounce before asserting its
+completed state; a bare pump is not evidence that a timer-dispatched check ran.
+The controlled cancellation regression must prove concurrent deduplication,
+failure-to-retry and a later real exit after the first timeout.
+Separately gate actual exit and both pipe EOFs. Cover a stdout failure with
+stderr still pending, and a late native start whose first cancellation fails;
+snapshot/terminal ownership must remain until both stream collectors settle.
+
+The native standalone `EntryAbility` rejects `openAgreement`, `openUrl` and Huawei
+`login` with `OFFLINE_ONLY` before external actions. Preserve startup progress,
+picker/share and the Java bridge. The old remote Agreement page is not registered.
+Test the actual handlers with host stubs and compile/package them separately.
+JDI uses loopback sockets; the retained INTERNET permission is not a claim that
+arbitrary user-authored Java programs are network-sandboxed.
 
 ## 7. Wrong vs Correct
 

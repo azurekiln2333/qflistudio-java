@@ -71,9 +71,10 @@ Future<void> _check() async {
 
     final output = Directory(p.join(root, 'classes'));
     await output.create(recursive: true);
-    final classPath = [output.path, ...jars].join(
-      Platform.isWindows ? ';' : ':',
-    );
+    final classPath = [
+      output.path,
+      ...jars,
+    ].join(Platform.isWindows ? ';' : ':');
 
     final compile = await _runJdk(
       layout: layout,
@@ -126,17 +127,19 @@ Future<void> _check() async {
         .transform(utf8.decoder)
         .transform(const LineSplitter())
         .listen((line) {
-      stdoutLines.add(line);
-      if (firstOutputMs < 0) {
-        firstOutputMs = DateTime.now().difference(launchStart).inMilliseconds;
-      }
-      final match = RegExp(r'PROBE_READY port=(\d+)').firstMatch(line);
-      if (match != null && !ready.isCompleted) {
-        port = int.parse(match.group(1)!);
-        readyMs = DateTime.now().difference(launchStart).inMilliseconds;
-        ready.complete();
-      }
-    });
+          stdoutLines.add(line);
+          if (firstOutputMs < 0) {
+            firstOutputMs = DateTime.now()
+                .difference(launchStart)
+                .inMilliseconds;
+          }
+          final match = RegExp(r'PROBE_READY port=(\d+)').firstMatch(line);
+          if (match != null && !ready.isCompleted) {
+            port = int.parse(match.group(1)!);
+            readyMs = DateTime.now().difference(launchStart).inMilliseconds;
+            ready.complete();
+          }
+        });
     process.stderr
         .transform(utf8.decoder)
         .transform(const LineSplitter())
@@ -156,11 +159,10 @@ Future<void> _check() async {
     checks.add('server-ready');
 
     // 5. Prove it actually serves, not just logs.
-    final client = HttpClient()..connectionTimeout = const Duration(seconds: 30);
+    final client = HttpClient()
+      ..connectionTimeout = const Duration(seconds: 30);
     try {
-      final request = await client.getUrl(
-        Uri.parse('http://127.0.0.1:$port/'),
-      );
+      final request = await client.getUrl(Uri.parse('http://127.0.0.1:$port/'));
       final response = await request.close().timeout(
         const Duration(seconds: 60),
       );
@@ -174,25 +176,11 @@ Future<void> _check() async {
     }
 
     debugPrint(
-      'QFLI_SPRING_BOOT_PROBE ${jsonEncode({
-        'ok': true,
-        'abi': Platform.version,
-        'jdkHome': layout.home,
-        'jarCount': jars.length,
-        'firstOutputMs': firstOutputMs,
-        'serverReadyMs': readyMs,
-        'port': port,
-        'checks': checks,
-      })}',
+      'QFLI_SPRING_BOOT_PROBE ${jsonEncode({'ok': true, 'abi': Platform.version, 'jdkHome': layout.home, 'jarCount': jars.length, 'firstOutputMs': firstOutputMs, 'serverReadyMs': readyMs, 'port': port, 'checks': checks})}',
     );
   } catch (error, stack) {
     debugPrint(
-      'QFLI_SPRING_BOOT_PROBE ${jsonEncode({
-        'ok': false,
-        'checks': checks,
-        'error': error.toString(),
-        'stack': stack.toString(),
-      })}',
+      'QFLI_SPRING_BOOT_PROBE ${jsonEncode({'ok': false, 'checks': checks, 'error': error.toString(), 'stack': stack.toString()})}',
     );
   } finally {
     if (server != null) {
@@ -233,6 +221,8 @@ Future<({int code, List<String> stdout, List<String> stderr})> _runJdk({
       .transform(utf8.decoder)
       .transform(const LineSplitter())
       .toList();
+  stdout.ignore();
+  stderr.ignore();
   final code = await process.exitCode;
   return (code: code, stdout: await stdout, stderr: await stderr);
 }

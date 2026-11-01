@@ -1,3 +1,6 @@
 {"file":".trellis/spec/frontend/tools-tab.md","reason":"Direct tool reachability and offline gates"}
 {"file":".trellis/spec/frontend/content-performance.md","reason":"Shipped catalog integrity"}
 {"file":".trellis/spec/backend/mobile-jdk.md","reason":"Do not substitute host/package tests for OHOS"}
+{"file":".trellis/spec/backend/java-analysis-debug.md","reason":"JDI lifecycle, actual source identity and inspection requirements"}
+{"file":".trellis/spec/backend/java-editor-debugger.md","reason":"Full adapter lifecycle and source snapshot integration checks"}
+{"file":".trellis/tasks/10-22-offline-ide-completeness/research/java-shared-debugger-integration.md","reason":"Review shared debugger adapter against full frozen contract"}

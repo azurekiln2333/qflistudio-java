@@ -6,7 +6,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart' show listEquals;
+import 'package:flutter/foundation.dart' show listEquals, visibleForTesting;
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 import 'package:qfli_java/java_diagnostics.dart';
@@ -16,9 +17,29 @@ import 'package:qfli_studio_core/services/app_paths.dart';
 import 'package:qfli_studio_core/tools/offline_tools.dart';
 
 import 'java_debug_smoke.dart' show runJavaDebugSmoke;
+import 'java_studio_debug_smoke.dart' show runJavaStudioDebugSmoke;
 
 const javaRuntimeAcceptanceReportName = 'qfli-java-runtime-acceptance.json';
 final _status = ValueNotifier<String>('Java runtime acceptance is running…');
+
+/// Embedded build identifiers associate artifacts; the target driver must still
+/// prove the exact HAP was installed/launched and this report was pulled from it.
+Map<String, Object?> javaRuntimeBuildBinding({
+  String buildNonce = const String.fromEnvironment('QFLI_JAVA_BUILD_NONCE'),
+  String inputManifestSha256 = const String.fromEnvironment(
+    'QFLI_JAVA_BUILD_INPUTS_SHA256',
+  ),
+}) => {
+  'buildNonce': buildNonce,
+  'inputManifestSha256': inputManifestSha256,
+  'hasEmbeddedBinding':
+      buildNonce.length == 32 &&
+      inputManifestSha256.length == 64 &&
+      RegExp(r'^[0-9a-f]{32}$').hasMatch(buildNonce) &&
+      RegExp(r'^[0-9a-f]{64}$').hasMatch(inputManifestSha256),
+  'installedPackageProven': false,
+  'requiresExternalInstallEvidence': true,
+};
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,6 +75,10 @@ Future<void> _entry() async {
       'deviceGatePassed': report['deviceGatePassed'],
       'diagnosticsDeviceGatePassed': report['diagnosticsDeviceGatePassed'],
       'debuggerDeviceGatePassed': report['debuggerDeviceGatePassed'],
+      'studioDebuggerDeviceGatePassed':
+          report['studioDebuggerDeviceGatePassed'],
+      'nativeOfflineDeviceGatePassed': report['nativeOfflineDeviceGatePassed'],
+      'buildBinding': report['buildBinding'],
       'operatingSystem': Platform.operatingSystem,
       'report': report['reportFile'],
       'reportSha256': OfflineDigest.sha256(
@@ -65,7 +90,7 @@ Future<void> _entry() async {
   } catch (error, stack) {
     _status.value = 'Java runtime acceptance failed: $error';
     debugPrint(
-      'QFLI_JAVA_RUNTIME_ACCEPTANCE ${jsonEncode({'ok': false, 'deviceGatePassed': false, 'operatingSystem': Platform.operatingSystem, 'error': '$error', 'stack': '$stack'})}',
+      'QFLI_JAVA_RUNTIME_ACCEPTANCE ${jsonEncode({'ok': false, 'deviceGatePassed': false, 'nativeOfflineDeviceGatePassed': false, 'operatingSystem': Platform.operatingSystem, 'error': '$error', 'stack': '$stack'})}',
     );
   }
 }
@@ -96,6 +121,7 @@ Future<Map<String, Object?>> runJavaRuntimeAcceptance({
     'operatingSystem': Platform.operatingSystem,
     'operatingSystemVersion': Platform.operatingSystemVersion,
     'dartVersion': Platform.version,
+    'buildBinding': javaRuntimeBuildBinding(),
     'reportFile': reportFile.path,
     'workDirectory': work.path,
     'status': 'running',
@@ -103,6 +129,8 @@ Future<Map<String, Object?>> runJavaRuntimeAcceptance({
     'deviceGatePassed': false,
     'diagnosticsDeviceGatePassed': false,
     'debuggerDeviceGatePassed': false,
+    'studioDebuggerDeviceGatePassed': false,
+    'nativeOfflineDeviceGatePassed': false,
   };
   Future<void> persist(String stage) async {
     report['stage'] = stage;
@@ -118,6 +146,11 @@ Future<Map<String, Object?>> runJavaRuntimeAcceptance({
 
   var cleanupSafe = true;
   try {
+    await persist('native-offline');
+    final nativeOffline = await runJavaNativeOfflineProbe();
+    report['nativeOffline'] = nativeOffline;
+    report['nativeOfflineDeviceGatePassed'] =
+        Platform.operatingSystem == 'ohos' && nativeOffline['ok'] == true;
     await persist('runtime');
     final runtime = <String, Object?>{'ok': false};
     report['runtime'] = runtime;
@@ -249,12 +282,40 @@ Future<Map<String, Object?>> runJavaRuntimeAcceptance({
     }
     final isOhos = Platform.operatingSystem == 'ohos';
     final actual17 = runtime['ok'] == true;
+    await persist('studio-debugger');
+    final studioDirectory = await Directory(
+      p.join(work.path, 'studio-debugger'),
+    ).create();
+    try {
+      report['studioDebugger'] = await runJavaStudioDebugSmoke(
+        temporaryDirectory: studioDirectory.path,
+      ).timeout(debuggerTimeout);
+    } catch (error, stack) {
+      cleanupSafe = false;
+      report['studioDebugger'] = {
+        'ok': false,
+        'timedOut': error is TimeoutException,
+        'error': '$error',
+        'stack': '$stack',
+        'cleanupConfirmed': false,
+        'note':
+            'The reused smoke has no external cancellation hook; stop the app before removing retained work.',
+      };
+    }
+    final studioDebugger = report['studioDebugger']! as Map<String, Object?>;
+    if (studioDebugger['cleanupConfirmed'] != true) cleanupSafe = false;
+    report['studioDebuggerDeviceGatePassed'] =
+        isOhos && actual17 && studioDebugger['ok'] == true;
     report['diagnosticsDeviceGatePassed'] =
         isOhos && actual17 && diagnostics['ok'] == true;
     report['debuggerDeviceGatePassed'] =
         isOhos && actual17 && debugger['ok'] == true;
     report['ok'] =
-        actual17 && diagnostics['ok'] == true && debugger['ok'] == true;
+        actual17 &&
+        diagnostics['ok'] == true &&
+        debugger['ok'] == true &&
+        studioDebugger['ok'] == true &&
+        nativeOffline['ok'] == true;
   } catch (error, stack) {
     report.addAll({'error': '$error', 'stack': '$stack', 'ok': false});
   } finally {
@@ -270,12 +331,144 @@ Future<Map<String, Object?>> runJavaRuntimeAcceptance({
     }
     if (report['cleanupConfirmed'] != true) report['ok'] = false;
     report['deviceGatePassed'] =
-        Platform.operatingSystem == 'ohos' && report['ok'] == true;
+        Platform.operatingSystem == 'ohos' &&
+        report['ok'] == true &&
+        (report['buildBinding']! as Map)['hasEmbeddedBinding'] == true &&
+        report['nativeOfflineDeviceGatePassed'] == true;
     report['status'] = 'complete';
     report['finishedAtUtc'] = DateTime.now().toUtc().toIso8601String();
     await persist('complete');
   }
   return report;
+}
+
+/// The target driver must rebuild the native HAP from the current EntryAbility,
+/// verify that source's SHA-256, and sign/install that exact HAP before launch.
+/// Only that driver may enable QFLI_JAVA_NATIVE_OFFLINE_SOURCE_BOUND and supply
+/// QFLI_JAVA_NATIVE_OFFLINE_SOURCE_SHA256 through --dart-define. These fields
+/// record the driver's source binding; the Dart probe cannot attest native
+/// package provenance itself. Hot reload into an older HAP is not valid evidence.
+/// Without that binding, or on a host, no method (especially login) is invoked.
+Future<Map<String, Object?>> runJavaNativeOfflineProbe({
+  bool sourceBoundNativeHap = const bool.fromEnvironment(
+    'QFLI_JAVA_NATIVE_OFFLINE_SOURCE_BOUND',
+  ),
+  String nativeSourceSha256 = const String.fromEnvironment(
+    'QFLI_JAVA_NATIVE_OFFLINE_SOURCE_SHA256',
+  ),
+  Duration methodTimeout = const Duration(seconds: 5),
+}) async {
+  final methods = <String, Object?>{
+    for (final (channel, method) in [
+      ('qflistudio/platform', 'openAgreement'),
+      ('qflistudio/platform', 'openUrl'),
+      ('qflistudio/huawei_account', 'login'),
+    ])
+      '$channel.$method': {
+        'channel': channel,
+        'method': method,
+        'ok': false,
+        'status': 'not-run',
+      },
+  };
+  final result = <String, Object?>{
+    'kind': 'java-native-offline',
+    'operatingSystem': Platform.operatingSystem,
+    'sourceBinding': {
+      'verifiedCurrentNativeHapByDriver': sourceBoundNativeHap,
+      'entryAbilitySha256': nativeSourceSha256,
+    },
+    'methods': methods,
+    'ok': false,
+  };
+  if (Platform.operatingSystem != 'ohos') {
+    result['unavailableReason'] =
+        'Actual OHOS native method channels are required; host calls are disabled.';
+    return result;
+  }
+  if (!sourceBoundNativeHap ||
+      !RegExp(r'^[0-9a-f]{64}$').hasMatch(nativeSourceSha256)) {
+    result['unavailableReason'] =
+        'The target driver has not verified a current source-bound native HAP.';
+    return result;
+  }
+  for (final method in ['openAgreement', 'openUrl']) {
+    methods['qflistudio/platform.$method'] = await probeJavaNativeOfflineUrl(
+      method,
+      timeout: methodTimeout,
+    );
+  }
+  // A stale/wrong native implementation may still contain online login. Even
+  // with a driver binding, do not call it after either URL refusal mismatches.
+  final urlsPassed = methods.entries
+      .where((entry) => entry.key.startsWith('qflistudio/platform.'))
+      .every((entry) => (entry.value! as Map)['ok'] == true);
+  if (urlsPassed) {
+    methods['qflistudio/huawei_account.login'] = await _offlineMethod(
+      const MethodChannel('qflistudio/huawei_account'),
+      'login',
+      null,
+      methodTimeout,
+    );
+  } else {
+    (methods['qflistudio/huawei_account.login']! as Map)['reason'] =
+        'Not invoked because the native URL refusal checks did not both pass.';
+  }
+  result['ok'] = methods.values.every((entry) => (entry! as Map)['ok'] == true);
+  return result;
+}
+
+/// Exercises the same channel/error-envelope check in host method-channel mocks.
+/// Login is deliberately excluded from this test entry point. The empty URL is
+/// invalid and contains no remote target even if an older handler is reached.
+@visibleForTesting
+Future<Map<String, Object?>> probeJavaNativeOfflineUrl(
+  String method, {
+  Duration timeout = const Duration(seconds: 5),
+}) {
+  if (method != 'openAgreement' && method != 'openUrl') {
+    throw ArgumentError.value(method, 'method', 'Only URL probes are allowed.');
+  }
+  return _offlineMethod(
+    const MethodChannel('qflistudio/platform'),
+    method,
+    const {'url': '', 'title': 'Offline acceptance invalid input'},
+    timeout,
+  );
+}
+
+Future<Map<String, Object?>> _offlineMethod(
+  MethodChannel channel,
+  String method,
+  Map<String, Object?>? arguments,
+  Duration timeout,
+) async {
+  final result = <String, Object?>{
+    'channel': channel.name,
+    'method': method,
+    'arguments': arguments,
+    'ok': false,
+  };
+  try {
+    await channel.invokeMethod<Object?>(method, arguments).timeout(timeout);
+    result['status'] = 'unexpected-success';
+  } on PlatformException catch (error) {
+    result.addAll({
+      'ok': error.code == 'OFFLINE_ONLY',
+      'status': error.code == 'OFFLINE_ONLY'
+          ? 'offline-only'
+          : 'platform-error',
+      'code': error.code,
+      'message': error.message,
+    });
+  } on MissingPluginException catch (error) {
+    result.addAll({'status': 'missing-method', 'error': '$error'});
+  } on TimeoutException catch (error) {
+    result.addAll({'status': 'timeout', 'error': '$error'});
+  } catch (error) {
+    result.addAll({'status': 'error', 'error': '$error'});
+  }
+  return result;
 }
 
 Future<Map<String, Object?>> _probe(
@@ -336,6 +529,8 @@ Future<Map<String, Object?>> _probe(
               if (late == null) return;
               final stdout = late.stdout.drain<void>();
               final stderr = late.stderr.drain<void>();
+              stdout.ignore();
+              stderr.ignore();
               await late.cancel().timeout(const Duration(seconds: 10));
               await Future.wait([
                 stdout,
