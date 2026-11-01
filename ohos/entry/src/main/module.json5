@@ -37,6 +37,17 @@
             ]
           }
         ]
+      },
+      {
+        "name": "InteropAbility",
+        "srcEntry": "./ets/interop/InteropAbility.ets",
+        "description": "$string:InteropAbility_desc",
+        "icon": "$media:icon",
+        "label": "$string:InteropAbility_label",
+        "startWindowIcon": "$media:icon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "launchType": "singleton"
       }
     ],
     "requestPermissions": [

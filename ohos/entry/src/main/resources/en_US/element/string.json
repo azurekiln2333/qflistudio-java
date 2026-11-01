@@ -11,6 +11,14 @@
     {
       "name": "EntryAbility_label",
       "value": "QFLIJVMX"
+    },
+    {
+      "name": "InteropAbility_desc",
+      "value": "Compiles and runs a Java project on behalf of QFLIStudio"
+    },
+    {
+      "name": "InteropAbility_label",
+      "value": "Cross-app build"
     }
   ]
 }

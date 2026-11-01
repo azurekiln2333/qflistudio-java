@@ -15,6 +15,14 @@
     {
       "name": "pasteboard_reason",
       "value": "用于读取剪贴板内容以粘贴到编辑器"
+    },
+    {
+      "name": "InteropAbility_desc",
+      "value": "按 QFLIStudio 的请求编译并运行 Java 项目"
+    },
+    {
+      "name": "InteropAbility_label",
+      "value": "跨应用编译运行"
     }
   ]
 }
