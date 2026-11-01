@@ -17,6 +17,12 @@ class OhosJdkProcess {
   final _stderr = StreamController<List<int>>();
   final _exit = Completer<int>();
   bool _running = true;
+  int? _nativeExit;
+  Object? _monitorFailure;
+  RandomAccessFile? _outputFile;
+  RandomAccessFile? _errorFile;
+  Future<void>? _monitoring;
+  Future<void>? _cancelling;
 
   Stream<List<int>> get stdout => _stdout.stream;
   Stream<List<int>> get stderr => _stderr.stream;
@@ -51,7 +57,8 @@ class OhosJdkProcess {
       });
       if (pid == null) throw const FormatException('JVM child PID is missing');
       final process = OhosJdkProcess._(pid, directory);
-      unawaited(process._monitor());
+      // A failed cleanup attempt retains the owned child for an explicit retry.
+      unawaited(process._ensureMonitoring().catchError((Object _) {}));
       return process;
     } catch (_) {
       await directory.delete(recursive: true);
@@ -59,60 +66,93 @@ class OhosJdkProcess {
     }
   }
 
-  Future<void> cancel() async {
-    if (_running) await _channel.invokeMethod<void>('cancel', {'pid': _pid});
+  Future<void> cancel() =>
+      _cancelling ??= _cancel().catchError((Object failure, StackTrace stack) {
+        _cancelling = null;
+        Error.throwWithStackTrace(failure, stack);
+      });
+
+  Future<void> _cancel() async {
+    if (_running && _monitoring != null) {
+      await _channel.invokeMethod<void>('cancel', {'pid': _pid});
+    }
+    await _ensureMonitoring().timeout(const Duration(seconds: 5));
     await exitCode;
   }
 
-  Future<void> _monitor() async {
-    RandomAccessFile? output;
-    RandomAccessFile? error;
-    try {
-      output = await File(p.join(_directory.path, 'stdout')).open();
-      error = await File(p.join(_directory.path, 'stderr')).open();
-      void read(RandomAccessFile file, StreamController<List<int>> stream) {
-        while (true) {
-          final bytes = file.readSync(65536);
-          if (bytes.isEmpty) break;
-          stream.add(bytes);
-        }
-      }
+  Future<void> _ensureMonitoring() =>
+      _monitoring ??= _monitor().catchError((Object failure, StackTrace stack) {
+        _monitoring = null;
+        Error.throwWithStackTrace(failure, stack);
+      });
 
-      while (true) {
-        final code = await _channel.invokeMethod<int>('poll', {'pid': _pid});
-        if (code != null) _running = false;
-        read(output, _stdout);
-        read(error, _stderr);
-        if (code != null) {
-          _exit.complete(code);
-          break;
-        }
-        await Future<void>.delayed(const Duration(milliseconds: 40));
-      }
-    } catch (failure, stack) {
-      if (_running) {
-        try {
-          await _channel.invokeMethod<void>('cancel', {'pid': _pid});
-          while (await _channel.invokeMethod<int>('poll', {'pid': _pid}) ==
-              null) {
-            await Future<void>.delayed(const Duration(milliseconds: 40));
-          }
-        } on Exception {
-          // Preserve the stream or process failure that triggered cleanup.
-        }
-      }
+  void _reportFailure(Object failure, StackTrace stack) {
+    if (_monitorFailure != null) return;
+    _monitorFailure = failure;
+    // Keep the original transport failure observable without turning a failed
+    // poll/cancel into an invented terminal status for an unconfirmed child.
+    _stderr.addError(failure, stack);
+  }
+
+  void _read(RandomAccessFile? file, StreamController<List<int>> stream) {
+    if (file == null) return;
+    while (true) {
+      final bytes = file.readSync(65536);
+      if (bytes.isEmpty) break;
+      stream.add(bytes);
+    }
+  }
+
+  Future<void> _poll() async {
+    final code = await _channel.invokeMethod<int>('poll', {'pid': _pid});
+    if (code != null) {
+      _nativeExit = code;
       _running = false;
-      _exit.completeError(failure, stack);
-    } finally {
-      await output?.close();
-      await error?.close();
+    }
+  }
+
+  Future<void> _monitor() async {
+    if (_monitorFailure == null && _running) {
+      try {
+        _outputFile ??= await File(p.join(_directory.path, 'stdout')).open();
+        _errorFile ??= await File(p.join(_directory.path, 'stderr')).open();
+        while (true) {
+          await _poll();
+          _read(_outputFile, _stdout);
+          _read(_errorFile, _stderr);
+          if (!_running) break;
+          await Future<void>.delayed(const Duration(milliseconds: 40));
+        }
+      } catch (failure, stack) {
+        _reportFailure(failure, stack);
+      }
+    }
+    try {
+      if (_running) {
+        await _channel.invokeMethod<void>('cancel', {'pid': _pid});
+        while (_running) {
+          await _poll();
+          if (!_running) break;
+          await Future<void>.delayed(const Duration(milliseconds: 40));
+        }
+      }
+      try {
+        _read(_outputFile, _stdout);
+        _read(_errorFile, _stderr);
+      } catch (failure, stack) {
+        _reportFailure(failure, stack);
+      }
+      await _outputFile?.close();
+      _outputFile = null;
+      await _errorFile?.close();
+      _errorFile = null;
+      if (await _directory.exists()) await _directory.delete(recursive: true);
       unawaited(_stdout.close());
       unawaited(_stderr.close());
-      try {
-        await _directory.delete(recursive: true);
-      } on FileSystemException {
-        // Cleanup must not replace the JVM exit code.
-      }
+      _exit.complete(_nativeExit!);
+    } catch (failure, stack) {
+      _reportFailure(failure, stack);
+      rethrow;
     }
   }
 }

@@ -89,6 +89,8 @@ abstract final class MobileJdk {
         );
         final output = process.stdout.transform(utf8.decoder).join();
         final diagnostic = process.stderr.transform(utf8.decoder).join();
+        output.ignore();
+        diagnostic.ignore();
         try {
           final code = await process.exitCode.timeout(
             const Duration(seconds: 30),
@@ -122,6 +124,8 @@ abstract final class MobileJdk {
       );
       final stdout = process.stdout.transform(utf8.decoder).join();
       final stderr = process.stderr.transform(utf8.decoder).join();
+      stdout.ignore();
+      stderr.ignore();
       try {
         final code = await process.exitCode.timeout(
           const Duration(seconds: 30),
