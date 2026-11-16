@@ -35,6 +35,9 @@ Preparation writes `NATIVE_SDK_DIR` through `GITHUB_ENV` for the next step.
   Do not combine generic and vendor trees: their include_next chains can hide
   size_t definitions. Preprocess `<limits.h>` and `<string>` before dependencies;
   an empty C++ compile does not test this header layout.
+- Keep the OHOS headless build's X11 JNI stubs. Its X11SurfaceData.h must guard
+  the Xrender include with `!HEADLESS`; removing X11 source files can remove JNI
+  entry points. Include any new source patch in the prepared-source stamp.
 - `inputs.lock.json` pins retained dependency and corresponding source bundles.
   Extract the dependency archive into the recipe cache, then verify every `.deb`
   against both existing dependency locks. Never silently upgrade missing packages.
@@ -88,6 +91,10 @@ Correct: require make images, staging and checksummed artifacts to succeed.
 Wrong: infer mobile compatibility from successful Ubuntu cross compilation.
 Correct: report compilation/packaging evidence and retain separate device gates
 from [Mobile JDK](mobile-jdk.md).
+
+Wrong: infer the pinned SDK layout from a compiler driver's conditional branch.
+Correct: inspect actual archive members and test target headers against their
+matching library ABI before modifying the include-tree selection.
 
 Wrong: delete build/ to recover space when it contains a registered WSL disk.
 Correct: leave cleanup as a separate explicit operation after cloud verification.

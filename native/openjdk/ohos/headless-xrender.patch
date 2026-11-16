@@ -1,0 +1,12 @@
+--- a/src/java.desktop/unix/native/common/java2d/x11/X11SurfaceData.h
++++ b/src/java.desktop/unix/native/common/java2d/x11/X11SurfaceData.h
+@@ -32,7 +32,9 @@
+ #include "GLXGraphicsConfig.h"
+ #endif
+ 
++#ifndef HEADLESS
+ #include <X11/extensions/Xrender.h>
++#endif
+ 
+ /**
+  * This include file contains support declarations for loops using the

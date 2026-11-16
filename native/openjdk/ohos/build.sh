@@ -93,7 +93,7 @@ while read -r sha name; do
 done < "$here/../android/termux-patches.lock"
 
 src=$work_dir/source
-stamp="$source_sha:$arch:$(sha256sum "$here/hotspot.patch" "$here/zero-memory.patch" "$here/../app-layout.patch" "$here/app-libraries.patch" "$here/launcher.patch" "$here/child-exit.patch" "${patches[@]}" | sha256sum | cut -d ' ' -f1)"
+stamp="$source_sha:$arch:$(sha256sum "$here/hotspot.patch" "$here/zero-memory.patch" "$here/headless-xrender.patch" "$here/../app-layout.patch" "$here/app-libraries.patch" "$here/launcher.patch" "$here/child-exit.patch" "${patches[@]}" | sha256sum | cut -d ' ' -f1)"
 if [[ -d $src ]]; then
   [[ -f $src/.qfli-prepared && $(< "$src/.qfli-prepared") == "$stamp" ]] || {
     printf 'Source directory has different inputs; choose a new work directory: %s\n' "$src" >&2; exit 1;
@@ -101,7 +101,7 @@ if [[ -d $src ]]; then
 else
   mkdir -p "$src"
   tar -xzf "$archive" -C "$src" --strip-components=1
-  for patch_file in "${patches[@]}" "$here/hotspot.patch" "$here/zero-memory.patch" "$here/../app-layout.patch" "$here/app-libraries.patch" "$here/launcher.patch" "$here/child-exit.patch"; do
+  for patch_file in "${patches[@]}" "$here/hotspot.patch" "$here/zero-memory.patch" "$here/headless-xrender.patch" "$here/../app-layout.patch" "$here/app-libraries.patch" "$here/launcher.patch" "$here/child-exit.patch"; do
     patch --directory="$src" -p1 --batch < "$patch_file"
   done
   printf '%s\n' "$stamp" > "$src/.qfli-prepared"
