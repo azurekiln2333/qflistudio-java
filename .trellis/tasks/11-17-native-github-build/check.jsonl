@@ -1,0 +1,4 @@
+{"file":".trellis/spec/backend/mobile-jdk.md","reason":"Review runtime packaging and architecture guarantees"}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Trace workflow inputs through downloaded app assets"}
+{"file":".trellis/tasks/11-17-native-github-build/research/storage-status.md","reason":"Validate scope, disk explanation and branch safety"}
+{"file":".trellis/tasks/11-17-native-github-build/research/native-build.md","reason":"Validate input recovery and archive contents against researched contracts"}

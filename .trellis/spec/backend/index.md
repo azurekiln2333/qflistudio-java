@@ -15,6 +15,7 @@ This directory contains guidelines for backend development. Fill in each file wi
 | Guide | Description | Status |
 |-------|-------------|--------|
 | [Mobile JDK](./mobile-jdk.md) | Native toolchain, installation, process transport, and device gates | Implemented |
+| [Native GitHub Builds](./native-ci.md) | Pinned CI inputs, four-target builds, artifact restore and diagnostics | Implemented; cloud trial recorded in task |
 | [Java Analysis and Debugging](./java-analysis-debug.md) | Unsaved-buffer compiler diagnostics, real local JDI sessions, tools UI and lifecycle | Implemented |
 | [Java Catalog Audit](./java-catalog-audit.md) | 280 topics, mirror inventory, bounded host/OHOS verification and emulator builds | Implemented |
 | [Directory Structure](./directory-structure.md) | Module organization and file layout | To fill |
