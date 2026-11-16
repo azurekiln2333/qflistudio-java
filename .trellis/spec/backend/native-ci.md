@@ -28,10 +28,13 @@ Preparation writes `NATIVE_SDK_DIR` through `GITHUB_ENV` for the next step.
   `native-downloads`, `native-work`, `native-artifacts`, and `native-logs` there.
 - Ubuntu 24.04 supplies Clang/LLVM/LLD 18 and host OpenJDK 17. Limit jobs to four.
   Android uses NDK 27.0.12077973; OHOS uses the checksum-pinned official SDK.
-- OHOS libc++ includes use `llvm/include/c++/v1` first, followed by an existing
-  `llvm/include/ARCH-linux-ohos/c++/v1`. Public SDKs place `__config_site` in
-  that target directory. Preprocess `<limits.h>` and `<string>` before building
-  dependencies; an empty C++ compile does not test this header layout.
+- Choose one complete OHOS libc++ header tree. Prefer
+  `llvm/include/libcxx-ohos/include/c++/v1` when it contains `__config_site`;
+  otherwise use `llvm/include/c++/v1` for legacy SDKs. The public SDK's OHOS tree
+  matches the target libraries' `std::__n1` ABI. Never use the host `__1` config.
+  Do not combine generic and vendor trees: their include_next chains can hide
+  size_t definitions. Preprocess `<limits.h>` and `<string>` before dependencies;
+  an empty C++ compile does not test this header layout.
 - `inputs.lock.json` pins retained dependency and corresponding source bundles.
   Extract the dependency archive into the recipe cache, then verify every `.deb`
   against both existing dependency locks. Never silently upgrade missing packages.

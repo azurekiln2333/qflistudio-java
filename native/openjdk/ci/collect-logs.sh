@@ -29,3 +29,6 @@ for target in logs.glob('*.log'):
 PY
 df -h "$RUNNER_TEMP" > "$logs/disk.txt"
 free -h > "$logs/memory.txt"
+if [[ $NATIVE_PLATFORM == ohos && -d ${NATIVE_SDK_DIR:-}/llvm/include ]]; then
+  find "$NATIVE_SDK_DIR/llvm/include" -name __config_site -print > "$logs/sdk-cxx-config-paths.txt"
+fi
