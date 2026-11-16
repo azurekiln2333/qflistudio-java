@@ -9,6 +9,11 @@ for arg in "$@"; do
 done
 if $linking; then flags+=(-fuse-ld=lld "-L$sdk/llvm/lib/$arch-linux-ohos"); fi
 if [[ $(basename "$0") == *++ ]]; then
-  exec "$host_cxx" "${flags[@]}" -isystem "$sdk/llvm/include/c++/v1" -stdlib=libc++ "$@"
+  flags+=(-isystem "$sdk/llvm/include/c++/v1")
+  # Public SDKs keep __config_site in a target-specific directory. Preserve the
+  # generic include first for SDKs that already carry their configuration there.
+  target_headers=$sdk/llvm/include/$arch-linux-ohos/c++/v1
+  if [[ -d $target_headers ]]; then flags+=(-isystem "$target_headers"); fi
+  exec "$host_cxx" "${flags[@]}" -stdlib=libc++ "$@"
 fi
 exec "$host_cc" "${flags[@]}" "$@"

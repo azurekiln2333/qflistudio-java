@@ -115,6 +115,9 @@ chmod 755 "$toolchain/ohos-clang" "$toolchain/ohos-clang++"
 printf 'host_cc=%q\nhost_cxx=%q\nsdk=%q\narch=%q\n' \
   "$(command -v clang)" "$(command -v clang++)" "$sdk" "$arch" > "$toolchain/toolchain.env"
 export CC=$toolchain/ohos-clang CXX=$toolchain/ohos-clang++ AR=llvm-ar-18 RANLIB=llvm-ranlib-18
+# Exercise the SDK's C++ configuration before building dependencies. An empty
+# C++ source compiles even when libc++ headers cannot locate __config_site.
+printf '#include <limits.h>\n#include <string>\n' | "$CXX" -x c++ -E - >/dev/null
 deps=$work_dir/dependencies
 mkdir -p "$deps/include"
 for header in cups fontconfig X11; do

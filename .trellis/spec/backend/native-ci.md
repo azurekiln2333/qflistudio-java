@@ -28,6 +28,10 @@ Preparation writes `NATIVE_SDK_DIR` through `GITHUB_ENV` for the next step.
   `native-downloads`, `native-work`, `native-artifacts`, and `native-logs` there.
 - Ubuntu 24.04 supplies Clang/LLVM/LLD 18 and host OpenJDK 17. Limit jobs to four.
   Android uses NDK 27.0.12077973; OHOS uses the checksum-pinned official SDK.
+- OHOS libc++ includes use `llvm/include/c++/v1` first, followed by an existing
+  `llvm/include/ARCH-linux-ohos/c++/v1`. Public SDKs place `__config_site` in
+  that target directory. Preprocess `<limits.h>` and `<string>` before building
+  dependencies; an empty C++ compile does not test this header layout.
 - `inputs.lock.json` pins retained dependency and corresponding source bundles.
   Extract the dependency archive into the recipe cache, then verify every `.deb`
   against both existing dependency locks. Never silently upgrade missing packages.
@@ -50,6 +54,7 @@ Preparation writes `NATIVE_SDK_DIR` through `GITHUB_ENV` for the next step.
 | Invalid target or missing required environment | Fail before build |
 | Bundle, package, source or SDK checksum mismatch | Fail before consuming input |
 | SDK lacks Clang 15.0.4 resources or target libc | Fail preparation |
+| OHOS libc++ configuration headers are unavailable | Fail C++ preflight |
 | Compile, ELF or notice validation fails | No success artifact; retain diagnostics |
 | One target fails | Let other matrix jobs finish |
 | Build succeeds | Publish checksummed inputs and explicit provenance |
