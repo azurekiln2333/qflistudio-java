@@ -1,0 +1,33 @@
+name: Verify OHOS artifacts
+
+on:
+  push:
+    branches: [main, 'ci/native-build-*']
+    paths:
+      - '.github/workflows/verify-native-artifacts.yml'
+      - 'scripts/verify-ohos-artifact.py'
+  workflow_dispatch:
+    inputs:
+      source_run:
+        description: Native OpenJDK run ID (blank selects the latest successful run on this branch)
+        type: string
+        required: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out verifier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Download and verify OHOS artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN: ${{ inputs.source_run || '' }}
+        run: python3 scripts/verify-ohos-artifact.py github
