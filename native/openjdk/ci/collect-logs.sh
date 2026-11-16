@@ -10,9 +10,10 @@ import sys
 work, logs = map(Path, sys.argv[1:])
 limit = 8 * 1024 * 1024
 # Keep bounded diagnostics instead of uploading the source/object tree.
-for pattern in ('source/build/*/configure.log', 'source/build/*/config.log',
+for pattern in ('source/configure.log', 'source/config.log',
+                'source/build/*/configure.log', 'source/build/*/config.log',
                 'source/build/*/build.log', 'source/build/*/build.log.old',
-                'alsa/config.log', 'libffi/config.log'):
+                'alsa/config.log', 'libffi/config.log', 'libffi/*/config.log'):
     for source in work.glob(pattern):
         if source.is_file():
             target = logs / str(source.relative_to(work)).replace('/', '_').replace('\\', '_')
