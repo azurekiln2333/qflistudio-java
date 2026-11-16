@@ -83,6 +83,13 @@ archive inventory, repeatability and rejection of corrupted cache bytes.
 Observe the real GitHub run; inspect target conclusions and artifact inventories.
 Do not substitute YAML validation for a cloud compilation result.
 
+`verify-native-artifacts.yml` and `scripts/verify-ohos-artifact.py` independently
+download existing OHOS artifacts without rebuilding. Use read-only Actions and
+contents access. Select exact runtime artifacts from a successful native run,
+verify API size/digest and internal checksums, then inspect all ELF architectures,
+image/staged consistency, legal notices and OHOS mirrors. Do not forward tokens
+to cross-host download redirects. Report results in summaries and annotations.
+
 ## 7. Wrong and correct
 
 Wrong: upload a successful configure log and claim the JDK is built.

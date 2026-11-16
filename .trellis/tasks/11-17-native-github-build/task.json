@@ -15,12 +15,12 @@
   "branch": "ci/native-build-20261117",
   "base_branch": "main",
   "worktree_path": "D:\\MyNewProjects\\qfli_java-native-ci",
-  "commit": null,
+  "commit": "796d5d04cdc62039ebd21f4522ba87ee9afd23df",
   "pr_url": null,
   "subtasks": [],
   "children": [],
   "parent": null,
   "relatedFiles": [],
-  "notes": "User approved implementation on 2026-11-17. Retained input release published and public download hashes verified. Isolated branch based on github/main.",
+  "notes": "All acceptance criteria passed on 2026-11-17. Android run43924543964 artifacts verified locally. OHOS run43945972223 passed; exact artifacts verified in run43949447383. GPL README declaration036e77e matches main studio LICENSE. Isolated branch pushed, not merged. Original application edits and WSL preserved. Removed task-owned SDK archive and checked Android download copies.",
   "meta": {}
 }

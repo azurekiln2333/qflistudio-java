@@ -24,6 +24,8 @@ downloadable outputs without retaining a local native compilation environment.
   unrelated edits and both existing main branches.
 - R6: Execute the workflow and report observed results and artifact URLs.
 - R7: Explain future local cleanup. Leave the WSL distribution intact in this task.
+- R8: Match the main qflistudio project GPL-3.0 license text and make the
+  declaration explicit across localized README files. Commit and push this update.
 
 ## Acceptance criteria
 
@@ -35,6 +37,8 @@ downloadable outputs without retaining a local native compilation environment.
   Android also passes its existing 16 KiB alignment checks.
 - A5 (R4): All retained dependency archives are verified against existing lock files.
 - A6 (R6): Provide the actual run link, artifact names, and restore instructions.
+- A7 (R8): The license text matches the main project, each README names GPL v3.0,
+  and the user receives the conventional commit subject and pushed revision.
 
 ## Out of scope
 
@@ -48,3 +52,5 @@ The user approved task creation and continued planning on 2026-11-17.
 GitHub API access confirmed the signed-in account can push to the public repository.
 The official OpenHarmony 6.0 SDK download and checksum are identified; the cloud
 run will verify its extracted native resources. No product decision remains open.
+
+The user added the GPL-3.0 alignment and commit/push request during execution.
