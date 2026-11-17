@@ -93,7 +93,7 @@ while read -r sha name; do
 done < "$here/../android/termux-patches.lock"
 
 src=$work_dir/source
-stamp="$source_sha:$arch:$(sha256sum "$here/hotspot.patch" "$here/zero-memory.patch" "$here/../app-layout.patch" "$here/app-libraries.patch" "$here/launcher.patch" "$here/child-exit.patch" "${patches[@]}" | sha256sum | cut -d ' ' -f1)"
+stamp="$source_sha:$arch:$(sha256sum "$here/hotspot.patch" "$here/zero-memory.patch" "$here/headless-xrender.patch" "$here/../app-layout.patch" "$here/app-libraries.patch" "$here/launcher.patch" "$here/child-exit.patch" "${patches[@]}" | sha256sum | cut -d ' ' -f1)"
 if [[ -d $src ]]; then
   [[ -f $src/.qfli-prepared && $(< "$src/.qfli-prepared") == "$stamp" ]] || {
     printf 'Source directory has different inputs; choose a new work directory: %s\n' "$src" >&2; exit 1;
@@ -101,7 +101,7 @@ if [[ -d $src ]]; then
 else
   mkdir -p "$src"
   tar -xzf "$archive" -C "$src" --strip-components=1
-  for patch_file in "${patches[@]}" "$here/hotspot.patch" "$here/zero-memory.patch" "$here/../app-layout.patch" "$here/app-libraries.patch" "$here/launcher.patch" "$here/child-exit.patch"; do
+  for patch_file in "${patches[@]}" "$here/hotspot.patch" "$here/zero-memory.patch" "$here/headless-xrender.patch" "$here/../app-layout.patch" "$here/app-libraries.patch" "$here/launcher.patch" "$here/child-exit.patch"; do
     patch --directory="$src" -p1 --batch < "$patch_file"
   done
   printf '%s\n' "$stamp" > "$src/.qfli-prepared"
@@ -115,6 +115,9 @@ chmod 755 "$toolchain/ohos-clang" "$toolchain/ohos-clang++"
 printf 'host_cc=%q\nhost_cxx=%q\nsdk=%q\narch=%q\n' \
   "$(command -v clang)" "$(command -v clang++)" "$sdk" "$arch" > "$toolchain/toolchain.env"
 export CC=$toolchain/ohos-clang CXX=$toolchain/ohos-clang++ AR=llvm-ar-18 RANLIB=llvm-ranlib-18
+# Exercise the SDK's C++ configuration before building dependencies. An empty
+# C++ source compiles even when libc++ headers cannot locate __config_site.
+printf '#include <limits.h>\n#include <string>\n' | "$CXX" -x c++ -E - >/dev/null
 deps=$work_dir/dependencies
 mkdir -p "$deps/include"
 for header in cups fontconfig X11; do

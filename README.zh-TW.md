@@ -166,4 +166,6 @@ flutter run -t lib/main.dart -d DEVICE_ID
 
 ## 授權
 
-授權條款見 [LICENSE](LICENSE)。
+本專案採用 GPL v3.0。
+完整條款見 [GNU General Public License v3.0](LICENSE)。
+第三方元件保留各自的授權條款。

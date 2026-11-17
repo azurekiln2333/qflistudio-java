@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "filename": "native-build-dependencies-v1.tar.gz",
+    "sha256": "5f02dacca50cb6d849f7b9707f64d03351463e3d4fea79ec05005b709f438116",
+    "url": "https://github.com/azurekiln2333/qflistudio-java/releases/download/native-build-inputs-v1/native-build-dependencies-v1.tar.gz"
+  },
+  "sources": {
+    "filename": "native-build-sources-v1.tar.gz",
+    "sha256": "6bae567082d27b84c73ec9c149e31f6a03f98dc69782c6acb5c3d1b69bed3369",
+    "url": "https://github.com/azurekiln2333/qflistudio-java/releases/download/native-build-inputs-v1/native-build-sources-v1.tar.gz"
+  },
+  "termux_commit": "d0f94da1e578a0c9550a84d408bc8ed0003882ec",
+  "termux_source": {
+    "filename": "termux-packages-d0f94da1e578a0c9550a84d408bc8ed0003882ec.tar.gz",
+    "sha256": "e5e3d53f6fe85040d1bd18298ae325df35b74fa0801be8d0d36b89ec0973deae",
+    "url": "https://codeload.github.com/termux/termux-packages/tar.gz/d0f94da1e578a0c9550a84d408bc8ed0003882ec"
+  },
+  "version": 1
+}

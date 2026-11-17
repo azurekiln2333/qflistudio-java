@@ -13,6 +13,7 @@ Build recipes and pinned input details:
 
 - [Android](android/README.md)
 - [HarmonyOS](ohos/README.md)
+- [GitHub builds and downloadable artifacts](ci/README.md)
 
 ## Stage An Image
 
