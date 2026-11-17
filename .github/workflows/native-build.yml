@@ -72,11 +72,11 @@ jobs:
       NATIVE_ABI: ${{ matrix.abi }}
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Restore verified downloads
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/native-downloads
           key: native-downloads-v1-${{ matrix.platform }}-${{ hashFiles('native/openjdk/android/*.lock', 'native/openjdk/ci/inputs.lock.json') }}
@@ -89,7 +89,7 @@ jobs:
       - name: Validate and package
         run: bash native/openjdk/ci/package.sh 2>&1 | tee "$RUNNER_TEMP/native-logs/package.log"
       - name: Upload runtime and app inputs
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: native-${{ matrix.platform }}-${{ matrix.abi }}-${{ github.sha }}
           path: ${{ runner.temp }}/native-artifacts/*
@@ -101,7 +101,7 @@ jobs:
         run: bash native/openjdk/ci/collect-logs.sh
       - name: Upload diagnostics
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: native-logs-${{ matrix.platform }}-${{ matrix.abi }}-${{ github.sha }}
           path: ${{ runner.temp }}/native-logs/*
