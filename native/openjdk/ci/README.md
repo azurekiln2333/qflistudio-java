@@ -52,9 +52,10 @@ or failure. SDKs, object files and full source build trees are not uploaded.
 The separate [Verify OHOS artifacts workflow](../../../.github/workflows/verify-native-artifacts.yml)
 downloads existing OHOS outputs and validates their API digest, internal checksums,
 ELF architecture, staged files, legal notices and provenance. It does not compile
-the JDK. Its optional `source_run` input selects a native build run; an empty value
-selects the latest successful native run on the current branch. Both OHOS outputs
-must exist. This is useful when the local network cannot reach an artifact's
+the JDK. It runs automatically after each successful push build of `Native OpenJDK`
+on `main` and verifies that run. Manual dispatch takes an optional `source_run`
+input; an empty value selects the latest successful native run on the current
+branch. Both OHOS outputs must exist. This is useful when the local network cannot reach an artifact's
 storage endpoint. Results appear in the job summary and notice annotations.
 
 ## Restored application layout

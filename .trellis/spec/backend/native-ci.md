@@ -89,6 +89,10 @@ contents access. Select exact runtime artifacts from a successful native run,
 verify API size/digest and internal checksums, then inspect all ELF architectures,
 image/staged consistency, legal notices and OHOS mirrors. Do not forward tokens
 to cross-host download redirects. Report results in summaries and annotations.
+Trigger verification with `workflow_run` after a successful `push` build of
+`Native OpenJDK` on `main`, and pass that run ID. A `push` trigger races the
+build it should verify. Filtered dispatch builds may lack OHOS outputs, so
+verify them by manual dispatch with `source_run`.
 
 ## 7. Wrong and correct
 

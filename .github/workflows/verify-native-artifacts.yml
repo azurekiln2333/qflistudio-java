@@ -1,11 +1,10 @@
 name: Verify OHOS artifacts
 
 on:
-  push:
-    branches: [main, 'ci/native-build-*']
-    paths:
-      - '.github/workflows/verify-native-artifacts.yml'
-      - 'scripts/verify-ohos-artifact.py'
+  workflow_run:
+    workflows: [Native OpenJDK]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
       source_run:
@@ -19,6 +18,11 @@ permissions:
 
 jobs:
   verify:
+    # Push builds cover all four targets; filtered dispatch builds may lack OHOS.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -29,5 +33,5 @@ jobs:
       - name: Download and verify OHOS artifacts
         env:
           GH_TOKEN: ${{ github.token }}
-          SOURCE_RUN: ${{ inputs.source_run || '' }}
+          SOURCE_RUN: ${{ github.event.workflow_run.id || inputs.source_run || '' }}
         run: python3 scripts/verify-ohos-artifact.py github
