@@ -21,6 +21,6 @@
   "children": [],
   "parent": null,
   "relatedFiles": [],
-  "notes": "All acceptance criteria passed on 2026-11-17. Android run43924543964 artifacts verified locally. OHOS run43945972223 passed; exact artifacts verified in run43949447383. GPL README declaration036e77e matches main studio LICENSE. Isolated branch pushed, not merged. Original application edits and WSL preserved. Removed task-owned SDK archive and checked Android download copies.",
+  "notes": "All acceptance criteria passed on 2026-11-17. Android run43924543964 artifacts verified locally. OHOS run43945972223 passed; exact artifacts verified in run43949447383. GPL README declaration036e77e matches main studio LICENSE. Merged into main at a0e8899. Both temporary branches were removed after ancestry checks found zero unique commits. Original application edits and WSL preserved. Removed task-owned SDK archive and checked Android download copies.",
   "meta": {}
 }

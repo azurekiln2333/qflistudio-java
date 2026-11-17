@@ -49,7 +49,7 @@ Separate `native-logs-PLATFORM-ABI-COMMIT` artifacts contain diagnostics.
 Extract a staged archive at the repository root after verifying its checksum.
 It restores `native/build/PLATFORM/jniLibs/ABI` and the matching `assets` files.
 OHOS bundles also restore the HAP library and rawfile copies.
-See [download and restore instructions](https://github.com/azurekiln2333/qflistudio-java/blob/ci/native-build-20261117/native/openjdk/ci/README.md).
+See [download and restore instructions](https://github.com/azurekiln2333/qflistudio-java/blob/main/native/openjdk/ci/README.md).
 
 These artifacts are JDK inputs for application packaging. They contain no APK
 or HAP. Compilation and staging do not establish mobile device execution.
@@ -107,5 +107,6 @@ compacting it; do not delete the entire `build` directory.
 - GPL declarations match the main studio project and were committed/pushed.
 - Native CI and SDK/headless build findings are recorded in the project spec.
 - The original application changes and WSL environment remain intact.
-- The build branch is pushed; it has not been merged into main.
+- The work was merged into `main` at `a0e8899`.
+- Both temporary branches were removed after ancestry checks found zero unique commits.
 - Device runtime tests and full APK/HAP packaging remain outside this task.
