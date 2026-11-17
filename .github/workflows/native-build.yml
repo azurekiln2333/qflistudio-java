@@ -1,0 +1,109 @@
+name: Native OpenJDK
+
+on:
+  push:
+    branches: [main, 'ci/native-build-*']
+    paths:
+      - 'native/openjdk/**'
+      - '.github/workflows/native-build.yml'
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Native platform
+        type: choice
+        options: [all, android, ohos]
+        default: all
+      abi:
+        description: Target architecture
+        type: choice
+        options: [all, arm64-v8a, x86_64]
+        default: all
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-${{ github.workflow }}-${{ github.ref }}-${{ inputs.platform || 'all' }}-${{ inputs.abi || 'all' }}
+  cancel-in-progress: false
+
+jobs:
+  targets:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+    steps:
+      - name: Select targets
+        id: select
+        env:
+          SELECTED_PLATFORM: ${{ inputs.platform || 'all' }}
+          SELECTED_ABI: ${{ inputs.abi || 'all' }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+
+          platform = os.environ['SELECTED_PLATFORM']
+          abi = os.environ['SELECTED_ABI']
+          assert platform in ('all', 'android', 'ohos')
+          assert abi in ('all', 'arm64-v8a', 'x86_64')
+          targets = [
+              {'platform': p, 'abi': a}
+              for p in ('android', 'ohos')
+              for a in ('arm64-v8a', 'x86_64')
+              if platform in ('all', p) and abi in ('all', a)
+          ]
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+              output.write('matrix=' + json.dumps({'include': targets}) + '\n')
+          PY
+
+  build:
+    name: ${{ matrix.platform }} / ${{ matrix.abi }}
+    needs: targets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      NATIVE_PLATFORM: ${{ matrix.platform }}
+      NATIVE_ABI: ${{ matrix.abi }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Restore verified downloads
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: ${{ runner.temp }}/native-downloads
+          key: native-downloads-v1-${{ matrix.platform }}-${{ hashFiles('native/openjdk/android/*.lock', 'native/openjdk/ci/inputs.lock.json') }}
+      - name: Prepare build inputs
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-logs"
+          bash native/openjdk/ci/prepare.sh 2>&1 | tee "$RUNNER_TEMP/native-logs/prepare.log"
+      - name: Compile native JDK
+        run: bash native/openjdk/ci/build.sh 2>&1 | tee "$RUNNER_TEMP/native-logs/build.log"
+      - name: Validate and package
+        run: bash native/openjdk/ci/package.sh 2>&1 | tee "$RUNNER_TEMP/native-logs/package.log"
+      - name: Upload runtime and app inputs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: native-${{ matrix.platform }}-${{ matrix.abi }}-${{ github.sha }}
+          path: ${{ runner.temp }}/native-artifacts/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+      - name: Collect diagnostics
+        if: always()
+        run: bash native/openjdk/ci/collect-logs.sh
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: native-logs-${{ matrix.platform }}-${{ matrix.abi }}-${{ github.sha }}
+          path: ${{ runner.temp }}/native-logs/*
+          if-no-files-found: warn
+          retention-days: 14

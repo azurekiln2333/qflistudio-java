@@ -185,4 +185,5 @@ Validate later revisions again on their target platforms.
 
 ## License
 
-See [LICENSE](LICENSE).
+This project is licensed under the [GNU General Public License v3.0](LICENSE).
+Third-party components retain their respective licenses.
