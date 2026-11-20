@@ -47,7 +47,14 @@
         "startWindowIcon": "$media:icon",
         "startWindowBackground": "$color:start_window_background",
         "exported": true,
-        "launchType": "singleton"
+        "launchType": "singleton",
+        "skills": [
+          {
+            "actions": [
+              "action.system.qfli.interop.request"
+            ]
+          }
+        ]
       }
     ],
     "requestPermissions": [

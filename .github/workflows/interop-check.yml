@@ -1,0 +1,33 @@
+name: Java foreground interop
+
+on:
+  push:
+    branches: [main, 'release/**']
+    paths:
+      - 'ohos/entry/src/main/ets/**'
+      - 'ohos/entry/src/main/resources/base/profile/main_pages.json'
+      - 'test/*ability*.cjs'
+      - 'test/interop_receiver_test.cjs'
+      - '.github/workflows/interop-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  host-contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '24.14.1'
+      - name: Install the pinned host transpiler
+        run: npm install --prefix "$RUNNER_TEMP/java-interop-tools" --no-save --ignore-scripts --package-lock=false typescript@4.9.5
+      - name: Execute production native entry and interop handlers with system doubles
+        run: |
+          export QFLI_TYPESCRIPT="$RUNNER_TEMP/java-interop-tools/node_modules/typescript"
+          node --test test/native_entry_ability_test.cjs test/interop_receiver_test.cjs

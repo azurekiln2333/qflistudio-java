@@ -39,7 +39,11 @@ channel. Android launch/normal backgrounds, Android 12+ splash backgrounds,
 and OHOS startup colors are `#F8F9FF` for light and `#111418` for dark.
 
 The standalone Java native entry never dispatches these remote methods to
-browser/router/account providers. Register only `pages/Index` in `main_pages`.
+browser/router/account providers. Register `pages/Index` and `pages/InteropIdle`
+in `main_pages`. The exported foreground `InteropAbility` loads only the plain
+ArkUI `InteropIdle` page: it owns no Flutter engine and must not load
+`FlutterPage`. This status page serves Studio's explicit cross-app Java request;
+it does not enable the standalone entry's browser or account channels.
 Keep local share, document picker, startup progress, plugins and Java bridge
 available. The INTERNET permission remains needed by local loopback JDWP/JDI;
 this route policy does not claim a network sandbox for user Java programs.
@@ -72,8 +76,29 @@ loading UI. Use temporary path-provider storage for these tests.
 `node --test test/native_entry_ability_test.cjs` transpiles the actual EntryAbility
 and invokes its channel handlers against system API doubles. Require remote
 refusal envelopes with zero provider calls, local bridge/share/picker behavior,
-progress validation, and the single local page registry. These host tests do not
+progress validation, and the local entry plus plain interop page registry. These host tests do not
 replace ArkTS compilation or source-bound installed-HAP native channel checks.
+
+The foreground interop receiver accepts a read-granted ZIP `payloadUri` and a
+`sessionToken` from Studio. Preserve the token in its single terminal callback
+to `InteropBridgeAbility`. Aggregate stdout and stderr before sending `done` or
+`error`: an earlier callback hands the foreground back to Studio and prevents
+later callbacks. Share `prepareJdk` with the local channel so both callers use
+the extracted JDK home. Register only the foreground request action in this
+release; background interop has separate lifecycle and cancellation contracts.
+
+The foreground compiler and JVM share one request deadline. On timeout, request
+native cancellation once and poll for up to five seconds to reap the child.
+Delete scratch directories and emit a timeout result only after reaping. If the
+child remains owned after that grace period, report an internal cleanup failure
+and preserve its scratch directories. Never invent a native exit status.
+Drain the bytes present in each output file, honor short reads, and preserve one
+streaming UTF-8 decoder per stream. Flush decoder state only after native exit.
+`test/interop_receiver_test.cjs` executes the actual receiver with filesystem,
+process and clock doubles. It covers final tails larger than 64 KiB, split UTF-8,
+short reads, shared deadlines, delayed reaping, unreaped cancellation and compile
+failure. `.github/workflows/interop-check.yml` runs both native host suites in
+GitHub Actions with a pinned TypeScript transpiler. This is not device evidence.
 
 Run Dart analysis and `flutter test --no-pub`, then build APK and HAP to check
 native resources and ArkTS. Cold-start visual verification requires an available

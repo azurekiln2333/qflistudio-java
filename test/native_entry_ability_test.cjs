@@ -160,7 +160,10 @@ test('native local share, picker, Java bridge and window startup stay wired', as
   assert.deepEqual(calls.remote, []);
 });
 
-test('standalone native page registry exposes only the local Flutter entry', () => {
+test('standalone native page registry exposes the local entry and plain interop status page', () => {
   const registry = JSON.parse(fs.readFileSync(path.join(root, 'ohos/entry/src/main/resources/base/profile/main_pages.json'), 'utf8'));
-  assert.deepEqual(registry.src, ['pages/Index']);
+  assert.deepEqual(registry.src, ['pages/Index', 'pages/InteropIdle']);
+  const interopPage = fs.readFileSync(path.join(root, 'ohos/entry/src/main/ets/pages/InteropIdle.ets'), 'utf8');
+  assert.match(interopPage, /@Entry\s+@Component\s+struct InteropIdle/);
+  assert.doesNotMatch(interopPage, /import\s+.*flutter_ohos|FlutterPage\s*\(/);
 });

@@ -16,7 +16,7 @@ interface JdkManifest {
   libraries: LibraryLink[];
 }
 
-interface JdkLayout {
+export interface JdkLayout {
   home: string;
   java: string;
   javac: string;
@@ -74,8 +74,27 @@ async function prepare(context: common.UIAbilityContext): Promise<JdkLayout> {
   };
 }
 
+let preparation: Promise<JdkLayout> | undefined;
+
+/**
+ * Prepares the bundled JDK and returns its layout.
+ *
+ * Shared by the editor's own run path and the cross-app interop receiver, so
+ * both go through the same one-time extraction and the same cache. home is
+ * the extracted JDK; java/javac are the launcher libraries inside the bundle
+ * directory (libraryDirectory).
+ */
+export function prepareJdk(context: common.UIAbilityContext): Promise<JdkLayout> {
+  if (preparation === undefined) {
+    preparation = prepare(context).catch((error: Error) => {
+      preparation = undefined;
+      throw error;
+    });
+  }
+  return preparation;
+}
+
 export function configureJavaChannel(engine: FlutterEngine, context: common.UIAbilityContext): void {
-  let preparation: Promise<JdkLayout> | undefined;
   const channel = new MethodChannel(engine.dartExecutor.getBinaryMessenger(), 'qfli_jvmx/jdk');
   channel.setMethodCallHandler({
     onMethodCall(call: MethodCall, result: MethodResult): void {
@@ -101,8 +120,7 @@ export function configureJavaChannel(engine: FlutterEngine, context: common.UIAb
         result.notImplemented();
         return;
       }
-      if (preparation === undefined) preparation = prepare(context);
-      preparation.then((layout: JdkLayout) => {
+      prepareJdk(context).then((layout: JdkLayout) => {
         const response = new Map<string, string>();
         response.set('home', layout.home);
         response.set('java', layout.java);
@@ -110,7 +128,6 @@ export function configureJavaChannel(engine: FlutterEngine, context: common.UIAb
         response.set('libraryDirectory', layout.libraryDirectory);
         result.success(response);
       }).catch((error: Error) => {
-        preparation = undefined;
         result.error('JDK_PREPARE_FAILED', error.message, null);
       });
     },
